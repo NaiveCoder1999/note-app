@@ -12,13 +12,13 @@ public class Course {
     @GeneratedValue
     private Long id;
     private String courseName;
-    private String userName;
+    private String instructorName;
     private String description;
 
-    public Course(Long id, String courseName, String userName, String description) {
+    public Course(Long id, String courseName, String instructorName, String description) {
         this.id = id;
         this.courseName = courseName;
-        this.userName = userName;
+        this.instructorName = instructorName;
         this.description = description;
     }
 
@@ -33,8 +33,8 @@ public class Course {
         return courseName;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getInstructorName() {
+        return instructorName;
     }
 
     public String getDescription() {
@@ -49,8 +49,8 @@ public class Course {
         this.courseName = courseName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setInstructorName(String userName) {
+        this.instructorName = userName;
     }
 
     public void setDescription(String description) {
