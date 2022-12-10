@@ -1,5 +1,6 @@
 package com.springbootcourse.service.impl;
 
+import com.springbootcourse.exception.CourseNotFoundException;
 import com.springbootcourse.model.Course;
 import com.springbootcourse.repository.CourseRepository;
 import com.springbootcourse.service.CourseService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -17,6 +19,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
     @Override
     public Course createCourse(Course course) {
         Course createdCourse = courseRepository.save(course);
@@ -25,7 +28,13 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getCourse(long id, String instructorName) {
-        return null;
+        logger.trace("Invoked getCourse by ID method");
+        Optional<Course> course = courseRepository.findById(id);
+        if (course.isPresent()) {
+            return course.get();
+        } else {
+            throw new CourseNotFoundException(id);
+        }
     }
 
     @Override

@@ -11,12 +11,14 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequestMapping("/instructors")
 public class CourseController {
 
     @Autowired
     private CourseService courseService;
 
-    @PostMapping("/instructors/{instructorName}/courses")
+    //@PostMapping("/instructors/{instructorName}/courses")
+    @PostMapping("/{instructorName}/courses")
     public ResponseEntity<Void> createCourse(@PathVariable String instructorName, @RequestBody Course course) {
         course.setInstructorName(instructorName);
         Course createdCourse = courseService.createCourse(course); //no need to pass instructor
@@ -29,10 +31,16 @@ public class CourseController {
         return ResponseEntity.created(uri).build(); //201 -Created
     }
 
-    @GetMapping("/instructors/{instructorName}/courses")
+    //@GetMapping("/instructors/{instructorName}/courses")
+    @GetMapping("/{instructorName}/courses")
     public List<Course> getAllCourses(@PathVariable String instructorName) {
         List<Course> courses = courseService.getAllCourses(instructorName);
         return courses;
+    }
+
+    @GetMapping("/{instructorName}/courses/{id}")
+    public Course getCourse(@PathVariable long id, @PathVariable String instructorName) {
+        return courseService.getCourse(id, instructorName);
     }
 
 }
