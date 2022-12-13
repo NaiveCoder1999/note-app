@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 public class Course {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO) //NOT AUTOINCREMENT
     private Long id;
     private String courseName;
     private String instructorName;

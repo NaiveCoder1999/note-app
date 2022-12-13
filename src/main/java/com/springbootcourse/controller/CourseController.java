@@ -3,6 +3,7 @@ package com.springbootcourse.controller;
 import com.springbootcourse.model.Course;
 import com.springbootcourse.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,7 +28,7 @@ public class CourseController {
         }
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(createdCourse.getId()).toUri(); //TODO
+                .buildAndExpand(createdCourse.getId()).toUri();
         return ResponseEntity.created(uri).build(); //201 -Created
     }
 
@@ -42,5 +43,21 @@ public class CourseController {
     public Course getCourse(@PathVariable long id, @PathVariable String instructorName) {
         return courseService.getCourse(id, instructorName);
     }
+
+    @PutMapping("/{instructorName}/courses/{id}")
+    public ResponseEntity<Course> updateCourse(@PathVariable long id, @PathVariable String instructorName,
+                    @RequestBody Course course) {
+        course.setInstructorName(instructorName);
+        Course courseUpdated = courseService.updateCourse(id, instructorName, course);
+        ResponseEntity<Course> responseEntity = new ResponseEntity<>(courseUpdated, HttpStatus.OK);
+        return responseEntity;
+    }
+
+    @DeleteMapping("/{instructorName}/courses/{id}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable long id, @PathVariable String instructorName) {
+        return null;
+    }
+
+
 
 }

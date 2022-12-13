@@ -46,12 +46,19 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course updateCourse(long id, String instructorName) {
-        return null;
+    public Course updateCourse(long id, String instructorName, Course course) {
+        logger.trace("Invoked updateCourse by ID method");
+        Optional<Course> courseCreated = courseRepository.findById(id);
+        if (!courseCreated.isPresent()) {
+            throw new CourseNotFoundException(id);
+        } else {
+            Course courseUpdated = courseRepository.save(course);
+            return courseUpdated;
+        }
     }
 
     @Override
     public void deleteCourse(long id, String instructorName) {
-
+        logger.trace("Invoked deleteCourse by ID method");
     }
 }
