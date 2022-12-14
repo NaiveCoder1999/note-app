@@ -22,7 +22,7 @@ public class CourseController {
     @PostMapping("/{instructorName}/courses")
     public ResponseEntity<Void> createCourse(@PathVariable String instructorName, @RequestBody Course course) {
         course.setInstructorName(instructorName);
-        Course createdCourse = courseService.createCourse(course); //no need to pass instructor
+        Course createdCourse = courseService.createCourse(course); //TODO validate for existed course
         if (createdCourse == null) {
             return ResponseEntity.noContent().build(); //204 – No Content Status
         }
@@ -55,7 +55,8 @@ public class CourseController {
 
     @DeleteMapping("/{instructorName}/courses/{id}")
     public ResponseEntity<Void> deleteCourse(@PathVariable long id, @PathVariable String instructorName) {
-        return null;
+        courseService.deleteCourse(id, instructorName); //TODO scan the delete status?
+        return ResponseEntity.noContent().build();
     }
 
 

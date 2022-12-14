@@ -58,7 +58,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void deleteCourse(long id, String instructorName) {
+    public void deleteCourse(long id, String instructorName) { //similar to get method
         logger.trace("Invoked deleteCourse by ID method");
+        Optional<Course> course = courseRepository.findById(id);
+        if (course.isPresent()) {
+            courseRepository.deleteById(id);
+        } else {
+            throw new CourseNotFoundException(id);
+        }
     }
 }
