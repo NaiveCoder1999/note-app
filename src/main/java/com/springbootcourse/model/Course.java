@@ -5,12 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 public class Course {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) //NOT AUTOINCREMENT
+    //@GeneratedValue(strategy = GenerationType.AUTO)
+    //@GeneratedValue(strategy = GenerationType.AUTO, generator = "manual-generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "manual-generator")
+    @GenericGenerator(name = "manual-generator", strategy = "com.springbootcourse.model.generator.ManualInsertGenerator")
     private Long id;
     private String courseName;
     private String instructorName;
