@@ -15,8 +15,13 @@ import java.util.List;
 @RequestMapping("/instructors")
 public class CourseController {
 
-    @Autowired
+    //@Autowired
+
     private CourseService courseService;
+
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
+    }
 
     //@PostMapping("/instructors/{instructorName}/courses")
     @PostMapping("/{instructorName}/courses")
