@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 class CourseServiceTest {
 
+    // to use with when thenReturn
     @Mock
     private CourseRepository courseRepository;
 
@@ -38,7 +39,6 @@ class CourseServiceTest {
     @Test
     void getCourse() {
         Course course = new Course(10001L, "Java", "coder", "Learn Java");
-
         when(courseRepository.findById(10001L)).thenReturn(Optional.of(course));
         assertEquals(course, courseService.getCourse(10001L, "coder"));
     }
@@ -69,6 +69,7 @@ class CourseServiceTest {
         when(courseRepository.findById(10001L)).thenReturn(Optional.of(course));
         courseService.deleteCourse(10001L, "coder");
 
+        //verify number of interactions with mock, set to 0 to verify no interaction
         verify(courseRepository, times(1)).deleteById(10001L);
     }
 
@@ -78,6 +79,31 @@ class CourseServiceTest {
                 CourseNotFoundException.class,
                 () -> courseService.getCourse(10001L, "coder"),
                 "Course ID not found: 10001"
+        );
+
+        assertEquals("Course ID not found: 10001", exception.getMessage());
+    }
+
+    @Test
+    void updateCourseNotFound() {
+        Course course = new Course(10001L, "Java", "nocoder", "Learn Java");
+
+        //when(courseRepository.findById(10001L)).thenThrow(CourseNotFoundException.class);
+        CourseNotFoundException exception = assertThrows(
+                CourseNotFoundException.class,
+                () -> courseService.updateCourse(10001L, "nocoder", course),
+                "Course ID not found: 10001"
+        );
+        //cover the else branch:
+        assertEquals("Course ID not found: 10001", exception.getMessage());
+    }
+
+    @Test
+    void deleteCourseNotFound() {
+        //when(courseRepository.findById(10001L)).thenThrow(CourseNotFoundException.class);
+        CourseNotFoundException exception = assertThrows(
+                CourseNotFoundException.class,
+                () -> courseService.deleteCourse(10001L, "coder")
         );
 
         assertEquals("Course ID not found: 10001", exception.getMessage());
