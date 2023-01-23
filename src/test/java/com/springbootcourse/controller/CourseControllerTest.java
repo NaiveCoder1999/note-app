@@ -1,5 +1,6 @@
 package com.springbootcourse.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springbootcourse.model.Course;
 import com.springbootcourse.service.CourseService;
@@ -21,7 +22,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test class for course controller
@@ -42,7 +48,12 @@ class CourseControllerTest {
 
 
     Course mockCourse = new Course(10001L, "NodeJS", "coder", "TestJava10001");
-    String mockCourseJson = "{\"id\":10001,\"courseName\":\"NodeJS\",\"instructorName\":\"coder\",\"description\":\"TestJava10001\"}";
+    //String mockCourseJson = "{\"id\":10001,\"courseName\":\"NodeJS\",\"instructorName\":\"coder\",\"description\":\"TestJava10001\"}";
+    String mockCourseJson = om.writeValueAsString(mockCourse);
+
+    CourseControllerTest() throws JsonProcessingException {
+    }
+
     @Test
     void createCourse() throws Exception {
         //Course course = new Course(10001L, "NodeJS", "coder", "TestJava10001");
@@ -63,9 +74,26 @@ class CourseControllerTest {
     }
 
     @Test
-    void getAllCourses() {
+    void getAllCourses() throws Exception {
+        List<Course> courses = Arrays.asList(
+                new Course(10001L, "Java", "coder", "Learn Java"),
+                new Course(10002L, "Spring", "coder", "Learn Spring")
 
+        );
 
+        String coursesJson = om.writeValueAsString(courses);
+
+        when(courseService.getAllCourses("coder")).thenReturn(courses);
+
+        //assertEquals(courses, courseService.getAllCourses("coder"));
+        //invoke controller
+        RequestBuilder request = MockMvcRequestBuilders.
+                get("/instructors/coder/courses").accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        JSONAssert.assertEquals(coursesJson,
+                result.getResponse().getContentAsString(), false);
     }
 
     @Test
@@ -84,10 +112,36 @@ class CourseControllerTest {
     }
 
     @Test
-    void updateCourse() {
+    void updateCourse() throws Exception {
+        Mockito.when(courseService.updateCourse(Mockito.anyLong(),
+                        Mockito.anyString(), Mockito.any(Course.class)))
+                .thenReturn(mockCourse);
+
+        RequestBuilder request = MockMvcRequestBuilders
+                .put("/instructors/coder/courses/10001")
+                .contentType(MediaType.APPLICATION_JSON).content(mockCourseJson);
+
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        MockHttpServletResponse response = result.getResponse();
+
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+
+        JSONAssert.assertEquals(mockCourseJson, result.getResponse().getContentAsString(), false);
+
     }
 
     @Test
-    void deleteCourse() {
+    void deleteCourse() throws Exception {
+        Mockito.doNothing().when(courseService).deleteCourse(10001L, "coder");
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/instructors/coder/courses/10001");
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        MockHttpServletResponse response = result.getResponse();
+
+        assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
     }
 }
