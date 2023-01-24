@@ -69,7 +69,7 @@ class CourseControllerTest {
         MockHttpServletResponse response = result.getResponse();
         assertEquals(HttpStatus.CREATED.value(), response.getStatus()); //compare 201 status code
         assertEquals("http://localhost/instructors/coder/courses/10001",
-                response.getHeader(HttpHeaders.LOCATION));
+                response.getHeader(HttpHeaders.LOCATION)); //or by contains
 
     }
 
