@@ -1,7 +1,7 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
+    es2022: true,
     node: true,
   },
   parser: "@babel/eslint-parser", // To fix "unexpected token" errors
@@ -16,12 +16,12 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  extends: ["eslint:recommended", "plugin:react/recommended"],
+  extends: ["plugin:react/recommended", "prettier"],
   overrides: [],
 
   plugins: ["react", "react-hooks"],
   rules: {
-    "no-extra-semi": "error",
+    //"no-extra-semi": "error",
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error", // 检查 Hook 的规则
