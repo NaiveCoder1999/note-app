@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function NoteList() {
+  const [courses, setCourses] = useState([]);
+  const [message, setMessage] = useState(null);
+
   return (
     <div className="container">
       <h3>All Notes</h3>
