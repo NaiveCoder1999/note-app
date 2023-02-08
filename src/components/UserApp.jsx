@@ -1,6 +1,7 @@
 import React from 'react';
 import NoteList from './NoteList';
 
+
 export default function UserApp() {
   return (
     <>

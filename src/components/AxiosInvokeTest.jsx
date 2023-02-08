@@ -1,14 +1,15 @@
 import React from 'react';
-import { getAllCourses } from '../services/getAllCourses';
+import * as Constants from '../constants/config';
+import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import NoteList from './NoteList';
 
-const INSTRUCTOR = 'coder';
+const INSTRUCTOR = Constants.USER;
 
 export default async function AxiosInvokeTest() {
   try {
-    const response = await getAllCourses(INSTRUCTOR);
+    const response = await getAllNotes(INSTRUCTOR);
     console.log(response);
   } catch (error) {
     console.log(error);
-  }  
+  }
 }
