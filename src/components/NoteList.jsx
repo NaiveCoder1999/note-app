@@ -4,16 +4,28 @@ import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { deleteNote } from '../services/deleteNote';
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
-  const [message, setMessage] = useState(null);
+  const [alertMessage, setAlertMessage] = useState(null);
 
-  function refreshNotes() {
-    return getAllNotes(Constants.USER);
+  // function refreshNotes() {
+  //   return getAllNotes(Constants.USER);
+  // }
+
+  async function getNotesData(userName) {
+    // var res = await refreshNotes();
+    let tableEntity = await getAllNotes(userName); //axios response type
+    console.log(tableEntity);
+    let tableData = tableEntity.data;
+    setNotes(tableData); //change promise to list
   }
 
-  function handleDeleteClick(id) {
-    deleteNote(Constants.USER, id)
-      .then((response) => {
-        setMessage({
+  function handleDelete(userName, id) {
+    deleteNote(userName, id)
+      .then((res) => {
+        //TODO
+        const del = notes.filter((note) => note.id !== id);
+        setNotes(del);
+        console.log('res', res);
+        setAlertMessage({
           message: `Delete note ${id} successful`,
         });
       })
@@ -22,27 +34,19 @@ export default function NoteList() {
       });
   }
 
-  //TODO
-  const handleDelete = (index, e) => {
-    setData(data.filter((item, i) => i !== index));
-  };
-
-  function handleUpdateClick() {}
+  function handleUpdate() {}
 
   useEffect(() => {
-    //use Immediately Invoked Function Expression(IIFE)
-    (async () => {
-      // var res = await refreshNotes();
-      let tableEntity = await refreshNotes(); //axiosresponse
-      console.log(tableEntity);
-      setNotes(tableEntity.data); //change promise to list
-    })();
+    // empty bracket it indicates the function will only run once when the component will load initially
+    getNotesData(Constants.USER);
   }, []);
 
   return (
     <div className="container">
       <h3>All Notes</h3>
-      {message && <div className="alert alert-success">{message}</div>}
+      {alertMessage && (
+        <div className="alert alert-success">{alertMessage.message}</div>
+      )}
       <div className="container">
         <table className="table table-striped">
           <thead>
@@ -66,7 +70,7 @@ export default function NoteList() {
                 <td>
                   <button
                     className="btn btn-danger"
-                    //onClick={handleDeleteClick(note.id)}
+                    onClick={() => handleDelete(Constants.USER, note.id)} //must add bracket before function name
                   >
                     Delete
                   </button>
