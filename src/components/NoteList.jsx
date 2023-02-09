@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as Constants from '../constants/config';
 import { getAllNotes } from '../services/getAllNotes'; //non-default export
-
+import { deleteNote } from '../services/deleteNote';
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [message, setMessage] = useState(null);
@@ -9,6 +9,25 @@ export default function NoteList() {
   function refreshNotes() {
     return getAllNotes(Constants.USER);
   }
+
+  function handleDeleteClick(id) {
+    deleteNote(Constants.USER, id)
+      .then((response) => {
+        setMessage({
+          message: `Delete note ${id} successful`,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  //TODO
+  const handleDelete = (index, e) => {
+    setData(data.filter((item, i) => i !== index));
+  };
+
+  function handleUpdateClick() {}
 
   useEffect(() => {
     //use Immediately Invoked Function Expression(IIFE)
@@ -23,6 +42,7 @@ export default function NoteList() {
   return (
     <div className="container">
       <h3>All Notes</h3>
+      {message && <div className="alert alert-success">{message}</div>}
       <div className="container">
         <table className="table table-striped">
           <thead>
@@ -41,17 +61,12 @@ export default function NoteList() {
                 <td>{note.courseName}</td>
                 <td>{note.description}</td>
                 <td>
-                  <button
-                    data-testid="updateButton"
-                    className="btn btn-success"
-                  >
-                    Update
-                  </button>
+                  <button className="btn btn-primary">Update</button>
                 </td>
                 <td>
                   <button
-                    data-testid="deleteButton"
-                    className="btn btn-warning"
+                    className="btn btn-danger"
+                    //onClick={handleDeleteClick(note.id)}
                   >
                     Delete
                   </button>
