@@ -1,10 +1,9 @@
-package com.springbootcourse.controller;
+package com.springbootnote.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springbootcourse.model.Course;
-import com.springbootcourse.service.CourseService;
-import org.junit.jupiter.api.BeforeEach;
+import com.springbootnote.model.Note;
+import com.springbootnote.service.NoteService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -22,7 +21,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,96 +28,96 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit test class for course controller
+ * Unit test class for note controller
  */
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(value = CourseController.class)
-class CourseControllerTest {
+@WebMvcTest(value = NoteController.class)
+class NoteControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private CourseService courseService;
+    private NoteService noteService;
 
     //object <-> json
     private static final ObjectMapper om = new ObjectMapper();
 
 
-    Course mockCourse = new Course(10001L, "NodeJS", "coder", "TestJava10001");
-    //String mockCourseJson = "{\"id\":10001,\"courseName\":\"NodeJS\",\"instructorName\":\"coder\",\"description\":\"TestJava10001\"}";
-    String mockCourseJson = om.writeValueAsString(mockCourse);
+    Note mockNote = new Note(10001L, "NodeJS", "coder", "TestJava10001");
+    //String mockNoteJson = "{\"id\":10001,\"noteName\":\"NodeJS\",\"userName\":\"coder\",\"description\":\"TestJava10001\"}";
+    String mockNoteJson = om.writeValueAsString(mockNote);
 
-    CourseControllerTest() throws JsonProcessingException {
+    NoteControllerTest() throws JsonProcessingException {
     }
 
     @Test
-    void createCourse() throws Exception {
-        //Course course = new Course(10001L, "NodeJS", "coder", "TestJava10001");
-        Mockito.when(courseService.createCourse
-                (Mockito.any(Course.class))).thenReturn(mockCourse);
+    void createNote() throws Exception {
+        //Note note = new Note(10001L, "NodeJS", "coder", "TestJava10001");
+        Mockito.when(noteService.createNote
+                (Mockito.any(Note.class))).thenReturn(mockNote);
 
         //invoke controller to create
         RequestBuilder request = MockMvcRequestBuilders.
-                post("/instructors/coder/courses")
-                .content(mockCourseJson).contentType(MediaType.APPLICATION_JSON);
+                post("/user/coder/notes")
+                .content(mockNoteJson).contentType(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(request).andReturn();
         MockHttpServletResponse response = result.getResponse();
         assertEquals(HttpStatus.CREATED.value(), response.getStatus()); //compare 201 status code
-        assertEquals("http://localhost/instructors/coder/courses/10001",
+        assertEquals("http://localhost/user/coder/notes/10001",
                 response.getHeader(HttpHeaders.LOCATION)); //or by contains
 
     }
 
     @Test
-    void getAllCourses() throws Exception {
-        List<Course> courses = Arrays.asList(
-                new Course(10001L, "Java", "coder", "Learn Java"),
-                new Course(10002L, "Spring", "coder", "Learn Spring")
+    void getAllNotes() throws Exception {
+        List<Note> notes = Arrays.asList(
+                new Note(10001L, "Java", "coder", "Learn Java"),
+                new Note(10002L, "Spring", "coder", "Learn Spring")
 
         );
 
-        String coursesJson = om.writeValueAsString(courses);
+        String notesJson = om.writeValueAsString(notes);
 
-        when(courseService.getAllCourses("coder")).thenReturn(courses);
+        when(noteService.getAllNotes("coder")).thenReturn(notes);
 
-        //assertEquals(courses, courseService.getAllCourses("coder"));
+        //assertEquals(notes, noteService.getAllNotes("coder"));
         //invoke controller
         RequestBuilder request = MockMvcRequestBuilders.
-                get("/instructors/coder/courses").accept(MediaType.APPLICATION_JSON);
+                get("/user/coder/notes").accept(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(request).andReturn();
 
-        JSONAssert.assertEquals(coursesJson,
+        JSONAssert.assertEquals(notesJson,
                 result.getResponse().getContentAsString(), false);
     }
 
     @Test
-    void getCourse() throws Exception {
-        Mockito.when(courseService.getCourse
-                (10001L, "coder")).thenReturn(mockCourse);
+    void getNote() throws Exception {
+        when(noteService.getNote
+                (10001L, "coder")).thenReturn(mockNote);
 
         //invoke controller
         RequestBuilder request = MockMvcRequestBuilders.
-                get("/instructors/coder/courses/10001").accept(MediaType.APPLICATION_JSON);
+                get("/user/coder/notes/10001").accept(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(request).andReturn();
 
-        JSONAssert.assertEquals(mockCourseJson,
+        JSONAssert.assertEquals(mockNoteJson,
                 result.getResponse().getContentAsString(), false);
     }
 
     @Test
-    void updateCourse() throws Exception {
-        Mockito.when(courseService.updateCourse(Mockito.anyLong(),
-                        Mockito.anyString(), Mockito.any(Course.class)))
-                .thenReturn(mockCourse);
+    void updateNote() throws Exception {
+        when(noteService.updateNote(Mockito.anyLong(),
+                        Mockito.anyString(), Mockito.any(Note.class)))
+                .thenReturn(mockNote);
 
         RequestBuilder request = MockMvcRequestBuilders
-                .put("/instructors/coder/courses/10001")
-                .contentType(MediaType.APPLICATION_JSON).content(mockCourseJson);
+                .put("/user/coder/notes/10001")
+                .contentType(MediaType.APPLICATION_JSON).content(mockNoteJson);
 
         MvcResult result = mockMvc.perform(request).andReturn();
 
@@ -127,16 +125,16 @@ class CourseControllerTest {
 
         assertEquals(HttpStatus.OK.value(), response.getStatus());
 
-        JSONAssert.assertEquals(mockCourseJson, result.getResponse().getContentAsString(), false);
+        JSONAssert.assertEquals(mockNoteJson, result.getResponse().getContentAsString(), false);
 
     }
 
     @Test
-    void deleteCourse() throws Exception {
-        Mockito.doNothing().when(courseService).deleteCourse(10001L, "coder");
+    void deletenote() throws Exception {
+        Mockito.doNothing().when(noteService).deleteNote(10001L, "coder");
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/instructors/coder/courses/10001");
+                .delete("/user/coder/notes/10001");
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 

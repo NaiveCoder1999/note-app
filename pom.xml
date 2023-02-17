@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.naivecoder</groupId>
-    <artifactId>springboot-course</artifactId>
+    <artifactId>springboot-note</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>springboot-course</name>
-    <description>springboot-course</description>
+    <name>springboot-note</name>
+    <description>springboot-note</description>
     <properties>
         <java.version>17</java.version>
     </properties>

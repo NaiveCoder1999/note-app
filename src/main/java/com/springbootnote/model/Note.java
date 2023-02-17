@@ -1,4 +1,4 @@
-package com.springbootcourse.model;
+package com.springbootnote.model;
 
 
 import jakarta.persistence.Entity;
@@ -8,38 +8,38 @@ import jakarta.persistence.Id;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-public class Course {
+public class Note {
 
     @Id
     //@GeneratedValue(strategy = GenerationType.AUTO)
     //@GeneratedValue(strategy = GenerationType.AUTO, generator = "manual-generator")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "manual-generator")
-    @GenericGenerator(name = "manual-generator", strategy = "com.springbootcourse.model.generator.ManualInsertGenerator")
+    @GenericGenerator(name = "manual-generator", strategy = "com.springbootnote.model.generator.ManualInsertGenerator")
     private Long id;
-    private String courseName;
-    private String instructorName;
+    private String noteName;
+    private String userName;
     private String description;
 
-    public Course(Long id, String courseName, String instructorName, String description) {
+    public Note(Long id, String noteName, String userName, String description) {
         this.id = id;
-        this.courseName = courseName;
-        this.instructorName = instructorName;
+        this.noteName = noteName;
+        this.userName = userName;
         this.description = description;
     }
 
-    public Course() {
+    public Note() {
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getCourseName() {
-        return courseName;
+    public String getNoteName() {
+        return noteName;
     }
 
-    public String getInstructorName() {
-        return instructorName;
+    public String getUserName() {
+        return userName;
     }
 
     public String getDescription() {
@@ -50,12 +50,12 @@ public class Course {
         this.id = id;
     }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
+    public void setNoteName(String noteName) {
+        this.noteName = noteName;
     }
 
-    public void setInstructorName(String userName) {
-        this.instructorName = userName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public void setDescription(String description) {
