@@ -21,7 +21,7 @@ export default function NoteList() {
   function handleDelete(userName, id) {
     deleteNote(userName, id)
       .then((res) => {
-        //TODO
+        //IMPORTANT
         const del = notes.filter((note) => note.id !== id);
         setNotes(del);
         console.log('res', res);

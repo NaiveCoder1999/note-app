@@ -1,14 +1,21 @@
 // import logo from './logo.svg';
 import './App.css';
 import AxiosInvokeTest from './components/AxiosInvokeTest';
-import UserApp from './components/UserApp'; //no curly parentheses on UserApp
+import React from 'react';
+import NoteList from './components/NoteList';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import NoteInfo from './components/NoteInfo';
 
 function App() {
   return (
-    <div className="container">
-      {/* <AxiosInvokeTest /> */}
-      <UserApp />
-    </div>
+    <>
+      <h1> Note User Application</h1>
+      <Routes>
+        <Route path="/" element={<NoteList />} />
+        <Route path="/notes" element={<NoteList />} />
+        <Route path="/notes/:id" element={<NoteInfo />} />
+      </Routes>
+    </>
   );
 }
 
