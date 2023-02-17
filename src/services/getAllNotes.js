@@ -4,7 +4,7 @@ import * as Constants from '../constants/config';
 
 export function getAllNotes(name) {
   return myAxios({
-    url: name + '/courses',
+    url: name + '/notes',
     method: 'get',
   });
 }

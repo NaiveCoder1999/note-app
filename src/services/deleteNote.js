@@ -4,7 +4,7 @@ import * as Constants from '../constants/config';
 
 export function deleteNote(name, id) {
   return myAxios({
-    url: name + '/courses' + '/' + id,
+    url: name + '/notes' + '/' + id,
     method: 'delete',
   });
 }

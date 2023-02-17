@@ -41,8 +41,8 @@ export default function NoteInfo() {
   }, []);
 
   return (
-    <div>
-      <h2>Note Details</h2>
+    <div className="container">
+      <h3>Note Details</h3>
     </div>
   );
 }

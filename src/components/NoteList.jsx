@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import * as Constants from '../constants/config';
 import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { deleteNote } from '../services/deleteNote';
+import { useNavigate } from 'react-router-dom';
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [alertMessage, setAlertMessage] = useState(null);
-
-  // function refreshNotes() {
-  //   return getAllNotes(Constants.USER);
-  // }
-
+  let navigate = useNavigate();
   async function getNotesData(userName) {
     // var res = await refreshNotes();
     let tableEntity = await getAllNotes(userName); //axios response type
@@ -34,7 +31,10 @@ export default function NoteList() {
       });
   }
 
-  function handleUpdate() {}
+  function handleUpdate(id) {
+    console.log('update ' + id);
+    navigate(`/notes/${id}`);
+  }
 
   useEffect(() => {
     // empty bracket it indicates the function will only run once when the component will load initially
@@ -62,10 +62,15 @@ export default function NoteList() {
             {notes.map((note) => (
               <tr key={note.id}>
                 <td>{note.id}</td>
-                <td>{note.courseName}</td>
+                <td>{note.noteName}</td>
                 <td>{note.description}</td>
                 <td>
-                  <button className="btn btn-primary">Update</button>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleUpdate(note.id)}
+                  >
+                    Update
+                  </button>
                 </td>
                 <td>
                   <button
@@ -80,7 +85,7 @@ export default function NoteList() {
           </tbody>
         </table>
       </div>
-      <div className="row">
+      <div className="container">
         <button className="btn btn-success">Add</button>
       </div>
     </div>
