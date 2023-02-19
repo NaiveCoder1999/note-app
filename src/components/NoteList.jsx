@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [alertMessage, setAlertMessage] = useState(null);
-  let navigate = useNavigate();
-  async function getNotesData(userName) {
+
+  async function getNotesList(userName) {
     // var res = await refreshNotes();
     let tableEntity = await getAllNotes(userName); //axios response type
     console.log(tableEntity);
@@ -31,6 +31,7 @@ export default function NoteList() {
       });
   }
 
+  let navigate = useNavigate();
   function handleUpdate(id) {
     console.log('update ' + id);
     navigate(`/notes/${id}`);
@@ -38,7 +39,7 @@ export default function NoteList() {
 
   useEffect(() => {
     // empty bracket it indicates the function will only run once when the component will load initially
-    getNotesData(Constants.USER);
+    getNotesList(Constants.USER);
   }, []);
 
   return (

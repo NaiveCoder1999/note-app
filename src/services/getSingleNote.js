@@ -3,10 +3,9 @@ import myAxios from './axios';
 import * as Constants from '../constants/config';
 
 // TODO
-export async function updateNote(name, id, course) {
-  //TODO
+export async function getSingleNote(name, id) {
   return myAxios({
-    url: name + '/notes',
-    method: 'post',
+    url: name + '/notes' + '/' + id,
+    method: 'get',
   });
 }

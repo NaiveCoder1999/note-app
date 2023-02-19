@@ -6,10 +6,10 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 export default function NoteInfo() {
   const [notes, setNotes] = useState([]);
-  const [alertMessage, setAlertMessage] = useState(null);
 
-  //TODO update function
-  async function getNotesData(userName) {
+  const [id, setId] = useState(0); //int
+  const [description, setDescription] = useState(null); //string
+  async function getNoteInfo(userName) {
     // var res = await refreshNotes();
     let tableEntity = await getAllNotes(userName); //axios response type
     console.log(tableEntity);
@@ -17,27 +17,14 @@ export default function NoteInfo() {
     setNotes(tableData); //change promise to list
   }
 
-  function handleDelete(userName, id) {
-    deleteNote(userName, id)
-      .then((res) => {
-        //IMPORTANT
-        const del = notes.filter((note) => note.id !== id);
-        setNotes(del);
-        console.log('res', res);
-        setAlertMessage({
-          message: `Delete note ${id} successful`,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  function handleUpdate(id) {
+    console.log('update ' + id);
+    navigate(`/notes/${id}`);
   }
-
-  function handleUpdate() {}
 
   useEffect(() => {
     // empty bracket it indicates the function will only run once when the component will load initially
-    getNotesData(Constants.USER);
+    //getNotesData(Constants.USER);
   }, []);
 
   return (
