@@ -15,15 +15,15 @@ export default function NoteList() {
     setNotes(tableData); //change promise to list
   }
 
-  function handleDelete(userName, id) {
-    deleteNote(userName, id)
+  function handleDelete(userName, noteId) {
+    deleteNote(userName, noteId)
       .then((res) => {
         //IMPORTANT
-        const del = notes.filter((note) => note.id !== id);
+        const del = notes.filter((note) => note.id !== noteId);
         setNotes(del);
         console.log('res', res);
         setAlertMessage({
-          message: `Delete note ${id} successful`,
+          message: `Delete note ${noteId} successful`,
         });
       })
       .catch((error) => {
@@ -32,9 +32,9 @@ export default function NoteList() {
   }
 
   let navigate = useNavigate();
-  function handleUpdate(id) {
-    console.log('update ' + id);
-    navigate(`/notes/${id}`);
+  function handleUpdate(noteId) {
+    console.log('update ' + noteId);
+    navigate(`/notes/${noteId}`);
   }
 
   useEffect(() => {
