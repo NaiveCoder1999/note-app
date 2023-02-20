@@ -37,6 +37,11 @@ export default function NoteList() {
     navigate(`/notes/${noteId}`);
   }
 
+  //this.props.navigation("/courses/-1")
+  function handleAdd() {
+    navigate(`/notes/-1`);
+  }
+
   useEffect(() => {
     // empty bracket it indicates the function will only run once when the component will load initially
     getNotesList(Constants.USER);
@@ -87,7 +92,9 @@ export default function NoteList() {
         </table>
       </div>
       <div className="container">
-        <button className="btn btn-success">Add</button>
+        <button className="btn btn-success" onClick={() => handleAdd()}>
+          Add
+        </button>
       </div>
     </div>
   );

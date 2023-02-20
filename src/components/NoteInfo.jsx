@@ -4,19 +4,20 @@ import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { deleteNote } from '../services/deleteNote';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useParams } from 'react-router-dom';
+import { getSingleNote } from '../services/getSingleNote';
 
 export default function NoteInfo() {
+  const [title, setTitle] = useState(null); //string
   const [description, setDescription] = useState(null); //string
-  let { noteId } = useParams(); //userId: "id"
+  const { noteId } = useParams(); //noteId: "id"
 
-  async function getNoteInfo(userName) {
-    //get id and description object
-    //TODO
-    // var res = await refreshNotes();
-
-    let tableEntity = await getAllNotes(userName); //axios response type
-    console.log(tableEntity);
-    let tableData = tableEntity.data;
+  async function getNoteInfo(userName, id) {
+    //get note json object
+    let noteEntity = await getSingleNote(userName, id); //axios response type
+    //console.log(noteEntity);
+    let noteData = noteEntity.data;
+    setTitle(noteData.noteName);
+    setDescription(noteData.description);
   }
 
   function handleUpdate(id) {
@@ -25,14 +26,20 @@ export default function NoteInfo() {
   }
 
   useEffect(() => {
-    console.log(noteId); //test for passing note id
-    // empty bracket it indicates the function will only run once when the component will load initially
-    //getNotesData(Constants.USER);
-  }, [noteId]);
+    if (noteId === `-1`) {
+      // 404 not found TODO
+      return;
+    }
+    //console.log(noteId); //test for passing note id
+    getNoteInfo(Constants.USER, noteId);
+  });
 
   return (
     <div className="container">
       <h3>Note Details</h3>
+      <div>{noteId}</div>
+      <div>{title}</div>
+      <div>{description}</div>
     </div>
   );
 }
