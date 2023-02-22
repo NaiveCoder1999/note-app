@@ -96,6 +96,9 @@ export default function NoteInfo() {
       <div className="App">
         <Tiptap />
       </div>
+      <div>
+        <button className="btn btn-success">Add</button>
+      </div>
     </div>
   );
 }
