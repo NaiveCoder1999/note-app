@@ -43,7 +43,8 @@ export default function NoteList() {
   }
 
   useEffect(() => {
-    // empty bracket it indicates the function will only run once when the component will load initially
+    // use empty depend array ->
+    //fuction will only run once when the component will load initially
     getNotesList(Constants.USER);
   }, []);
 
