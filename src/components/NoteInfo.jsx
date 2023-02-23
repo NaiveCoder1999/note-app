@@ -5,12 +5,15 @@ import { deleteNote } from '../services/deleteNote';
 import { useFormik, Formik, Form, Field, ErrorMessage } from 'formik';
 import { useParams } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
+import parser from 'html-react-parser';
 import * as Yup from 'yup';
 import Tiptap from './Tiptap.jsx';
+import '../styles/TiptapStyles.scss';
 
 export default function NoteInfo() {
-  const [title, setTitle] = useState(null); //string
-  const [description, setDescription] = useState(null); //string
+  const [title, setTitle] = useState(''); //string
+  const [description, setDescription] = useState(''); //string
+  const [input, setInput] = useState(''); //string
   const { noteId } = useParams(); //noteId: "id"
 
   // TODO
@@ -93,8 +96,9 @@ export default function NoteInfo() {
       <div>{noteId}</div>
       <div>{title}</div>
       <div>{description}</div>
-      <div className="App">
-        <Tiptap />
+      <div className="Tiptap">
+        <Tiptap setInput={setInput} />
+        <div className="ProseMirror"> {parser(input)} </div>
       </div>
       <div>
         <button className="btn btn-success">Add</button>

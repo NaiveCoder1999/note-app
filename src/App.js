@@ -1,5 +1,5 @@
 // import logo from './logo.svg';
-import './App.css';
+import './styles/App.css';
 import AxiosInvokeTest from './components/AxiosInvokeTest';
 import React from 'react';
 import NoteList from './components/NoteList';
