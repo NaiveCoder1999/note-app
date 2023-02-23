@@ -38,7 +38,7 @@ button.is-active {
 // transfer from css
 .Tiptap {
   max-width: 700px;
-  margin: 5rem auto;
+  margin: 1rem auto;
   font-family: Poppins, sans-serif;
 }
 /* Basic editor styles */
@@ -96,13 +96,13 @@ button.is-active {
   blockquote {
     padding-left: 1rem;
     // border-left: 2px solid rgba(#0D0D0D, 0.1);
-    border-left: 3px solid #9c9c9c;
+    border-left: 2px solid #9c9c9c;
   }
 
   hr {
     border: none;
     // border-top: 2px solid rgba(#0D0D0D, 0.1);
-    border-top: 3px solid #9c9c9c;
+    border-top: 2px solid #9c9c9c;
     margin: 2rem 0;
   }
 }

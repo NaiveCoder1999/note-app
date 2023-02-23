@@ -13,7 +13,7 @@ import '../styles/TiptapStyles.scss';
 export default function NoteInfo() {
   const [title, setTitle] = useState(''); //string
   const [description, setDescription] = useState(''); //string
-  const [input, setInput] = useState(''); //string
+  const [preview, setPreview] = useState(''); //string
   const { noteId } = useParams(); //noteId: "id"
 
   // TODO
@@ -96,13 +96,13 @@ export default function NoteInfo() {
       <div>{noteId}</div>
       <div>{title}</div>
       <div>{description}</div>
+
       <div className="Tiptap">
-        <Tiptap setInput={setInput} />
-        <div className="ProseMirror"> {parser(input)} </div>
+        <Tiptap setPreview={setPreview} />
       </div>
-      <div>
-        <button className="btn btn-success">Add</button>
-      </div>
+      <button className="btn btn-success">Add</button>
+      <p></p>
+      <div className="ProseMirror"> {parser(preview)} </div>
     </div>
   );
 }

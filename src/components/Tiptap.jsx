@@ -145,7 +145,7 @@ MenuBar.propTypes = {
   }),
 };
 
-function Tiptap({ setInput }) {
+function Tiptap({ setPreview }) {
   const editor = useEditor({
     extensions: [
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -181,7 +181,7 @@ function Tiptap({ setInput }) {
     `,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      setInput(html);
+      setPreview(html);
     },
   });
 
@@ -195,7 +195,7 @@ function Tiptap({ setInput }) {
 
 //fix missing props validation by proptype generator extension
 Tiptap.propTypes = {
-  setInput: PropTypes.func,
+  setPreview: PropTypes.func,
 };
 
 export default Tiptap;
