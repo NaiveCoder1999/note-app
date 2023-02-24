@@ -1,6 +1,11 @@
 // src/Tiptap.jsx
 import PropTypes from 'prop-types';
 
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+import { EditorContent, ReactNodeViewRenderer, useEditor } from '@tiptap/react';
 import { Color } from '@tiptap/extension-color';
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
@@ -20,8 +25,10 @@ import {
   RiArrowGoBackFill,
   RiArrowGoForwardFill,
 } from 'react-icons/ri';
-import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+
+import { lowlight } from 'lowlight';
+import CodeBlockComponent from './CodeBlockComponent';
 import React from 'react';
 
 function MenuBar({ editor }) {
@@ -106,7 +113,7 @@ function MenuBar({ editor }) {
           className={editor.isActive('code') ? 'is-active' : ''}
         >
           {/* code */}
-          <RiCodeFill/>
+          <RiCodeFill />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -159,22 +166,38 @@ function Tiptap({ setPreview }) {
         },
       }),
       Underline,
+      Document,
+      Paragraph,
+      Text,
+      CodeBlockLowlight.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlockComponent);
+        },
+      }).configure({ lowlight }),
     ],
     content: `
-    <p>
-      Markdown shortcuts make it easy to format the text while typing.
-    </p>
     <p>
       To test that, start a new line and type <code>#</code> followed by a space to get a heading. Try <code>#</code>, <code>##</code>, <code>###</code>, <code>####</code>, <code>#####</code>, <code>######</code> for different levels.
     </p>
     <p>
-      Those conventions are called input rules in tiptap. Some of them are enabled by default. Try <code>></code> for blockquotes, <code>*</code>, <code>-</code> or <code>+</code> for bullet lists, or <code>\`foobar\`</code> to highlight code, <code>~~tildes~~</code> to strike text, or <code>==equal signs==</code> to highlight text.
+     Try typing <code>(c)</code> to see how it’s converted to a proper © character. You can also try <code>-></code>, <code>>></code>, <code>1/2</code>, <code>!=</code>, or <code>--</code>.
     </p>
     <p>
-      You can overwrite existing input rules or add your own to nodes, marks and extensions.
+    That’s a boring paragraph followed by a fenced code block:
     </p>
+    <pre><code class="language-javascript">for (var i=1; i <= 20; i++)
+    {
+    if (i % 15 == 0)
+    console.log("FizzBuzz");
+    else if (i % 3 == 0)
+    console.log("Fizz");
+    else if (i % 5 == 0)
+    console.log("Buzz");
+    else
+    console.log(i);
+    }</code></pre>
     <p>
-      For example, we added the <code>Typography</code> extension here. Try typing <code>(c)</code> to see how it’s converted to a proper © character. You can also try <code>-></code>, <code>>></code>, <code>1/2</code>, <code>!=</code>, or <code>--</code>.
+      Press Command/Ctrl + Enter to leave the fenced code block and continue typing in boring paragraphs.
     </p>
     `,
     onUpdate: ({ editor }) => {

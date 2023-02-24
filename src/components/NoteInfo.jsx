@@ -100,7 +100,7 @@ export default function NoteInfo() {
       <div className="Tiptap">
         <Tiptap setPreview={setPreview} />
       </div>
-      <button className="btn btn-success">Add</button>
+      <button className="btn btn-success">Save</button>
       <p></p>
       <div className="ProseMirror"> {parser(preview)} </div>
     </div>
