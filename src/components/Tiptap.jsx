@@ -1,15 +1,15 @@
 // src/Tiptap.jsx
 import PropTypes from 'prop-types';
-
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
-import Text from '@tiptap/extension-text';
 import { EditorContent, ReactNodeViewRenderer, useEditor } from '@tiptap/react';
 import { Color } from '@tiptap/extension-color';
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
+// import { OrderedList } from '@tiptap/extension-ordered-list';
+// import { BulletList } from '@tiptap/extension-bullet-list';
+// import { Paragraph } from '@tiptap/extension-paragraph';
+
 import {
   RiBold,
   RiItalic,
@@ -150,11 +150,9 @@ function MenuBar({ editor }) {
   );
 }
 
-function Tiptap({ setPreview }) {
+export default function Tiptap({ setPreview }) {
   const editor = useEditor({
     extensions: [
-      Color.configure({ types: [TextStyle.name, ListItem.name] }),
-      TextStyle.configure({ types: [ListItem.name] }),
       StarterKit.configure({
         bulletList: {
           keepMarks: true,
@@ -165,10 +163,20 @@ function Tiptap({ setPreview }) {
           keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
         },
       }),
+      // BulletList.configure({
+      //   keepMarks: true,
+      //   keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+      // }),
+      // OrderedList.configure({
+      //   keepMarks: true,
+      //   keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+      // }),
+      // Document,
+      // Paragraph,
+      // Text,
+      Color.configure({ types: [TextStyle.name, ListItem.name] }),
+      TextStyle.configure({ types: [ListItem.name] }),
       Underline,
-      Document,
-      Paragraph,
-      Text,
       CodeBlockLowlight.extend({
         addNodeView() {
           return ReactNodeViewRenderer(CodeBlockComponent);
@@ -202,6 +210,7 @@ function Tiptap({ setPreview }) {
     `,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
+      //console.log(html);
       setPreview(html);
     },
   });
@@ -227,5 +236,3 @@ MenuBar.propTypes = {
 Tiptap.propTypes = {
   setPreview: PropTypes.func,
 };
-
-export default Tiptap;
