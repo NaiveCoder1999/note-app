@@ -152,7 +152,7 @@ function MenuBar({ editor }) {
 }
 
 // export default function Tiptap({ setPreview, setEditable }) {
-export default function Tiptap({ setPreview }) {
+export default function Tiptap({ setPreview, setText }) {
   const [editable, setEditable] = useState(false);
   const editor = useEditor({
     extensions: [
@@ -213,8 +213,10 @@ export default function Tiptap({ setPreview }) {
     `,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
+      const text = JSON.stringify(editor.getJSON()); //JSON object to string
       //console.log(html);
       setPreview(html);
+      setText(text);
     },
   });
 
@@ -264,4 +266,5 @@ MenuBar.propTypes = {
 Tiptap.propTypes = {
   setPreview: PropTypes.func,
   setEditable: PropTypes.func,
+  setText: PropTypes.func,
 };

@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import * as Constants from '../constants/config';
 import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { deleteNote } from '../services/deleteNote';
 import { useFormik, Formik, Form, Field, ErrorMessage } from 'formik';
 import { useParams } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
+import { generateHTML } from '@tiptap/html';
+import Bold from '@tiptap/extension-bold';
+// import { generateHTML } from '@tiptap/core'
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
 import parser from 'html-react-parser';
 import * as Yup from 'yup';
 import Tiptap from './Tiptap.jsx';
@@ -14,7 +20,7 @@ export default function NoteInfo() {
   const [title, setTitle] = useState(''); //string
   const [description, setDescription] = useState(''); //string
   const [preview, setPreview] = useState(''); //string
-  const [editable, setEditable] = useState(false);
+  const [text, setText] = useState(''); //string
   const { noteId } = useParams(); //noteId: "id"
 
   // TODO
@@ -91,6 +97,17 @@ export default function NoteInfo() {
     return errors;
   }
 
+  // const noteJson = text;
+  // const output = useMemo(() => {
+  //   return generateHTML(noteJson, [
+  //     Document,
+  //     Paragraph,
+  //     Text,
+  //     Bold,
+  //     // other extensions …
+  //   ]);
+  // }, [noteJson]);
+
   return (
     <div className="container">
       <h3>Note Details</h3>
@@ -100,12 +117,15 @@ export default function NoteInfo() {
 
       <div className="Tiptap">
         {/* <Tiptap setPreview={setPreview} setEditable={setEditable} /> */}
-        <Tiptap setPreview={setPreview} />
+        <Tiptap setPreview={setPreview} setText={setText} />
         <p></p>
         <button className="btn btn-success">Save</button>
       </div>
-
       <div className="ProseMirror"> {parser(preview)} </div>
+
+      <div>{preview} </div>
+
+      <div>{text} </div>
     </div>
   );
 }
