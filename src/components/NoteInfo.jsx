@@ -14,6 +14,7 @@ export default function NoteInfo() {
   const [title, setTitle] = useState(''); //string
   const [description, setDescription] = useState(''); //string
   const [preview, setPreview] = useState(''); //string
+  const [editable, setEditable] = useState(false);
   const { noteId } = useParams(); //noteId: "id"
 
   // TODO
@@ -98,10 +99,12 @@ export default function NoteInfo() {
       <div>{description}</div>
 
       <div className="Tiptap">
+        {/* <Tiptap setPreview={setPreview} setEditable={setEditable} /> */}
         <Tiptap setPreview={setPreview} />
+        <p></p>
+        <button className="btn btn-success">Save</button>
       </div>
-      <button className="btn btn-success">Save</button>
-      <p></p>
+
       <div className="ProseMirror"> {parser(preview)} </div>
     </div>
   );

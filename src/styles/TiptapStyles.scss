@@ -29,6 +29,32 @@ button.is-active {
   border-radius: 2px; //round corner
 }
 
+//code block component
+.code-block {
+  position: relative;
+
+  select {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+  }
+}
+
+//checkbox style
+.checkbox {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  margin-left: 0.5rem;
+  input[type='checkbox'] {
+    margin-right: 0.5rem;
+  }
+}
+
+[contenteditable='false'] {
+  //color: #999;
+  cursor: not-allowed;
+}
+
 // transfer from css
 .Tiptap {
   max-width: 700px;
@@ -150,16 +176,5 @@ button.is-active {
     // border-top: 2px solid rgba(#0D0D0D, 0.1);
     border-top: 2px solid #9c9c9c;
     margin: 2rem 0;
-  }
-}
-
-//code block component
-.code-block {
-  position: relative;
-
-  select {
-    position: absolute;
-    right: 0.5rem;
-    top: 0.5rem;
   }
 }

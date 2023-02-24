@@ -1,4 +1,5 @@
 // src/Tiptap.jsx
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { EditorContent, ReactNodeViewRenderer, useEditor } from '@tiptap/react';
@@ -150,7 +151,9 @@ function MenuBar({ editor }) {
   );
 }
 
+// export default function Tiptap({ setPreview, setEditable }) {
 export default function Tiptap({ setPreview }) {
+  const [editable, setEditable] = useState(false);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -215,10 +218,35 @@ export default function Tiptap({ setPreview }) {
     },
   });
 
+  useEffect(() => {
+    if (!editor) {
+      return undefined;
+    }
+
+    editor.setEditable(editable);
+  }, [editor, editable]);
+
+  if (!editor) {
+    return null;
+  }
   return (
-    <div className="textEditor">
-      <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
+    <div>
+      <div className="textEditor">
+        <MenuBar editor={editor} />
+      </div>
+      <div className="textEditor">
+        <div className="checkbox">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id="editable"
+            value={editable}
+            onChange={(event) => setEditable(event.target.checked)}
+          />
+          <label htmlFor="editable">Editable</label>
+        </div>
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 }
@@ -235,4 +263,5 @@ MenuBar.propTypes = {
 //fix missing props validation by proptype generator extension
 Tiptap.propTypes = {
   setPreview: PropTypes.func,
+  setEditable: PropTypes.func,
 };
