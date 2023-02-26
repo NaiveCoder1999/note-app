@@ -151,9 +151,10 @@ function MenuBar({ editor }) {
   );
 }
 
-// export default function Tiptap({ setPreview, setEditable }) {
-export default function Tiptap({ setPreview, setText }) {
+export default function Tiptap({ initialValue = '', getPreview, getText }) {
   const [editable, setEditable] = useState(false);
+  const [descValue, setDescValue] = useState(JSON.stringify(initialValue)); //set initial state for description
+  console.log(descValue);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -186,37 +187,38 @@ export default function Tiptap({ setPreview, setText }) {
         },
       }).configure({ lowlight }),
     ],
-    content: `
-    <p>
-      To test that, start a new line and type <code>#</code> followed by a space to get a heading. Try <code>#</code>, <code>##</code>, <code>###</code>, <code>####</code>, <code>#####</code>, <code>######</code> for different levels.
-    </p>
-    <p>
-     Try typing <code>(c)</code> to see how it’s converted to a proper © character. You can also try <code>-></code>, <code>>></code>, <code>1/2</code>, <code>!=</code>, or <code>--</code>.
-    </p>
-    <p>
-    That’s a boring paragraph followed by a fenced code block:
-    </p>
-    <pre><code class="language-javascript">for (var i=1; i <= 20; i++)
-    {
-    if (i % 15 == 0)
-    console.log("FizzBuzz");
-    else if (i % 3 == 0)
-    console.log("Fizz");
-    else if (i % 5 == 0)
-    console.log("Buzz");
-    else
-    console.log(i);
-    }</code></pre>
-    <p>
-      Press Command/Ctrl + Enter to leave the fenced code block and continue typing in boring paragraphs.
-    </p>
-    `,
+    // content: `
+    // <p>
+    //   To test that, start a new line and type <code>#</code> followed by a space to get a heading. Try <code>#</code>, <code>##</code>, <code>###</code>, <code>####</code>, <code>#####</code>, <code>######</code> for different levels.
+    // </p>
+    // <p>
+    //  Try typing <code>(c)</code> to see how it’s converted to a proper © character. You can also try <code>-></code>, <code>>></code>, <code>1/2</code>, <code>!=</code>, or <code>--</code>.
+    // </p>
+    // <p>
+    // That’s a boring paragraph followed by a fenced code block:
+    // </p>
+    // <pre><code class="language-javascript">for (var i=1; i <= 20; i++)
+    // {
+    // if (i % 15 == 0)
+    // console.log("FizzBuzz");
+    // else if (i % 3 == 0)
+    // console.log("Fizz");
+    // else if (i % 5 == 0)
+    // console.log("Buzz");
+    // else
+    // console.log(i);
+    // }</code></pre>
+    // <p>
+    //   Press Command/Ctrl + Enter to leave the fenced code block and continue typing in boring paragraphs.
+    // </p>
+    // `,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       const text = JSON.stringify(editor.getJSON()); //JSON object to string
       //console.log(html);
-      setPreview(html);
-      setText(text);
+      getPreview(html);
+      getText(text);
+      setDescValue(html);
     },
   });
 
@@ -224,9 +226,12 @@ export default function Tiptap({ setPreview, setText }) {
     if (!editor) {
       return undefined;
     }
-
+    // Update editor content when initialValueof note changes
+    //editor.commands.setContent(descValue);
+    editor.commands.setContent(initialValue);
     editor.setEditable(editable);
-  }, [editor, editable]);
+    //}, [editor, editable, descValue]);
+  }, [editor, editable, initialValue]);
 
   if (!editor) {
     return null;
@@ -243,12 +248,18 @@ export default function Tiptap({ setPreview, setText }) {
             type="checkbox"
             id="editable"
             value={editable}
-            onChange={(event) => setEditable(event.target.checked)}
+            onChange={(event) => {
+              setEditable(event.target.checked);
+              // editor.commands.setContent(editor.getHTML());
+              // initialValue = editor.getHTML();
+            }}
           />
           <label htmlFor="editable">Editable</label>
         </div>
         <EditorContent editor={editor} />
       </div>
+      <p></p>
+      <div>desc value: {descValue}</div>
     </div>
   );
 }
@@ -264,7 +275,8 @@ MenuBar.propTypes = {
 
 //fix missing props validation by proptype generator extension
 Tiptap.propTypes = {
-  setPreview: PropTypes.func,
+  initialValue: PropTypes.string,
+  getPreview: PropTypes.func,
   setEditable: PropTypes.func,
-  setText: PropTypes.func,
+  getText: PropTypes.func,
 };

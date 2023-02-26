@@ -18,21 +18,10 @@ import '../styles/TiptapStyles.scss';
 
 export default function NoteInfo() {
   const [title, setTitle] = useState(''); //string
-  const [description, setDescription] = useState(''); //string
-  const [preview, setPreview] = useState(''); //string
-  const [text, setText] = useState(''); //string
+  const [description, setDescription] = useState(''); //string of note
+  const [preview, setPreview] = useState(''); //string of html data
+  const [text, setText] = useState(''); //string of json data
   const { noteId } = useParams(); //noteId: "id"
-
-  // TODO
-  // Creating schema
-  const validationSchema = Yup.object().shape({
-    title: Yup.string()
-      .required('Description is required')
-      .min(5, 'Enter at least 5 Characters in Description'),
-    description: Yup.string()
-      .required('Description is required')
-      .min(10, 'Enter at least 10 Characters in Description'),
-  });
 
   async function getNoteInfo(userName, id) {
     //get note json object
@@ -41,35 +30,6 @@ export default function NoteInfo() {
     let noteData = noteEntity.data;
     setTitle(noteData.noteName);
     setDescription(noteData.description);
-  }
-
-  //TODO
-  function handleSubmit(values) {
-    let username = INSTRUCTOR;
-
-    let course = {
-      id: noteId,
-      description: values.description,
-      targetDate: values.targetDate,
-    };
-
-    if (this.state.id === -1) {
-      CourseDataService.createCourse(username, course)
-        .then(() => this.props.navigation('/courses'))
-        .catch((error) => {
-          //TODO better handle errors https://axios-http.com/docs/handling_errors
-          return error;
-        });
-    } else {
-      CourseDataService.updateCourse(username, id, course)
-        .then(() => this.props.navigation('/courses'))
-        .catch((error) => {
-          //TODO better handle errors https://axios-http.com/docs/handling_errors
-          return error;
-        });
-    }
-
-    console.log(values);
   }
 
   function handleUpdate(id) {
@@ -97,6 +57,46 @@ export default function NoteInfo() {
     return errors;
   }
 
+  // TODO
+  // Creating schema
+  const validationSchema = Yup.object().shape({
+    title: Yup.string()
+      .required('Description is required')
+      .min(5, 'Enter at least 5 Characters in Description'),
+    description: Yup.string()
+      .required('Description is required')
+      .min(10, 'Enter at least 10 Characters in Description'),
+  });
+  //TODO
+  function handleSubmit() {
+    let username = Constants.USER;
+
+    let course = {
+      id: noteId,
+      noteName: preview,
+      userName: username,
+      description: description,
+    };
+
+    if (this.state.id === -1) {
+      CourseDataService.createCourse(username, course)
+        .then(() => this.props.navigation('/courses'))
+        .catch((error) => {
+          //TODO better handle errors https://axios-http.com/docs/handling_errors
+          return error;
+        });
+    } else {
+      CourseDataService.updateCourse(username, id, course)
+        .then(() => this.props.navigation('/courses'))
+        .catch((error) => {
+          //TODO better handle errors https://axios-http.com/docs/handling_errors
+          return error;
+        });
+    }
+
+    console.log(values);
+  }
+
   // const noteJson = text;
   // const output = useMemo(() => {
   //   return generateHTML(noteJson, [
@@ -116,15 +116,18 @@ export default function NoteInfo() {
       <div>{description}</div>
 
       <div className="Tiptap">
-        {/* <Tiptap setPreview={setPreview} setEditable={setEditable} /> */}
-        <Tiptap setPreview={setPreview} setText={setText} />
+        <Tiptap
+          initialValue={description}
+          getPreview={setPreview}
+          getText={setText}
+        />
         <p></p>
         <button className="btn btn-success">Save</button>
       </div>
       <div className="ProseMirror"> {parser(preview)} </div>
 
       <div>{preview} </div>
-
+      <p></p>
       <div>{text} </div>
     </div>
   );
