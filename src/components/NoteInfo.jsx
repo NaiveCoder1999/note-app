@@ -6,11 +6,7 @@ import { useFormik, Formik, Form, Field, ErrorMessage } from 'formik';
 import { useParams } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
 import { generateHTML } from '@tiptap/html';
-import Bold from '@tiptap/extension-bold';
-// import { generateHTML } from '@tiptap/core'
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
-import Text from '@tiptap/extension-text';
+
 import parser from 'html-react-parser';
 import * as Yup from 'yup';
 import Tiptap from './Tiptap.jsx';
@@ -97,17 +93,6 @@ export default function NoteInfo() {
     console.log(values);
   }
 
-  // const noteJson = text;
-  // const output = useMemo(() => {
-  //   return generateHTML(noteJson, [
-  //     Document,
-  //     Paragraph,
-  //     Text,
-  //     Bold,
-  //     // other extensions …
-  //   ]);
-  // }, [noteJson]);
-
   return (
     <div className="container">
       <h3>Note Details</h3>
@@ -119,7 +104,7 @@ export default function NoteInfo() {
         <Tiptap
           initialValue={description}
           getPreview={setPreview} //onchange function
-          getText={setText}
+          getJSON={setText}
         />
         <p></p>
         <button className="btn btn-success">Save</button>

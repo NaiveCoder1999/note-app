@@ -7,9 +7,6 @@ import { Color } from '@tiptap/extension-color';
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
-// import { OrderedList } from '@tiptap/extension-ordered-list';
-// import { BulletList } from '@tiptap/extension-bullet-list';
-// import { Paragraph } from '@tiptap/extension-paragraph';
 
 import {
   RiBold,
@@ -151,10 +148,9 @@ function MenuBar({ editor }) {
   );
 }
 
-export default function Tiptap({ initialValue, getPreview, getText }) {
+export default function Tiptap({ initialValue, getPreview, getJSON }) {
   const [editable, setEditable] = useState(false);
-  const initValue = useRef(initialValue);
-  const [descValue, setDescValue] = useState(initValue.current); //set initial state for description
+  const prevValue = useRef(initialValue);
 
   //console.log('init value:' + initValue.current);
   const editor = useEditor({
@@ -162,11 +158,11 @@ export default function Tiptap({ initialValue, getPreview, getText }) {
       StarterKit.configure({
         bulletList: {
           keepMarks: true,
-          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+          keepAttributes: false,
         },
         orderedList: {
           keepMarks: true,
-          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+          keepAttributes: false,
         },
       }),
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -178,19 +174,12 @@ export default function Tiptap({ initialValue, getPreview, getText }) {
         },
       }).configure({ lowlight }),
     ],
-    onCreate: ({ editor }) => {
-      // The editor is ready.
-      editor.commands.setContent(initialValue);
-    },
-    // content: initialValue,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       const text = JSON.stringify(editor.getJSON()); //JSON object to string
-      //console.log(html);
       getPreview(html);
-      getText(text);
-      setDescValue(html);
-      initValue.current = html;
+      getJSON(text);
+      prevValue.current = html;
     },
   });
 
@@ -203,16 +192,14 @@ export default function Tiptap({ initialValue, getPreview, getText }) {
     editor.setEditable(editable);
     if (prevDesc !== initialValue && prevDesc !== '<p></p>') {
       editor.commands.setContent(prevDesc);
-      initValue.current = prevDesc;
-      setDescValue(prevDesc);
+      prevValue.current = prevDesc;
     } else {
       editor.commands.setContent(initialValue);
+      // let obj =
+      //   '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Test Example"}]}]}';
+      // editor.commands.setContent(JSON.parse(obj));
     }
   }, [editor, editable, initialValue]);
-
-  if (!editor) {
-    return null;
-  }
 
   return (
     <div>
@@ -234,8 +221,7 @@ export default function Tiptap({ initialValue, getPreview, getText }) {
         </div>
         <EditorContent editor={editor} />
       </div>
-      <p>use ref value:{initValue.current} </p>
-      <p>desc value: {descValue}</p>
+      <p>use ref value:{prevValue.current} </p>
       <p>initial Value:{initialValue} </p>
     </div>
   );
@@ -255,5 +241,5 @@ Tiptap.propTypes = {
   initialValue: PropTypes.string,
   getPreview: PropTypes.func,
   setEditable: PropTypes.func,
-  getText: PropTypes.func,
+  getJSON: PropTypes.func,
 };
