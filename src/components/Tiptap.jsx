@@ -221,8 +221,8 @@ export default function Tiptap({ initialValue, getPreview, getJSON }) {
         </div>
         <EditorContent editor={editor} />
       </div>
-      <p>use ref value:{prevValue.current} </p>
-      <p>initial Value:{initialValue} </p>
+      {/* <p>use ref value:{prevValue.current} </p> */
+      /* <p>initial Value:{initialValue} </p> */}
     </div>
   );
 }

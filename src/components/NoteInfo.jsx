@@ -37,32 +37,10 @@ export default function NoteInfo() {
     if (noteId === `-1`) {
       return;
     }
-    //console.log(noteId); //test for passing note id
+
     getNoteInfo(Constants.USER, noteId);
   });
 
-  //TODO refer kuroko
-  function validate(values) {
-    let errors = {};
-    if (!values.description) {
-      errors.description = 'Enter a Description';
-    } else if (values.description.length < 5) {
-      errors.description = 'Enter at least 5 Characters in Description';
-    }
-
-    return errors;
-  }
-
-  // TODO
-  // Creating schema
-  const validationSchema = Yup.object().shape({
-    title: Yup.string()
-      .required('Description is required')
-      .min(5, 'Enter at least 5 Characters in Description'),
-    description: Yup.string()
-      .required('Description is required')
-      .min(10, 'Enter at least 10 Characters in Description'),
-  });
   //TODO
   function handleSubmit() {
     let username = Constants.USER;
@@ -78,14 +56,12 @@ export default function NoteInfo() {
       CourseDataService.createCourse(username, course)
         .then(() => this.props.navigation('/courses'))
         .catch((error) => {
-          //TODO better handle errors https://axios-http.com/docs/handling_errors
           return error;
         });
     } else {
       CourseDataService.updateCourse(username, id, course)
         .then(() => this.props.navigation('/courses'))
         .catch((error) => {
-          //TODO better handle errors https://axios-http.com/docs/handling_errors
           return error;
         });
     }
@@ -93,12 +69,24 @@ export default function NoteInfo() {
     console.log(values);
   }
 
+  //TODO refer kuroko
+  // Creating schema
+  const validationSchema = Yup.object().shape({
+    title: Yup.string()
+      .required('Note title is required')
+      .min(5, 'Enter at least 5 Characters in title'),
+    description: Yup.string()
+      .required('Description is required')
+      .min(10, 'Enter at least 10 Characters in Description'),
+  });
+
+  //TODO formik
   return (
     <div className="container">
       <h3>Note Details</h3>
       <div>{noteId}</div>
       <div>{title}</div>
-      <div>{description}</div>
+      {/* <div>{description}</div> */}
 
       <div className="Tiptap">
         <Tiptap
@@ -106,14 +94,11 @@ export default function NoteInfo() {
           getPreview={setPreview} //onchange function
           getJSON={setText}
         />
-        <p></p>
-        <button className="btn btn-success">Save</button>
       </div>
+      {/*       
       <div className="ProseMirror"> {parser(preview)} </div>
-
-      <div>{preview} </div>
-      <p></p>
-      <div>{text} </div>
+      <button className="btn btn-success">Save</button>
+      <div>HTML render: {preview} </div> */}
     </div>
   );
 }
