@@ -1,5 +1,5 @@
 // src/Tiptap.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { EditorContent, ReactNodeViewRenderer, useEditor } from '@tiptap/react';
@@ -151,10 +151,12 @@ function MenuBar({ editor }) {
   );
 }
 
-export default function Tiptap({ initialValue = '', getPreview, getText }) {
+export default function Tiptap({ initialValue, getPreview, getText }) {
   const [editable, setEditable] = useState(false);
-  const [descValue, setDescValue] = useState(JSON.stringify(initialValue)); //set initial state for description
-  console.log(descValue);
+  const initValue = useRef(initialValue);
+  const [descValue, setDescValue] = useState(initValue.current); //set initial state for description
+
+  //console.log('init value:' + initValue.current);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -167,17 +169,6 @@ export default function Tiptap({ initialValue = '', getPreview, getText }) {
           keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
         },
       }),
-      // BulletList.configure({
-      //   keepMarks: true,
-      //   keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-      // }),
-      // OrderedList.configure({
-      //   keepMarks: true,
-      //   keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-      // }),
-      // Document,
-      // Paragraph,
-      // Text,
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure({ types: [ListItem.name] }),
       Underline,
@@ -187,31 +178,11 @@ export default function Tiptap({ initialValue = '', getPreview, getText }) {
         },
       }).configure({ lowlight }),
     ],
-    // content: `
-    // <p>
-    //   To test that, start a new line and type <code>#</code> followed by a space to get a heading. Try <code>#</code>, <code>##</code>, <code>###</code>, <code>####</code>, <code>#####</code>, <code>######</code> for different levels.
-    // </p>
-    // <p>
-    //  Try typing <code>(c)</code> to see how it’s converted to a proper © character. You can also try <code>-></code>, <code>>></code>, <code>1/2</code>, <code>!=</code>, or <code>--</code>.
-    // </p>
-    // <p>
-    // That’s a boring paragraph followed by a fenced code block:
-    // </p>
-    // <pre><code class="language-javascript">for (var i=1; i <= 20; i++)
-    // {
-    // if (i % 15 == 0)
-    // console.log("FizzBuzz");
-    // else if (i % 3 == 0)
-    // console.log("Fizz");
-    // else if (i % 5 == 0)
-    // console.log("Buzz");
-    // else
-    // console.log(i);
-    // }</code></pre>
-    // <p>
-    //   Press Command/Ctrl + Enter to leave the fenced code block and continue typing in boring paragraphs.
-    // </p>
-    // `,
+    onCreate: ({ editor }) => {
+      // The editor is ready.
+      editor.commands.setContent(initialValue);
+    },
+    // content: initialValue,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       const text = JSON.stringify(editor.getJSON()); //JSON object to string
@@ -219,6 +190,7 @@ export default function Tiptap({ initialValue = '', getPreview, getText }) {
       getPreview(html);
       getText(text);
       setDescValue(html);
+      initValue.current = html;
     },
   });
 
@@ -227,15 +199,21 @@ export default function Tiptap({ initialValue = '', getPreview, getText }) {
       return undefined;
     }
     // Update editor content when initialValueof note changes
-    //editor.commands.setContent(descValue);
-    editor.commands.setContent(initialValue);
+    let prevDesc = editor.getHTML();
     editor.setEditable(editable);
-    //}, [editor, editable, descValue]);
+    if (prevDesc !== initialValue && prevDesc !== '<p></p>') {
+      editor.commands.setContent(prevDesc);
+      initValue.current = prevDesc;
+      setDescValue(prevDesc);
+    } else {
+      editor.commands.setContent(initialValue);
+    }
   }, [editor, editable, initialValue]);
 
   if (!editor) {
     return null;
   }
+
   return (
     <div>
       <div className="textEditor">
@@ -250,16 +228,15 @@ export default function Tiptap({ initialValue = '', getPreview, getText }) {
             value={editable}
             onChange={(event) => {
               setEditable(event.target.checked);
-              // editor.commands.setContent(editor.getHTML());
-              // initialValue = editor.getHTML();
             }}
           />
           <label htmlFor="editable">Editable</label>
         </div>
         <EditorContent editor={editor} />
       </div>
-      <p></p>
-      <div>desc value: {descValue}</div>
+      <p>use ref value:{initValue.current} </p>
+      <p>desc value: {descValue}</p>
+      <p>initial Value:{initialValue} </p>
     </div>
   );
 }

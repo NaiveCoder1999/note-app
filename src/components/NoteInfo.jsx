@@ -118,7 +118,7 @@ export default function NoteInfo() {
       <div className="Tiptap">
         <Tiptap
           initialValue={description}
-          getPreview={setPreview}
+          getPreview={setPreview} //onchange function
           getText={setText}
         />
         <p></p>
