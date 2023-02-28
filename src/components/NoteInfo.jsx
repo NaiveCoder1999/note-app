@@ -53,14 +53,16 @@ const validationSchema = Yup.object().shape({
 
 //creating formik
 //user is CONSTANT
+//enableReinitialize={true} is vital
 const NoteForm = ({ id, title, description, onSubmit }) => {
   return (
     <Formik
+      enableReinitialize={true}
       validationSchema={validationSchema}
+      validateOnChange={true}
+      validateOnBlur={true}
       initialValues={{ id, title, description }}
       onSubmit={onSubmit}
-      // validateOnChange={true}
-      // validateOnBlur={true}
     >
       {({ values, setFieldValue, handleSubmit }) => (
         <Form onSubmit={handleSubmit}>
@@ -96,7 +98,7 @@ export default function NoteInfo() {
   const [title, setTitle] = useState(''); //string
   const [description, setDescription] = useState(''); //string of note
   const [preview, setPreview] = useState(''); //string of html data
-  const [text, setText] = useState(''); //string of json data
+  //const [text, setText] = useState(''); //string of json data
   const { noteId } = useParams(); //noteId: "id"
 
   async function getNoteInfo(userName, id) {
@@ -129,7 +131,7 @@ export default function NoteInfo() {
       <div>{title}</div>
       <div>{description}</div>
       <p></p>
-      <div data-testid="noteContainer" className="container">
+      <div className="container">
         <NoteForm
           id={noteId}
           title={title}
