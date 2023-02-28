@@ -3,6 +3,7 @@ import * as Constants from '../constants/config';
 import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { deleteNote } from '../services/deleteNote';
 import { useNavigate } from 'react-router-dom';
+
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [alertMessage, setAlertMessage] = useState(null);

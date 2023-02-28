@@ -148,9 +148,10 @@ function MenuBar({ editor }) {
   );
 }
 
-export default function Tiptap({ initialValue, getPreview, getJSON }) {
+// export default function Tiptap({ initialValues, onChange, getJSON }) {
+export default function Tiptap({ initialValues, onChange }) {
   const [editable, setEditable] = useState(false);
-  const prevValue = useRef(initialValue);
+  const prevValue = useRef(initialValues);
 
   //console.log('init value:' + initValue.current);
   const editor = useEditor({
@@ -177,8 +178,8 @@ export default function Tiptap({ initialValue, getPreview, getJSON }) {
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       const text = JSON.stringify(editor.getJSON()); //JSON object to string
-      getPreview(html);
-      getJSON(text);
+      onChange(html);
+      //getJSON(text);
       prevValue.current = html;
     },
   });
@@ -187,19 +188,19 @@ export default function Tiptap({ initialValue, getPreview, getJSON }) {
     if (!editor) {
       return undefined;
     }
-    // Update editor content when initialValueof note changes
+    // Update editor content when initialValuesof note changes
     let prevDesc = editor.getHTML();
     editor.setEditable(editable);
-    if (prevDesc !== initialValue && prevDesc !== '<p></p>') {
+    if (prevDesc !== initialValues && prevDesc !== '<p></p>') {
       editor.commands.setContent(prevDesc);
       prevValue.current = prevDesc;
     } else {
-      editor.commands.setContent(initialValue);
+      editor.commands.setContent(initialValues);
       // let obj =
       //   '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Test Example"}]}]}';
       // editor.commands.setContent(JSON.parse(obj));
     }
-  }, [editor, editable, initialValue]);
+  }, [editor, editable, initialValues]);
 
   return (
     <div>
@@ -222,7 +223,7 @@ export default function Tiptap({ initialValue, getPreview, getJSON }) {
         <EditorContent editor={editor} />
       </div>
       {/* <p>use ref value:{prevValue.current} </p> */
-      /* <p>initial Value:{initialValue} </p> */}
+      /* <p>initial Value:{initialValues} </p> */}
     </div>
   );
 }
@@ -238,8 +239,8 @@ MenuBar.propTypes = {
 
 //fix missing props validation by proptype generator extension
 Tiptap.propTypes = {
-  initialValue: PropTypes.string,
-  getPreview: PropTypes.func,
+  initialValues: PropTypes.string,
+  onChange: PropTypes.func,
   setEditable: PropTypes.func,
-  getJSON: PropTypes.func,
+  //getJSON: PropTypes.func,
 };
