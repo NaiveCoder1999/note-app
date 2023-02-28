@@ -1,18 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useMemo } from 'react';
 import * as Constants from '../constants/config';
-import { getAllNotes } from '../services/getAllNotes'; //non-default export
-import { deleteNote } from '../services/deleteNote';
-import { useFormik, Formik, Form, Field, ErrorMessage } from 'formik';
-import { useParams } from 'react-router-dom';
-import { getSingleNote } from '../services/getSingleNote';
-import { generateHTML } from '@tiptap/html';
 
-import parser from 'html-react-parser';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+
 import * as Yup from 'yup';
 import Tiptap from './Tiptap.jsx';
 import '../styles/TiptapStyles.scss';
-
 
 //TODO refer kuroko
 // Creating schema
@@ -38,22 +32,38 @@ const NoteForm = ({ id, title, description, onSubmit }) => {
       initialValues={{ id, title, description }}
       onSubmit={onSubmit}
     >
-      {({ values, setFieldValue, handleSubmit }) => ( //handleSubmit is Formil API
-        <Form onSubmit={handleSubmit}>
-          <label htmlFor="id">ID</label>
-          <Field id="id" name="id" disabled />
-
-          <label htmlFor="title">Title</label>
-          <Field id="title" name="title" />
-
-          <label htmlFor="description">Description</label>
-          <div className="Tiptap">
-            <Tiptap
-              initialValues={values.description}
-              onChange={(value) => setFieldValue('description', value)} //set description as get HTML
-            />
-          </div>
-          <button type="submit">Submit</button>
+      {(
+        { values, setFieldValue, handleSubmit } //handleSubmit is Formil API
+      ) => (
+        <Form onSubmit={handleSubmit} className="Tiptap">
+          <ErrorMessage
+            name="description"
+            component="div"
+            className="alert alert-warning"
+          />
+          <fieldset className="form-group">
+            <label htmlFor="id">ID</label>
+            <Field id="id" className="form-control" name="id" disabled />
+          </fieldset>
+          <p></p>
+          <fieldset className="form-group">
+            <label htmlFor="title">Title</label>
+            <Field id="title" className="form-control" name="title" />
+          </fieldset>
+          <p></p>
+          <fieldset className="form-group">
+            <label htmlFor="description">Description</label>
+            <div className="Tiptap">
+              <Tiptap
+                initialValues={values.description}
+                onChange={(value) => setFieldValue('description', value)} //set description as get HTML
+              />
+            </div>
+          </fieldset>
+          <p></p>
+          <button className="btn btn-success" type="submit">
+            Submit
+          </button>
         </Form>
       )}
     </Formik>

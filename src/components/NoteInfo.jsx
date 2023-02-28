@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect, useMemo } from 'react';
 import * as Constants from '../constants/config';
 import { getAllNotes } from '../services/getAllNotes'; //non-default export
-import { deleteNote } from '../services/deleteNote';
+import { updateNote } from '../services/updateNote';
 import { useFormik, Formik, Form, Field, ErrorMessage } from 'formik';
 import { useParams } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
 import { generateHTML } from '@tiptap/html';
+import NoteForm from './NoteForm.jsx';
 
 import parser from 'html-react-parser';
 import * as Yup from 'yup';
@@ -41,58 +42,6 @@ function handleSubmit() {
   console.log(values);
 }
 //TODO refer kuroko
-// Creating schema
-const validationSchema = Yup.object().shape({
-  title: Yup.string()
-    .required('Note title is required')
-    .min(5, 'Enter at least 5 Characters in title'),
-  description: Yup.string()
-    .required('Description is required')
-    .min(10, 'Enter at least 10 Characters in Description'),
-});
-
-//creating formik
-//user is CONSTANT
-//enableReinitialize={true} is vital
-const NoteForm = ({ id, title, description, onSubmit }) => {
-  return (
-    <Formik
-      enableReinitialize={true}
-      validationSchema={validationSchema}
-      validateOnChange={true}
-      validateOnBlur={true}
-      initialValues={{ id, title, description }}
-      onSubmit={onSubmit}
-    >
-      {({ values, setFieldValue, handleSubmit }) => (
-        <Form onSubmit={handleSubmit}>
-          <label htmlFor="id">ID</label>
-          <Field id="id" name="id" disabled />
-
-          <label htmlFor="title">Title</label>
-          <Field id="title" name="title" />
-
-          <label htmlFor="description">Description</label>
-          <div className="Tiptap">
-            <Tiptap
-              initialValues={values.description}
-              onChange={(value) => setFieldValue('description', value)} //set description as get HTML
-            />
-          </div>
-          <button type="submit">Submit</button>
-        </Form>
-      )}
-    </Formik>
-  );
-};
-
-NoteForm.propTypes = {
-  user: PropTypes.any,
-  id: PropTypes.any,
-  description: PropTypes.any,
-  title: PropTypes.any,
-  onSubmit: PropTypes.any,
-};
 
 export default function NoteInfo() {
   const [title, setTitle] = useState(''); //string
@@ -127,9 +76,9 @@ export default function NoteInfo() {
   return (
     <div className="container">
       <h3>Note Details</h3>
-      <div>{noteId}</div>
+      {/* <div>{noteId}</div>
       <div>{title}</div>
-      <div>{description}</div>
+      <div>{description}</div> */}
       <p></p>
       <div className="container">
         <NoteForm
@@ -140,18 +89,15 @@ export default function NoteInfo() {
         />
       </div>
 
-      <div className="Tiptap">
+      {/* <div className="Tiptap">
         <Tiptap
           initialValues={description}
           onChange={setPreview} //onchange function to pass HTML description to Note info component
         />
       </div>
-
       <div>HTML render: {preview} </div>
-      {/*       
       <div className="ProseMirror"> {parser(preview)} </div>
-      <button className="btn btn-success">Save</button>
-       */}
+      <button className="btn btn-success">Save</button> */}
     </div>
   );
 }
