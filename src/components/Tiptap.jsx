@@ -149,7 +149,7 @@ function MenuBar({ editor }) {
 }
 
 // export default function Tiptap({ initialValues, onChange, getJSON }) {
-export default function Tiptap({ initialValues, onChange }) {
+export default function Tiptap({ initialValues, onChange, getHTML }) {
   const [editable, setEditable] = useState(false);
   const prevValue = useRef(initialValues);
 
@@ -179,6 +179,7 @@ export default function Tiptap({ initialValues, onChange }) {
       const html = editor.getHTML();
       const text = JSON.stringify(editor.getJSON()); //JSON object to string
       onChange(html);
+      getHTML(html);
       //getJSON(text);
       prevValue.current = html;
     },
@@ -242,5 +243,6 @@ Tiptap.propTypes = {
   initialValues: PropTypes.string,
   onChange: PropTypes.func,
   setEditable: PropTypes.func,
+  getHTML: PropTypes.func,
   //getJSON: PropTypes.func,
 };

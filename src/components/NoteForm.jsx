@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import * as Constants from '../constants/config';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -22,7 +22,8 @@ const validationSchema = Yup.object().shape({
 //creating formik
 //user is CONSTANT
 //enableReinitialize={true} is vital
-const NoteForm = ({ id, title, description, onSubmit }) => {
+const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
+  const formRef = useRef();
   return (
     <Formik
       enableReinitialize={true}
@@ -30,6 +31,7 @@ const NoteForm = ({ id, title, description, onSubmit }) => {
       validateOnChange={true}
       validateOnBlur={true}
       initialValues={{ id, title, description }}
+      //innerRef={formRef}
       onSubmit={onSubmit}
     >
       {(
@@ -63,7 +65,10 @@ const NoteForm = ({ id, title, description, onSubmit }) => {
             <div className="Tiptap">
               <Tiptap
                 initialValues={values.description}
-                onChange={(value) => setFieldValue('description', value)} //set description as get HTML
+                onChange={(value) => {
+                  setFieldValue('description', value);
+                }}
+                getHTML={onNoteChange} //set description as get HTML
               />
             </div>
           </fieldset>
@@ -84,6 +89,7 @@ NoteForm.propTypes = {
   description: PropTypes.string,
   title: PropTypes.string,
   onSubmit: PropTypes.func,
+  onNoteChange: PropTypes.func,
 };
 
 export default NoteForm;

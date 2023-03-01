@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useMemo } from 'react';
 import * as Constants from '../constants/config';
-import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { updateNote } from '../services/updateNote';
+import { createNote } from '../services/createNote';
 import { useFormik, Formik, Form, Field, ErrorMessage } from 'formik';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
 import { generateHTML } from '@tiptap/html';
 import NoteForm from './NoteForm.jsx';
@@ -14,38 +14,9 @@ import * as Yup from 'yup';
 import Tiptap from './Tiptap.jsx';
 import '../styles/TiptapStyles.scss';
 
-//TODO
-function handleSubmit() {
-  let username = Constants.USER;
-
-  let course = {
-    id: noteId,
-    noteName: preview,
-    userName: username,
-    description: description,
-  };
-
-  if (this.state.id === -1) {
-    CourseDataService.createCourse(username, course)
-      .then(() => this.props.navigation('/courses'))
-      .catch((error) => {
-        return error;
-      });
-  } else {
-    CourseDataService.updateCourse(username, id, course)
-      .then(() => this.props.navigation('/courses'))
-      .catch((error) => {
-        return error;
-      });
-  }
-
-  console.log(values);
-}
-//TODO refer kuroko
-
 export default function NoteInfo() {
   const [title, setTitle] = useState(''); //string
-  const [description, setDescription] = useState(''); //string of note
+  const [description, setDescription] = useState(''); //string of initial note
   const [preview, setPreview] = useState(''); //string of html data
   //const [text, setText] = useState(''); //string of json data
   const { noteId } = useParams(); //noteId: "id"
@@ -59,10 +30,38 @@ export default function NoteInfo() {
     setDescription(noteData.description);
   }
 
-  function handleUpdate(id) {
-    console.log('update ' + id);
-    navigate(`/notes/${id}`);
+  //function to handle update and handle create
+  //TODO
+  let navigate = useNavigate();
+  function handleSubmit() {
+    let username = Constants.USER;
+
+    let note = {
+      id: noteId,
+      noteName: title,
+      userName: username,
+      description: preview,
+    };
+
+    navigate(`/notes/${noteId}`);
+
+    if (noteId === -1) {
+      createNote(username, note)
+        .then(() => navigate('/notes'))
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      updateNote(username, noteId, note)
+        .then(() => navigate('/notes'))
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+    //console.log(values);
   }
+  //TODO refer kuroko
 
   useEffect(() => {
     if (noteId === `-1`) {
@@ -86,6 +85,7 @@ export default function NoteInfo() {
           title={title}
           description={description}
           onSubmit={handleSubmit}
+          onNoteChange={setPreview} //update the note description realtime
         />
       </div>
 
