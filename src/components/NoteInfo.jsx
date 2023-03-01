@@ -18,6 +18,7 @@ export default function NoteInfo() {
   const [title, setTitle] = useState(''); //string
   const [description, setDescription] = useState(''); //string of initial note
   const [preview, setPreview] = useState(''); //string of html data
+  const [placehoder, setPlacehoder] = useState('');
   //const [text, setText] = useState(''); //string of json data
   const { noteId } = useParams(); //noteId: "id"
 
@@ -36,22 +37,27 @@ export default function NoteInfo() {
   function handleSubmit() {
     let username = Constants.USER;
 
-    let note = {
-      id: noteId,
-      noteName: title,
-      userName: username,
-      description: preview,
-    };
+    if (noteId === `-1`) {
+      //string compare
+      let note = {
+        noteName: title,
+        userName: username,
+        description: preview,
+      };
 
-    navigate(`/notes/${noteId}`);
-
-    if (noteId === -1) {
       createNote(username, note)
         .then(() => navigate('/notes'))
         .catch((error) => {
           console.log(error);
         });
     } else {
+      let note = {
+        id: noteId,
+        noteName: title,
+        userName: username,
+        description: preview,
+      };
+
       updateNote(username, noteId, note)
         .then(() => navigate('/notes'))
         .catch((error) => {
@@ -89,12 +95,14 @@ export default function NoteInfo() {
         />
       </div>
 
-      {/* <div className="Tiptap">
+      <div className="Tiptap">
         <Tiptap
           initialValues={description}
           onChange={setPreview} //onchange function to pass HTML description to Note info component
+          getHTML={setPlacehoder}
         />
       </div>
+      {/*
       <div>HTML render: {preview} </div>
       <div className="ProseMirror"> {parser(preview)} </div>
       <button className="btn btn-success">Save</button> */}

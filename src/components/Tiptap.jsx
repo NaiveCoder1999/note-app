@@ -151,7 +151,7 @@ function MenuBar({ editor }) {
 // export default function Tiptap({ initialValues, onChange, getJSON }) {
 export default function Tiptap({ initialValues, onChange, getHTML }) {
   const [editable, setEditable] = useState(false);
-  const prevValue = useRef(initialValues);
+  const prevValue = useRef(initialValues); //useRef is effective than useState
 
   //console.log('init value:' + initValue.current);
   const editor = useEditor({
@@ -181,7 +181,7 @@ export default function Tiptap({ initialValues, onChange, getHTML }) {
       onChange(html);
       getHTML(html);
       //getJSON(text);
-      prevValue.current = html;
+      // prevValue.current = html;
     },
   });
 
@@ -189,9 +189,10 @@ export default function Tiptap({ initialValues, onChange, getHTML }) {
     if (!editor) {
       return undefined;
     }
+    editor.setEditable(editable);
     // Update editor content when initialValuesof note changes
     let prevDesc = editor.getHTML();
-    editor.setEditable(editable);
+
     if (prevDesc !== initialValues && prevDesc !== '<p></p>') {
       editor.commands.setContent(prevDesc);
       prevValue.current = prevDesc;
@@ -223,8 +224,8 @@ export default function Tiptap({ initialValues, onChange, getHTML }) {
         </div>
         <EditorContent editor={editor} />
       </div>
-      {/* <p>use ref value:{prevValue.current} </p> */
-      /* <p>initial Value:{initialValues} </p> */}
+      {/* <p>use ref value:{prevValue.current} </p> */}
+      {/* <p>initial Value:{initialValues} </p> */}
     </div>
   );
 }
