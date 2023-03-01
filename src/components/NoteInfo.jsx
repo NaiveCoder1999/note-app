@@ -26,7 +26,7 @@ export default function NoteInfo() {
   const handleNoteInfo = useCallback(async () => {
     getNoteInfo(Constants.USER, noteId);
   }, [noteId]);
-  
+
   async function getNoteInfo(userName, id) {
     //get note json object
     let noteEntity = await getSingleNote(userName, id); //axios response type
@@ -84,12 +84,12 @@ export default function NoteInfo() {
   return (
     <div className="container">
       <h3>Note Details</h3>
-      {/* <div>{noteId}</div>
+      <div>{noteId}</div>
       <div>{title}</div>
-      <div>{description}</div> */}
-      <div>{noteData.id}</div>
+      <div>{description}</div>
+      {/* <div>{noteData.id}</div>
       <div>{noteData.noteName}</div>
-      <div>{noteData.description}</div>
+      <div>{noteData.description}</div> */}
       <p></p>
       <div className="container">
         <NoteForm
