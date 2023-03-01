@@ -1,4 +1,3 @@
-import { configure } from '@testing-library/react';
 import axios from 'axios';
 import * as Constants from '../constants/config';
 export default function myAxios(axiosConfig) {

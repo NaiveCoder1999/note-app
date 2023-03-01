@@ -37,9 +37,16 @@ const NoteForm = ({ id, title, description, onSubmit }) => {
       ) => (
         <Form onSubmit={handleSubmit} className="Tiptap">
           <ErrorMessage
+            name="title"
+            component="div"
+            className="alert alert-danger"
+            role="alert"
+          />
+          <ErrorMessage
             name="description"
             component="div"
-            className="alert alert-warning"
+            className="alert alert-danger"
+            role="alert"
           />
           <fieldset className="form-group">
             <label htmlFor="id">ID</label>
@@ -61,9 +68,11 @@ const NoteForm = ({ id, title, description, onSubmit }) => {
             </div>
           </fieldset>
           <p></p>
+
           <button className="btn btn-success" type="submit">
             Submit
           </button>
+          <p>formik values {JSON.stringify(values.description)}</p>
         </Form>
       )}
     </Formik>
@@ -71,11 +80,10 @@ const NoteForm = ({ id, title, description, onSubmit }) => {
 };
 
 NoteForm.propTypes = {
-  user: PropTypes.any,
-  id: PropTypes.any,
-  description: PropTypes.any,
-  title: PropTypes.any,
-  onSubmit: PropTypes.any,
+  id: PropTypes.string,
+  description: PropTypes.string,
+  title: PropTypes.string,
+  onSubmit: PropTypes.func,
 };
 
 export default NoteForm;

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as Constants from '../constants/config';
 export default function useAxiosPost(axiosConfig) {
