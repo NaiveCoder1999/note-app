@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import * as Constants from '../constants/config';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -8,7 +8,6 @@ import * as Yup from 'yup';
 import Tiptap from './Tiptap.jsx';
 import '../styles/TiptapStyles.scss';
 
-//TODO refer kuroko
 // Creating schema
 const validationSchema = Yup.object().shape({
   title: Yup.string()
@@ -23,7 +22,6 @@ const validationSchema = Yup.object().shape({
 //user is CONSTANT
 //enableReinitialize={true} is vital
 const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
-  const formRef = useRef();
   return (
     <Formik
       enableReinitialize={true}
@@ -31,7 +29,6 @@ const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
       validateOnChange={true}
       validateOnBlur={true}
       initialValues={{ id, title, description }}
-      //innerRef={formRef}
       onSubmit={onSubmit}
     >
       {(

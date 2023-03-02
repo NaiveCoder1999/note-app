@@ -11,7 +11,8 @@ import NoteForm from './NoteForm.jsx';
 
 import '../styles/TiptapStyles.scss';
 
-export default function NoteInfo() {
+//TODO merge the formik and tiptap editor
+export default function NoteInfoIntegrated() {
   const [noteData, setNoteData] = useState({
     id: '',
     noteName: '',
@@ -23,9 +24,9 @@ export default function NoteInfo() {
   //const [text, setText] = useState(''); //string of json data
   const { noteId } = useParams(); //noteId: "id"
 
-  const handleNoteInfo = useCallback(async (noteId) => {
+  const handleNoteInfo = useCallback(async () => {
     getNoteInfo(Constants.USER, noteId);
-  }, []);
+  }, [noteId]);
 
   async function getNoteInfo(userName, id) {
     //get note json object
@@ -72,25 +73,13 @@ export default function NoteInfo() {
     //console.log(values);
   }
 
-  // by passing empty array at the end, this will always return the same function, compatible with removeEventListener
-  const keyDownHandler = useCallback((keyEvent) => {
-    //if ((keyEvent.charCode || keyEvent.keyCode) === 13) {
-    if (keyEvent.keyCode === 13 && keyEvent.target.nodeName === 'INPUT') {
-      keyEvent.preventDefault();
-    }
-  }, []);
-
   useEffect(() => {
     if (noteId === `-1`) {
       return;
     }
 
-    handleNoteInfo(noteId);
-    document.addEventListener('keydown', keyDownHandler);
-    return () => {
-      document.removeEventListener('keydown', keyDownHandler);
-    };
-  }, [handleNoteInfo, keyDownHandler, noteId]);
+    handleNoteInfo();
+  }, [handleNoteInfo, noteId]);
 
   //TODO formik
   return (
@@ -108,6 +97,9 @@ export default function NoteInfo() {
           id={noteId}
           title={title}
           description={description}
+          // id={noteData.id}
+          // title={noteData.noteName}
+          // description={noteData.description}
           onSubmit={handleSubmit}
           onNoteChange={setPreview} //update the note description realtime
         />

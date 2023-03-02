@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as Constants from '../constants/config';
 import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { deleteNote } from '../services/deleteNote';
@@ -8,6 +8,9 @@ export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [alertMessage, setAlertMessage] = useState(null);
 
+  const handleNotesList = useCallback(async () => {
+    getNotesList(Constants.USER);
+  }, []);
   async function getNotesList(userName) {
     // var res = await refreshNotes();
     let tableEntity = await getAllNotes(userName); //axios response type
@@ -46,8 +49,9 @@ export default function NoteList() {
   useEffect(() => {
     // use empty depend array ->
     //fuction will only run once when the component will load initially
-    getNotesList(Constants.USER);
-  }, []);
+    //getNotesList(Constants.USER);
+    handleNotesList();
+  }, [handleNotesList]);
 
   return (
     <div className="container">
