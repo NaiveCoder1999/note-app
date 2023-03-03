@@ -21,23 +21,26 @@ const validationSchema = Yup.object().shape({
 //creating formik
 //user is CONSTANT
 //enableReinitialize={true} is vital
-const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
+
+//const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
+const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
   return (
     <Formik
       enableReinitialize={true}
       validationSchema={validationSchema}
       validateOnChange={true}
       validateOnBlur={true}
-      initialValues={{ id, title, description }}
+      //initialValues={{ id, title, description }}
+      initialValues={initialValues}
       onSubmit={onSubmit}
     >
       {(
         //props' methods
-        { values, setFieldValue, dirty, isSubmitting, handleSubmit } //handleSubmit is Formil API
+        { values, setFieldValue, isSubmitting, handleSubmit } //handleSubmit is Formil API
       ) => (
         <Form onSubmit={handleSubmit} className="Tiptap">
           <ErrorMessage
-            name="title"
+            name="noteName"
             component="div"
             className="alert alert-danger"
             role="alert"
@@ -54,15 +57,15 @@ const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
           </fieldset>
           <p></p>
           <fieldset className="form-group">
-            <label htmlFor="title">Title</label>
-            <Field id="title" className="form-control" name="title" />
+            <label htmlFor="noteName">Title</label>
+            <Field id="noteName" className="form-control" name="noteName" />
           </fieldset>
           <p></p>
           <fieldset className="form-group">
             <label htmlFor="description">Description</label>
             <div className="Tiptap">
               <Tiptap
-                initialValues={values.description}
+                initialContent={values.description}
                 onChange={(value) => {
                   setFieldValue('description', value); //set formik internal values
                 }}
@@ -75,7 +78,7 @@ const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
           <button
             className="btn btn-success"
             type="submit"
-            disabled={isSubmitting}
+            // disabled={isSubmitting}
           >
             Submit
           </button>
@@ -87,9 +90,10 @@ const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
 };
 
 NoteForm.propTypes = {
-  id: PropTypes.string,
-  description: PropTypes.string,
-  title: PropTypes.string,
+  // id: PropTypes.string,
+  // description: PropTypes.string,
+  // title: PropTypes.string,
+  initialValues: PropTypes.object,
   onSubmit: PropTypes.func,
   onNoteChange: PropTypes.func,
 };

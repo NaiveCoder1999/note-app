@@ -161,10 +161,10 @@ function MenuBar({ editor }) {
   );
 }
 
-// export default function Tiptap({ initialValues, onChange, getJSON }) {
-export default function Tiptap({ initialValues, onChange, getHTML }) {
+// export default function Tiptap({ initialContent, onChange, getJSON }) {
+export default function Tiptap({ initialContent, onChange, getHTML }) {
   const [editable, setEditable] = useState(false);
-
+  const contentRef = useRef(initialContent);
   //console.log('init value:' + initValue.current);
   const editor = useEditor({
     extensions: [
@@ -187,7 +187,7 @@ export default function Tiptap({ initialValues, onChange, getHTML }) {
         },
       }).configure({ lowlight }),
     ],
-    //content: initialValues, //no data because it is not static variable
+    //content: contentRef.current, //no data because it is not static variable
     onUpdate: ({ editor }) => {
       let html = editor.getHTML();
       onChange(html);
@@ -208,13 +208,13 @@ export default function Tiptap({ initialValues, onChange, getHTML }) {
       return undefined;
     }
     editor.setEditable(editable);
-    // Update editor content when initialValuesof note changes
+    // Update editor content when initialContent of note changes
     let prevDesc = editor.getHTML();
 
-    if (prevDesc === initialValues || prevDesc === '<p></p>') {
-      editor.commands.setContent(initialValues);
+    if (prevDesc === initialContent || prevDesc === '<p></p>') {
+      editor.commands.setContent(initialContent);
     }
-  }, [editor, editable, initialValues]);
+  }, [editor, editable, initialContent]);
 
   return (
     <div>
@@ -236,7 +236,7 @@ export default function Tiptap({ initialValues, onChange, getHTML }) {
         </div>
         <EditorContent editor={editor} />
       </div>
-      {/* <p>initial Value:{initialValues} </p> */}
+      {/* <p>initial Value:{initialContent} </p> */}
     </div>
   );
 }
@@ -252,7 +252,7 @@ MenuBar.propTypes = {
 
 //fix missing props validation by proptype generator extension
 Tiptap.propTypes = {
-  initialValues: PropTypes.string,
+  initialContent: PropTypes.string,
   onChange: PropTypes.func,
   setEditable: PropTypes.func,
   getHTML: PropTypes.func,

@@ -8,6 +8,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
 import { generateHTML } from '@tiptap/html';
 import NoteForm from './NoteForm.jsx';
+import Tiptap from './Tiptap.jsx';
 
 import '../styles/TiptapStyles.scss';
 
@@ -15,62 +16,102 @@ export default function NoteInfo() {
   const [noteData, setNoteData] = useState({
     id: '',
     noteName: '',
+    userName: '',
     description: '',
-  }); //json
-  const [title, setTitle] = useState(''); //string
-  const [description, setDescription] = useState(''); //string of initial note
+  }); //json object
+  //const [title, setTitle] = useState(''); //string
+  //const [description, setDescription] = useState(''); //string of initial note
   const [preview, setPreview] = useState(''); //string of html data
-  //const [text, setText] = useState(''); //string of json data
+  //const [text, setText] = useState(''); //string of testing independent editor component
   const { noteId } = useParams(); //noteId: "id"
-
+  const navigate = useNavigate();
   const handleNoteInfo = useCallback(async (noteId) => {
-    getNoteInfo(Constants.USER, noteId);
+    fetchNoteData(Constants.USER, noteId);
   }, []);
 
-  async function getNoteInfo(userName, id) {
+  async function fetchNoteData(userName, id) {
     //get note json object
     let noteEntity = await getSingleNote(userName, id); //axios response type
     console.log(noteEntity);
     let noteData = noteEntity.data;
     setNoteData(noteData); //set a json data
-    setTitle(noteData.noteName);
-    setDescription(noteData.description);
+    //setTitle(noteData.noteName);
+    //setDescription(noteData.description);
   }
 
   //function to handle update and handle create
-  let navigate = useNavigate();
-  function handleSubmit() {
+
+  async function handleSubmit(values) {
+    console.log(values);
+    const { id, noteName, userName, description } = values;
     let username = Constants.USER;
+    let noteTitle = noteName;
+    let noteDeescription = description;
 
     if (noteId === `-1`) {
+      // add function
       //string compare
       let note = {
-        noteName: title,
+        noteName: noteTitle,
         userName: username,
-        description: preview,
+        description: noteDeescription,
       };
 
       createNote(username, note)
+        .then(console.log(res.data))
         .then(() => navigate('/notes'))
         .catch((error) => {
           console.log(error);
         });
     } else {
       let note = {
+        //update function
         id: noteId,
-        noteName: title,
+        noteName: noteTitle,
         userName: username,
-        description: preview,
+        description: noteDeescription,
       };
 
       updateNote(username, noteId, note)
+        .then(console.log(res.data))
         .then(() => navigate('/notes'))
         .catch((error) => {
           console.log(error);
         });
     }
-    //console.log(values);
   }
+  // function handleSubmit() {
+  //   let username = Constants.USER;
+
+  //   if (noteId === `-1`) {
+  //     //string compare
+  //     let note = {
+  //       noteName: title,
+  //       userName: username,
+  //       description: preview,
+  //     };
+
+  //     createNote(username, note)
+  //       .then(() => navigate('/notes'))
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   } else {
+  //     let note = {
+  //       id: noteId,
+  //       noteName: title,
+  //       userName: username,
+  //       description: preview,
+  //     };
+
+  //     updateNote(username, noteId, note)
+  //       .then(() => navigate('/notes'))
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   }
+  //   //console.log(values);
+  // }
 
   // by passing empty array at the end, this will always return the same function, compatible with removeEventListener
   const keyDownHandler = useCallback((keyEvent) => {
@@ -97,18 +138,19 @@ export default function NoteInfo() {
   return (
     <div className="container">
       <h3>Note Details</h3>
-      <div>{noteId}</div>
+      {/* <div>{noteId}</div>
       <div>{title}</div>
-      <div>{description}</div>
-      {/* <div>{noteData.id}</div>
+      <div>{description}</div> */}
+      <div>{noteData.id}</div>
       <div>{noteData.noteName}</div>
-      <div>{noteData.description}</div> */}
+      <div>{noteData.description}</div>
       <p></p>
       <div className="container">
         <NoteForm
-          id={noteId}
-          title={title}
-          description={description}
+          // id={noteId}
+          // title={title}
+          // description={description}
+          initialValues={noteData}
           onSubmit={handleSubmit}
           onNoteChange={setPreview} //update the note description realtime, child to parent
         />
@@ -117,9 +159,9 @@ export default function NoteInfo() {
       {/* <p>For Testing:</p>
       <div className="Tiptap">
         <Tiptap
-          initialValues={description}
+          initialContent={description}
           onChange={setPreview} //onchange function to pass HTML description to Note info component
-          getHTML={setPlacehoder}
+          getHTML={setText}
         />
       </div> */}
       {/*
