@@ -86,6 +86,7 @@ export default function NoteInfo() {
     }
 
     handleNoteInfo(noteId);
+
     document.addEventListener('keydown', keyDownHandler);
     return () => {
       document.removeEventListener('keydown', keyDownHandler);
@@ -109,7 +110,7 @@ export default function NoteInfo() {
           title={title}
           description={description}
           onSubmit={handleSubmit}
-          onNoteChange={setPreview} //update the note description realtime
+          onNoteChange={setPreview} //update the note description realtime, child to parent
         />
       </div>
 

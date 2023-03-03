@@ -32,7 +32,8 @@ const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
       onSubmit={onSubmit}
     >
       {(
-        { values, setFieldValue, handleSubmit } //handleSubmit is Formil API
+        //props' methods
+        { values, setFieldValue, dirty, isSubmitting, handleSubmit } //handleSubmit is Formil API
       ) => (
         <Form onSubmit={handleSubmit} className="Tiptap">
           <ErrorMessage
@@ -63,7 +64,7 @@ const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
               <Tiptap
                 initialValues={values.description}
                 onChange={(value) => {
-                  setFieldValue('description', value);
+                  setFieldValue('description', value); //set formik internal values
                 }}
                 getHTML={onNoteChange} //set description as get HTML
               />
@@ -71,7 +72,11 @@ const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
           </fieldset>
           <p></p>
 
-          <button className="btn btn-success" type="submit">
+          <button
+            className="btn btn-success"
+            type="submit"
+            disabled={isSubmitting}
+          >
             Submit
           </button>
           <p>formik values {JSON.stringify(values.description)}</p>

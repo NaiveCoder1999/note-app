@@ -164,7 +164,6 @@ function MenuBar({ editor }) {
 // export default function Tiptap({ initialValues, onChange, getJSON }) {
 export default function Tiptap({ initialValues, onChange, getHTML }) {
   const [editable, setEditable] = useState(false);
-  const prevValue = useRef(initialValues); //useRef is effective than useState
 
   //console.log('init value:' + initValue.current);
   const editor = useEditor({
@@ -188,17 +187,23 @@ export default function Tiptap({ initialValues, onChange, getHTML }) {
         },
       }).configure({ lowlight }),
     ],
+    //content: initialValues, //no data because it is not static variable
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      const text = JSON.stringify(editor.getJSON()); //JSON object to string
+      let html = editor.getHTML();
       onChange(html);
       getHTML(html);
+      //const text = JSON.stringify(editor.getJSON()); //JSON object to string
       //getJSON(text);
-      // prevValue.current = html;
     },
+    //   onBlur: ({ editor }) => {
+    //     setEditorContent(editor.getHTML());
+    //   },
+    // },
+    // [editorContent]
   });
 
   useEffect(() => {
+    //load the initial data
     if (!editor) {
       return undefined;
     }
@@ -206,14 +211,8 @@ export default function Tiptap({ initialValues, onChange, getHTML }) {
     // Update editor content when initialValuesof note changes
     let prevDesc = editor.getHTML();
 
-    if (prevDesc !== initialValues && prevDesc !== '<p></p>') {
-      editor.commands.setContent(prevDesc);
-      prevValue.current = prevDesc;
-    } else {
+    if (prevDesc === initialValues || prevDesc === '<p></p>') {
       editor.commands.setContent(initialValues);
-      // let obj =
-      //   '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Test Example"}]}]}';
-      // editor.commands.setContent(JSON.parse(obj));
     }
   }, [editor, editable, initialValues]);
 
@@ -237,7 +236,6 @@ export default function Tiptap({ initialValues, onChange, getHTML }) {
         </div>
         <EditorContent editor={editor} />
       </div>
-      {/* <p>use ref value:{prevValue.current} </p> */}
       {/* <p>initial Value:{initialValues} </p> */}
     </div>
   );
