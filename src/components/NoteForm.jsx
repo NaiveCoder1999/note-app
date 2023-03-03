@@ -1,5 +1,11 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useNavigate,
+} from 'react';
 import * as Constants from '../constants/config';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -9,14 +15,17 @@ import Tiptap from './Tiptap.jsx';
 import '../styles/TiptapStyles.scss';
 
 // Creating schema
+//name must be in correspodence with formik id and name
 const validationSchema = Yup.object().shape({
-  title: Yup.string()
+  noteName: Yup.string()
     .required('Note title is required')
     .min(5, 'Enter at least 5 Characters in title'),
   description: Yup.string()
     .required('Description is required')
     .min(10, 'Enter at least 10 Characters in Description'),
 });
+
+//function to handle update and handle create
 
 //creating formik
 //user is CONSTANT
@@ -30,9 +39,12 @@ const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
       validationSchema={validationSchema}
       validateOnChange={true}
       validateOnBlur={true}
-      //initialValues={{ id, title, description }}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={(values) => onSubmit(values)} //important
+
+      // onSubmit={() => {
+      //   !isValid && JSON.stringify(errors);
+      // }}
     >
       {(
         //props' methods

@@ -41,24 +41,24 @@ export default function NoteInfo() {
 
   //function to handle update and handle create
 
-  async function handleSubmit(values) {
+  function handleSubmit(values) {
     console.log(values);
     const { id, noteName, userName, description } = values;
-    let username = Constants.USER;
+    let noteid = noteId;
+    let username = userName;
     let noteTitle = noteName;
-    let noteDeescription = description;
+    let noteDescription = description;
 
-    if (noteId === `-1`) {
+    if (noteid === `-1`) {
       // add function
       //string compare
       let note = {
         noteName: noteTitle,
         userName: username,
-        description: noteDeescription,
+        description: noteDescription,
       };
 
       createNote(username, note)
-        .then(console.log(res.data))
         .then(() => navigate('/notes'))
         .catch((error) => {
           console.log(error);
@@ -69,11 +69,10 @@ export default function NoteInfo() {
         id: noteId,
         noteName: noteTitle,
         userName: username,
-        description: noteDeescription,
+        description: noteDescription,
       };
 
       updateNote(username, noteId, note)
-        .then(console.log(res.data))
         .then(() => navigate('/notes'))
         .catch((error) => {
           console.log(error);
