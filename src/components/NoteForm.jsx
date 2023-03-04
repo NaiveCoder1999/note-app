@@ -102,9 +102,6 @@ const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
 };
 
 NoteForm.propTypes = {
-  // id: PropTypes.string,
-  // description: PropTypes.string,
-  // title: PropTypes.string,
   initialValues: PropTypes.object,
   onSubmit: PropTypes.func,
   onNoteChange: PropTypes.func,

@@ -161,11 +161,9 @@ function MenuBar({ editor }) {
   );
 }
 
-// export default function Tiptap({ initialContent, onChange, getJSON }) {
 export default function Tiptap({ initialContent, onChange, getHTML }) {
   const [editable, setEditable] = useState(false);
-  const contentRef = useRef(initialContent);
-  //console.log('init value:' + initValue.current);
+  //const contentRef = useRef(initialContent);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -197,8 +195,6 @@ export default function Tiptap({ initialContent, onChange, getHTML }) {
       let html = editor.getHTML();
       onChange(html);
       getHTML(html); //invoke parent component function
-      //const text = JSON.stringify(editor.getJSON()); //JSON object to string
-      //getJSON(text);
     },
   });
 
@@ -209,9 +205,16 @@ export default function Tiptap({ initialContent, onChange, getHTML }) {
     }
     editor.setEditable(editable);
     // Update editor content when initialContent of note changes
-    let prevDesc = editor.getHTML();
+    // let prevDesc = editor.getHTML();
 
-    if (prevDesc === initialContent || prevDesc === '<p></p>') {
+    // if (prevDesc === initialContent || prevDesc === '<p></p>') {
+    //   editor.commands.setContent(initialContent);
+    // }
+    let prevDesc = editor.getHTML();
+    editor.setEditable(editable);
+    if (prevDesc !== initialContent && prevDesc !== '<p></p>') {
+      editor.commands.setContent(prevDesc);
+    } else {
       editor.commands.setContent(initialContent);
     }
   }, [editor, editable, initialContent]);

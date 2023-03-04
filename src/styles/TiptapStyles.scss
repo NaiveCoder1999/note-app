@@ -71,8 +71,9 @@ button.is-active {
   min-height: 100px;
 
   * {
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    //white-space: pre-wrap;
+    white-space: break-spaces;
+    word-break: break-word;
   }
   > * + * {
     margin-top: 0.75em;
