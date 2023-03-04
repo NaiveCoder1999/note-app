@@ -193,30 +193,34 @@ export default function Tiptap({ initialContent, onChange, getHTML }) {
     },
     onUpdate: ({ editor }) => {
       let html = editor.getHTML();
-      onChange(html);
       getHTML(html); //invoke parent component function
+    },
+    onBlur: ({ editor }) => {
+      //to fix cursor jumping in the formik field
+      let html = editor.getHTML();
+      onChange(html);
     },
   });
 
   useEffect(() => {
-    //load the initial data
+    //set editable flag
     if (!editor) {
       return undefined;
     }
     editor.setEditable(editable);
-    // Update editor content when initialContent of note changes
-    // let prevDesc = editor.getHTML();
 
-    // if (prevDesc === initialContent || prevDesc === '<p></p>') {
-    //   editor.commands.setContent(initialContent);
-    // }
+    //Update editor content when initialContent of note changes
     let prevDesc = editor.getHTML();
-    editor.setEditable(editable);
-    if (prevDesc !== initialContent && prevDesc !== '<p></p>') {
-      editor.commands.setContent(prevDesc);
-    } else {
+
+    if (prevDesc === initialContent || prevDesc === '<p></p>') {
       editor.commands.setContent(initialContent);
     }
+    // let prevDesc = editor.getHTML();
+    // if (prevDesc !== initialContent && prevDesc !== '<p></p>') {
+    //   editor.commands.setContent(prevDesc);
+    // } else {
+    //   editor.commands.setContent(initialContent);
+    // }
   }, [editor, editable, initialContent]);
 
   return (
