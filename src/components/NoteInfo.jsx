@@ -9,13 +9,13 @@ import { getSingleNote } from '../services/getSingleNote';
 import { generateHTML } from '@tiptap/html';
 import NoteForm from './NoteForm.jsx';
 import Tiptap from './Tiptap.jsx';
-import parser from 'html-react-parser';
+import parse from 'html-react-parser';
 
 import '../styles/TiptapStyles.scss';
 
 export default function NoteInfo() {
   const [noteData, setNoteData] = useState({
-    id: '',
+    id: '-1',
     noteName: '',
     userName: '',
     description: '',
@@ -41,9 +41,8 @@ export default function NoteInfo() {
   }
 
   //function to handle update and handle create
-
   function handleSubmit(values) {
-    console.log(values);
+    //console.log(values);
     const { id, noteName, userName, description } = values;
     let noteid = noteId;
     let username = userName;
@@ -55,11 +54,11 @@ export default function NoteInfo() {
       //string compare
       let note = {
         noteName: noteTitle,
-        userName: username,
+        userName: Constants.USER,
         description: noteDescription,
       };
 
-      createNote(username, note)
+      createNote(Constants.USER, note)
         .then(() => navigate('/notes'))
         .catch((error) => {
           console.log(error);
@@ -80,38 +79,6 @@ export default function NoteInfo() {
         });
     }
   }
-  // function handleSubmit() {
-  //   let username = Constants.USER;
-
-  //   if (noteId === `-1`) {
-  //     //string compare
-  //     let note = {
-  //       noteName: title,
-  //       userName: username,
-  //       description: preview,
-  //     };
-
-  //     createNote(username, note)
-  //       .then(() => navigate('/notes'))
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   } else {
-  //     let note = {
-  //       id: noteId,
-  //       noteName: title,
-  //       userName: username,
-  //       description: preview,
-  //     };
-
-  //     updateNote(username, noteId, note)
-  //       .then(() => navigate('/notes'))
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }
-  //   //console.log(values);
-  // }
 
   // by passing empty array at the end, this will always return the same function, compatible with removeEventListener
   const keyDownHandler = useCallback((keyEvent) => {
@@ -166,7 +133,7 @@ export default function NoteInfo() {
       </div>
 
       {/* <div>HTML render: {preview} </div> */}
-      <div className="ProseMirror"> {parser(preview)} </div>
+      <div className="ProseMirror"> {parse(preview)} </div>
     </div>
   );
 }
