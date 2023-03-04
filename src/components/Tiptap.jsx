@@ -177,6 +177,7 @@ export default function Tiptap({ initialContent, onChange, getHTML }) {
           keepMarks: true,
           keepAttributes: false,
         },
+        codeBlock: false, //solve warning of codeblocklowlight
       }),
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure({ types: [ListItem.name] }),
@@ -188,18 +189,17 @@ export default function Tiptap({ initialContent, onChange, getHTML }) {
       }).configure({ lowlight }),
     ],
     //content: contentRef.current, //no data because it is not static variable
+    parseOptions: {
+      preserveWhitespace: 'full',
+      //preserveWhitespace: true,
+    },
     onUpdate: ({ editor }) => {
       let html = editor.getHTML();
       onChange(html);
-      getHTML(html);
+      getHTML(html); //invoke parent component function
       //const text = JSON.stringify(editor.getJSON()); //JSON object to string
       //getJSON(text);
     },
-    //   onBlur: ({ editor }) => {
-    //     setEditorContent(editor.getHTML());
-    //   },
-    // },
-    // [editorContent]
   });
 
   useEffect(() => {

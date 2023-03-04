@@ -70,6 +70,10 @@ button.is-active {
   border-radius: 0 0 5px 5px;
   min-height: 100px;
 
+  * {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
   > * + * {
     margin-top: 0.75em;
   }

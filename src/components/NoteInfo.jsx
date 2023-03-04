@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as Constants from '../constants/config';
 import { updateNote } from '../services/updateNote';
 import { createNote } from '../services/createNote';
@@ -9,6 +9,7 @@ import { getSingleNote } from '../services/getSingleNote';
 import { generateHTML } from '@tiptap/html';
 import NoteForm from './NoteForm.jsx';
 import Tiptap from './Tiptap.jsx';
+import parser from 'html-react-parser';
 
 import '../styles/TiptapStyles.scss';
 
@@ -22,7 +23,7 @@ export default function NoteInfo() {
   //const [title, setTitle] = useState(''); //string
   //const [description, setDescription] = useState(''); //string of initial note
   const [preview, setPreview] = useState(''); //string of html data
-  //const [text, setText] = useState(''); //string of testing independent editor component
+  const [text, setText] = useState(''); //string of testing independent editor component
   const { noteId } = useParams(); //noteId: "id"
   const navigate = useNavigate();
   const handleNoteInfo = useCallback(async (noteId) => {
@@ -151,22 +152,21 @@ export default function NoteInfo() {
           // description={description}
           initialValues={noteData}
           onSubmit={handleSubmit}
-          onNoteChange={setPreview} //update the note description realtime, child to parent
+          onNoteChange={(value) => setPreview(value)} //update the note description realtime, child to parent
         />
       </div>
 
-      {/* <p>For Testing:</p>
+      <p>For Testing:</p>
       <div className="Tiptap">
         <Tiptap
-          initialContent={description}
+          initialContent={noteData.description}
           onChange={setPreview} //onchange function to pass HTML description to Note info component
           getHTML={setText}
         />
-      </div> */}
-      {/*
-      <div>HTML render: {preview} </div>
+      </div>
+
+      {/* <div>HTML render: {preview} </div> */}
       <div className="ProseMirror"> {parser(preview)} </div>
-      <button className="btn btn-success">Save</button> */}
     </div>
   );
 }

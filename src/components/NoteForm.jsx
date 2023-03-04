@@ -81,7 +81,7 @@ const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
                 onChange={(value) => {
                   setFieldValue('description', value); //set formik internal values
                 }}
-                getHTML={onNoteChange} //set description as get HTML
+                getHTML={(value) => onNoteChange(value)} //set description as get HTML
               />
             </div>
           </fieldset>
@@ -90,11 +90,11 @@ const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
           <button
             className="btn btn-success"
             type="submit"
-            // disabled={isSubmitting}
+            disabled={isSubmitting}
           >
             Submit
           </button>
-          <p>formik values {JSON.stringify(values.description)}</p>
+          {/* <p>formik values {JSON.stringify(values.description)}</p> */}
         </Form>
       )}
     </Formik>
