@@ -1,10 +1,5 @@
 package com.springbootnote.model;
-
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -18,6 +13,9 @@ public class Note {
     private Long id;
     private String noteName;
     private String userName;
+
+    // fix 255 length limit, description should be long enough
+    @Lob
     private String description;
 
     public Note(Long id, String noteName, String userName, String description) {
