@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import * as Constants from '../constants/config';
 import { updateNote } from '../services/updateNote';
 import { createNote } from '../services/createNote';
-import { useFormik, Formik, Form, Field, ErrorMessage } from 'formik';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
 import { generateHTML } from '@tiptap/html';
@@ -35,7 +34,7 @@ export default function NoteInfo() {
   async function fetchNoteData(userName, id) {
     //get note json object
     let noteEntity = await getSingleNote(userName, id); //axios response type
-    //console.log(noteEntity);
+    console.log(noteEntity);
     let noteData = noteEntity.data;
     setNoteData(noteData); //set a json data
     //setTitle(noteData.noteName);
@@ -107,47 +106,57 @@ export default function NoteInfo() {
   const renderContent = (htmlString) => {
     const parser = new DOMParser();
     const html = parser.parseFromString(htmlString, 'text/html');
-    const snippets = [];
-    let lastIndex = -1;
-    let codeIndex = 0;
     const codeTags = html.getElementsByTagName('code');
-    for (let i = 0; i < codeTags.length; i++) {
-      const codeTag = codeTags[i];
-      const language = codeTag.getAttribute('class').replace('language-', '');
-      const code = codeTag.innerHTML;
-      const start = htmlString.indexOf(codeTag.outerHTML, lastIndex + 1);
-      const end = start + codeTag.outerHTML.length;
-      if (start > lastIndex) {
+    if (codeTags.length === 0) {
+      // If there are no code snippets, render the entire string as a single non-code snippet
+      return parse(htmlString);
+    } else {
+      const snippets = [];
+      let lastIndex = -1;
+      let codeIndex = 0;
+      for (let i = 0; i < codeTags.length; i++) {
+        const codeTag = codeTags[i];
+        const classAttr = codeTag.getAttribute('class');
+        const language =
+          classAttr && classAttr.startsWith('language-')
+            ? classAttr.replace('language-', '')
+            : 'text'; //maybe changed to markdown
+
+        const code = codeTag.innerHTML;
+        const start = htmlString.indexOf(codeTag.outerHTML, lastIndex + 1);
+        const end = start + codeTag.outerHTML.length;
+        if (start > lastIndex) {
+          snippets.push({
+            type: 'nonCode',
+            content: htmlString.substring(lastIndex + 1, start),
+          });
+        }
+        snippets.push({
+          type: 'code',
+          content: { language, code },
+          index: codeIndex++,
+        });
+        lastIndex = end - 1;
+      }
+      if (lastIndex < htmlString.length - 1) {
         snippets.push({
           type: 'nonCode',
-          content: htmlString.substring(lastIndex + 1, start),
+          content: htmlString.substring(lastIndex + 1),
         });
       }
-      snippets.push({
-        type: 'code',
-        content: { language, code },
-        index: codeIndex++,
+      return snippets.map((snippet, index) => {
+        if (snippet.type === 'code') {
+          const { language, code } = snippet.content;
+          return (
+            <SyntaxHighlighter key={index} language={language} style={oneDark}>
+              {code}
+            </SyntaxHighlighter>
+          );
+        } else {
+          return parse(snippet.content);
+        }
       });
-      lastIndex = end - 1;
     }
-    if (lastIndex < htmlString.length - 1) {
-      snippets.push({
-        type: 'nonCode',
-        content: htmlString.substring(lastIndex + 1),
-      });
-    }
-    return snippets.map((snippet, index) => {
-      if (snippet.type === 'code') {
-        const { language, code } = snippet.content;
-        return (
-          <SyntaxHighlighter key={index} language={language} style={oneDark}>
-            {code}
-          </SyntaxHighlighter>
-        );
-      } else {
-        return parse(snippet.content);
-      }
-    });
   };
 
   //TODO formik
