@@ -161,7 +161,8 @@ function MenuBar({ editor }) {
   );
 }
 
-export default function Tiptap({ initialContent, onChange, getHTML }) {
+export default function Tiptap({ initialContent, onChange }) {
+  // export default function Tiptap({ initialContent, onChange, getHTML }) {
   const [editable, setEditable] = useState(false);
   //const contentRef = useRef(initialContent);
   const editor = useEditor({
@@ -189,16 +190,15 @@ export default function Tiptap({ initialContent, onChange, getHTML }) {
     //content: contentRef.current, //no data because it is not static variable
     parseOptions: {
       preserveWhitespace: 'full',
-      //preserveWhitespace: true,
     },
-    onUpdate: ({ editor }) => {
-      let html = editor.getHTML();
-      getHTML(html); //invoke parent component function
-    },
+    // onUpdate: ({ editor }) => {
+    //   let html = editor.getHTML();
+    //   getHTML(html); //invoke parent component function
+    // },
     onBlur: ({ editor }) => {
       //to fix cursor jumping in the formik field
       let html = editor.getHTML();
-      onChange(html);
+      onChange(html); //invoke parent component function
     },
   });
 
@@ -262,6 +262,6 @@ Tiptap.propTypes = {
   initialContent: PropTypes.string,
   onChange: PropTypes.func,
   setEditable: PropTypes.func,
-  getHTML: PropTypes.func,
+  //getHTML: PropTypes.func,
   //getJSON: PropTypes.func,
 };

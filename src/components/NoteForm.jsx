@@ -1,11 +1,5 @@
 import PropTypes from 'prop-types';
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-  useNavigate,
-} from 'react';
+import React from 'react';
 import * as Constants from '../constants/config';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -80,8 +74,9 @@ const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
                 initialContent={values.description}
                 onChange={(value) => {
                   setFieldValue('description', value); //set formik internal values
+                  onNoteChange(value); //pass HTML string to NoteInfo
                 }}
-                getHTML={(value) => onNoteChange(value)} //set description as get HTML
+                // getHTML={(value) => onNoteChange(value)} //set description as get HTML
               />
             </div>
           </fieldset>
