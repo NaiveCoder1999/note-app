@@ -108,11 +108,13 @@ export default function NoteInfo() {
     const html = parser.parseFromString(htmlString, 'text/html');
     const codeTags = html.getElementsByTagName('code');
     if (codeTags.length === 0) {
-      // If there are no code snippets, render the entire string as a single non-code snippet
+      // If there are no code snippets,
+      // render the entire string as a single non-code snippet
       return parse(htmlString);
     } else {
       const snippets = [];
-      let lastIndex = -1;
+      let lastIndex = -1; // last character of the html string
+      // allocate each snippet a unique index property
       let codeIndex = 0;
       for (let i = 0; i < codeTags.length; i++) {
         const codeTag = codeTags[i];
@@ -122,7 +124,8 @@ export default function NoteInfo() {
             ? classAttr.replace('language-', '')
             : 'text'; //maybe changed to markdown
 
-        const code = codeTag.innerHTML;
+        const code = codeTag.innerHTML; //notes inside the <code> tag
+        // starting index of each code snippet: string.indexOf(searchvalue, start)
         const start = htmlString.indexOf(codeTag.outerHTML, lastIndex + 1);
         const end = start + codeTag.outerHTML.length;
         if (start > lastIndex) {
@@ -163,9 +166,9 @@ export default function NoteInfo() {
   return (
     <div className="container">
       <h3>Note Details</h3>
-      <div>{noteData.id}</div>
+      {/* <div>{noteData.id}</div>
       <div>{noteData.noteName}</div>
-      <div>{noteData.description}</div>
+      <div>{noteData.description}</div> */}
       <p></p>
       <div className="container">
         <NoteForm

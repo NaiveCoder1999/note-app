@@ -65,7 +65,7 @@ export default function NoteList() {
             <tr>
               <th scope="col">Id</th>
               <th scope="col">Title</th>
-              <th scope="col">Notes</th>
+              <th scope="col">Content</th>
               <th scope="col">Update</th>
               <th scope="col">Delete</th>
             </tr>
@@ -75,7 +75,15 @@ export default function NoteList() {
               <tr key={note.id}>
                 <td>{note.id}</td>
                 <td>{note.noteName}</td>
-                <td>{note.description}</td>
+                {/* <td>{note.description}</td> */}
+                <td>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => handleUpdate(note.id)} //TODO replace as render
+                  >
+                    Preview
+                  </button>
+                </td>
                 <td>
                   <button
                     className="btn btn-primary"

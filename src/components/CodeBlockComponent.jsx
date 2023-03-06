@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
 import '../styles/CodeBlockComponent.scss';
 
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';

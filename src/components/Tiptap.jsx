@@ -183,7 +183,7 @@ export default function Tiptap({ initialContent, onChange }) {
       Underline,
       CodeBlockLowlight.extend({
         addNodeView() {
-          return ReactNodeViewRenderer(CodeBlockComponent);
+          return ReactNodeViewRenderer(CodeBlockComponent); //add lang select options
         },
       }).configure({ lowlight }),
     ],
