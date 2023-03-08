@@ -105,7 +105,9 @@ export default function NoteInfo() {
   // Parse the HTML content from the TiptapEditor into React components with syntax highlighting
   const renderContent = (htmlString) => {
     const parser = new DOMParser();
+    // parse the HTML string into a DOM tree
     const html = parser.parseFromString(htmlString, 'text/html');
+    // find all the <code> tags in the DOM tree
     const codeTags = html.getElementsByTagName('code');
     if (codeTags.length === 0) {
       // If there are no code snippets,
@@ -113,34 +115,45 @@ export default function NoteInfo() {
       return parse(htmlString);
     } else {
       const snippets = [];
-      let lastIndex = -1; // last character of the html string
-      // allocate each snippet a unique index property
-      let codeIndex = 0;
+      let lastIndex = -1; // last character of string already processed
+      // allocate each snippet a unique index property, independent
+      let codeSnippetIndex = 0;
       for (let i = 0; i < codeTags.length; i++) {
         const codeTag = codeTags[i];
         const classAttr = codeTag.getAttribute('class');
         const language =
           classAttr && classAttr.startsWith('language-')
             ? classAttr.replace('language-', '')
-            : 'text'; //maybe changed to markdown
+            : 'markdown';
 
         const code = codeTag.innerHTML; //notes inside the <code> tag
-        // starting index of each code snippet: string.indexOf(searchvalue, start)
-        const start = htmlString.indexOf(codeTag.outerHTML, lastIndex + 1);
-        const end = start + codeTag.outerHTML.length;
-        if (start > lastIndex) {
+        // starting index of each code snippet by string.indexOf(searchvalue, startIndex)
+        const codeSnippetStartIdx = htmlString.indexOf(
+          codeTag.outerHTML,
+          lastIndex + 1
+        );
+        // used to find the ending index of each code snippet
+        const codeSnippetEndIdx =
+          codeSnippetStartIdx + codeTag.outerHTML.length;
+        //new <code> start index is greater than processed string's last index
+        //so there is non-code snippet
+        if (codeSnippetStartIdx > lastIndex) {
           snippets.push({
             type: 'nonCode',
-            content: htmlString.substring(lastIndex + 1, start),
+            content: htmlString.substring(lastIndex + 1, codeSnippetStartIdx),
           });
         }
         snippets.push({
           type: 'code',
           content: { language, code },
-          index: codeIndex++,
+          index: codeSnippetIndex++,
         });
-        lastIndex = end - 1;
+        //point to last last character in the code snippet,
+        // not the character immediately after it
+        lastIndex = codeSnippetEndIdx - 1;
       }
+      // checks if we've reached the end of the input HTML string
+      // and there are no more <code> tags to process.
       if (lastIndex < htmlString.length - 1) {
         snippets.push({
           type: 'nonCode',

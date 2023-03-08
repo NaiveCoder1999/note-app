@@ -9,7 +9,10 @@ import NoteInfo from './components/NoteInfo';
 function App() {
   return (
     <>
-      <h1> Note User Application</h1>
+      <div className="container">
+        <h1> Note User Application</h1>
+      </div>
+
       <Routes>
         <Route path="/" element={<NoteList />} />
         <Route path="/notes" element={<NoteList />} />
