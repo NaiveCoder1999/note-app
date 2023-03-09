@@ -189,40 +189,10 @@ export default function NoteList() {
                   <td>
                     <button
                       className="btn btn-danger"
-                      onClick={() => toggleDeleteModal(true)} //must add bracket before function name
+                      onClick={() => handleDeleteModal(note)} //must add bracket before function name
                     >
                       Delete
                     </button>
-                    <Modal
-                      centered
-                      show={isDeleteModalOpen}
-                      onHide={() => toggleDeleteModal(false)}
-                    >
-                      <Modal.Header closeButton>
-                        <Modal.Title>Delete Confirmation</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        Do you really want to delete this note?<p></p> This
-                        process cannot be undone.
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button
-                          variant="secondary"
-                          onClick={() => toggleDeleteModal(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          variant="danger"
-                          onClick={() => {
-                            handleDelete(Constants.USER, note.id);
-                            toggleDeleteModal(false);
-                          }}
-                        >
-                          Delete
-                        </Button>
-                      </Modal.Footer>
-                    </Modal>
                   </td>
                 </tr>
               ))}
@@ -253,6 +223,46 @@ export default function NoteList() {
                     }}
                   >
                     Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            )}
+
+            {selectedNote && (
+              <Modal
+                centered
+                show={isDeleteModalOpen}
+                onHide={() => {
+                  toggleDeleteModal(false);
+                  setSelectedNote(null);
+                }}
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>Delete Confirmation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  Do you really want to delete this note?<p></p> This process
+                  cannot be undone.
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      toggleDeleteModal(false);
+                      setSelectedNote(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => {
+                      handleDelete(Constants.USER, selectedNote.id);
+                      toggleDeleteModal(false);
+                      setSelectedNote(null);
+                    }}
+                  >
+                    Delete
                   </Button>
                 </Modal.Footer>
               </Modal>
