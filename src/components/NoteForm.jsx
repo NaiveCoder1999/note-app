@@ -25,8 +25,8 @@ const validationSchema = Yup.object().shape({
 //user is CONSTANT
 //enableReinitialize={true} is vital
 
-//const NoteForm = ({ id, title, description, onSubmit, onNoteChange }) => {
-const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
+// const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
+const NoteForm = ({ initialValues, onSubmit }) => {
   return (
     <Formik
       enableReinitialize={true}
@@ -74,7 +74,7 @@ const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
                 initialContent={values.description}
                 onChange={(value) => {
                   setFieldValue('description', value); //set formik internal values
-                  onNoteChange(value); //pass HTML string to NoteInfo
+                  //onNoteChange(value); //pass HTML string to NoteInfo
                 }}
                 // getHTML={(value) => onNoteChange(value)} //set description as get HTML
               />
@@ -99,7 +99,7 @@ const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
 NoteForm.propTypes = {
   initialValues: PropTypes.object,
   onSubmit: PropTypes.func,
-  onNoteChange: PropTypes.func,
+  //onNoteChange: PropTypes.func,
 };
 
 export default NoteForm;

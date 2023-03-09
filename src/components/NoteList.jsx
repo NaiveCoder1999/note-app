@@ -8,7 +8,6 @@ import { Modal, Button } from 'react-bootstrap';
 //for syntax highlight of code snippet
 import parse from 'html-react-parser';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-// import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function NoteList() {
@@ -23,13 +22,16 @@ export default function NoteList() {
     setSelectedNote(item);
     togglePreviewModal(true);
   };
+
   const handleDeleteModal = (item) => {
     setSelectedNote(item);
     toggleDeleteModal(true);
   };
+
   const handleNotesList = useCallback(async () => {
     getNotesList(Constants.USER);
   }, []);
+
   async function getNotesList(userName) {
     // var res = await refreshNotes();
     let tableEntity = await getAllNotes(userName); //axios response type
@@ -201,7 +203,7 @@ export default function NoteList() {
               <Modal
                 centered
                 size="xl"
-                // fullscreen={true}
+                // fullscreen={'md-down'}
                 show={isPreviewModalOpen && selectedNote !== null}
                 onHide={() => {
                   togglePreviewModal(false);

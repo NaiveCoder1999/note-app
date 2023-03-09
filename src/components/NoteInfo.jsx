@@ -109,7 +109,8 @@ export default function NoteInfo() {
         <NoteForm
           initialValues={noteData}
           onSubmit={handleSubmit}
-          onNoteChange={(value) => setPreview(value)} //update the note description realtime, child to parent
+          //update the note description realtime, child to parent
+          // onNoteChange={(value) => setPreview(value)}
         />
       </div>
       {/* <div className="ProseMirror"> {parse(preview)} </div> */}
