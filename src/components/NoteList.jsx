@@ -4,17 +4,29 @@ import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { deleteNote } from '../services/deleteNote';
 import { useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
+
+//for syntax highlight of code snippet
+import parse from 'html-react-parser';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+// import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [deleteAlertMessage, setDeleteAlertMessage] = useState(null);
 
-  const [show, setShow] = useState(false);
   const [isDeleteModalOpen, toggleDeleteModal] = useState(false);
   const [isPreviewModalOpen, togglePreviewModal] = useState(false);
+  const [selectedNote, setSelectedNote] = useState(null); //passed item object to control modal
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
+  const handlePreviewModal = (item) => {
+    setSelectedNote(item);
+    togglePreviewModal(true);
+  };
+  const handleDeleteModal = (item) => {
+    setSelectedNote(item);
+    toggleDeleteModal(true);
+  };
   const handleNotesList = useCallback(async () => {
     getNotesList(Constants.USER);
   }, []);
@@ -56,28 +68,82 @@ export default function NoteList() {
   useEffect(() => {
     // use empty depend array ->
     //fuction will only run once when the component will load initially
-    //getNotesList(Constants.USER);
     handleNotesList();
   }, [handleNotesList]);
 
-  function deleteModal() {
-    return (
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete Confirmation</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="danger" onClick={handleClose}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
+  // Parse the HTML content from the TiptapEditor into React components with syntax highlighting
+  const renderContent = (htmlString) => {
+    const parser = new DOMParser();
+    // parse the HTML string into a DOM tree
+    const html = parser.parseFromString(htmlString, 'text/html');
+    // find all the <code> tags in the DOM tree
+    const codeTags = html.getElementsByTagName('code');
+    if (codeTags.length === 0) {
+      // If there are no code snippets,
+      // render the entire string as a single non-code snippet
+      return parse(htmlString);
+    } else {
+      const snippets = [];
+      let lastIndex = -1; // last character of string already processed
+      // allocate each snippet a unique index property, independent
+      let codeSnippetIndex = 0;
+      for (let i = 0; i < codeTags.length; i++) {
+        const codeTag = codeTags[i];
+        const classAttr = codeTag.getAttribute('class');
+        const language =
+          classAttr && classAttr.startsWith('language-')
+            ? classAttr.replace('language-', '')
+            : 'text';
+
+        const code = codeTag.innerHTML; //notes inside the <code> tag
+        // starting index of each code snippet by string.indexOf(searchvalue, startIndex)
+        const codeSnippetStartIdx = htmlString.indexOf(
+          codeTag.outerHTML,
+          lastIndex + 1
+        );
+        // used to find the ending index of each code snippet
+        const codeSnippetEndIdx =
+          codeSnippetStartIdx + codeTag.outerHTML.length;
+        //new <code> start index is greater than processed string's last index
+        //so there is non-code snippet
+        if (codeSnippetStartIdx > lastIndex) {
+          snippets.push({
+            type: 'nonCode',
+            content: htmlString.substring(lastIndex + 1, codeSnippetStartIdx),
+          });
+        }
+        snippets.push({
+          type: 'code',
+          content: { language, code },
+          index: codeSnippetIndex++,
+        });
+        //point to last last character in the code snippet,
+        // not the character immediately after it
+        lastIndex = codeSnippetEndIdx - 1;
+      }
+      // checks if we've reached the end of the input HTML string
+      // and there are no more <code> tags to process.
+      if (lastIndex < htmlString.length - 1) {
+        snippets.push({
+          type: 'nonCode',
+          content: htmlString.substring(lastIndex + 1),
+        });
+      }
+      return snippets.map((snippet, index) => {
+        if (snippet.type === 'code') {
+          const { language, code } = snippet.content;
+          return (
+            <SyntaxHighlighter key={index} language={language} style={oneDark}>
+              {code}
+            </SyntaxHighlighter>
+          );
+        } else {
+          return parse(snippet.content);
+        }
+      });
+    }
+  };
+
   return (
     <>
       <div className="container">
@@ -107,7 +173,7 @@ export default function NoteList() {
                   <td>
                     <button
                       className="btn btn-secondary"
-                      onClick={() => togglePreviewModal(true)}
+                      onClick={() => handlePreviewModal(note)}
                     >
                       Preview
                     </button>
@@ -128,6 +194,7 @@ export default function NoteList() {
                       Delete
                     </button>
                     <Modal
+                      centered
                       show={isDeleteModalOpen}
                       onHide={() => toggleDeleteModal(false)}
                     >
@@ -143,7 +210,7 @@ export default function NoteList() {
                           variant="secondary"
                           onClick={() => toggleDeleteModal(false)}
                         >
-                          Close
+                          Cancel
                         </Button>
                         <Button
                           variant="danger"
@@ -160,6 +227,36 @@ export default function NoteList() {
                 </tr>
               ))}
             </tbody>
+            {selectedNote && (
+              <Modal
+                centered
+                size="xl"
+                // fullscreen={true}
+                show={isPreviewModalOpen && selectedNote !== null}
+                onHide={() => {
+                  togglePreviewModal(false);
+                  setSelectedNote(null);
+                }}
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>{selectedNote.noteName}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  {renderContent(selectedNote.description)}
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      togglePreviewModal(false);
+                      setSelectedNote(null);
+                    }}
+                  >
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            )}
           </table>
         </div>
         <div className="container">
