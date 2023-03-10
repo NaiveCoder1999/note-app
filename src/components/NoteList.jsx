@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Constants from '../constants/config';
+import SuccessMessageContext from '../providers/SuccessMessageContext';
+
 import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { deleteNote } from '../services/deleteNote';
 import { useNavigate } from 'react-router-dom';
@@ -12,12 +14,11 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
-  const [deleteAlertMessage, setDeleteAlertMessage] = useState(null);
-
+  const [deleteAlertMessage, setDeleteAlertMessage] = useState(null); //delete message alert
   const [isDeleteModalOpen, toggleDeleteModal] = useState(false);
   const [isPreviewModalOpen, togglePreviewModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null); //passed item object to control modal
-
+  const createAndUpdateAlertMessage = useContext(SuccessMessageContext); //create and update success message
   const handlePreviewModal = (item) => {
     setSelectedNote(item);
     togglePreviewModal(true);
@@ -48,7 +49,7 @@ export default function NoteList() {
         setNotes(del);
         console.log('res', res);
         setDeleteAlertMessage({
-          message: `Delete note ${noteId} successful`,
+          message: `Delete note ${noteId} successfully`,
         });
       })
       .catch((error) => {
@@ -141,6 +142,17 @@ export default function NoteList() {
           );
         } else {
           return parse(snippet.content);
+          // return parse(snippet.content, {
+          //   replace: (domNode) => {
+          //     if (domNode.name === 'a') {
+          //       return (
+          //         <a href={domNode.attribs.href} key={index}>
+          //           {domToReact(domNode.children)}
+          //         </a>
+          //       );
+          //     }
+          //   },
+          // });
         }
       });
     }
@@ -155,6 +167,12 @@ export default function NoteList() {
             {deleteAlertMessage.message}
           </div>
         )}
+        {createAndUpdateAlertMessage && (
+          <div className="alert alert-success">
+            {createAndUpdateAlertMessage.message}
+          </div>
+        )}
+
         <div className="container">
           <table className="table table-striped">
             <thead>

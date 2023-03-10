@@ -1,11 +1,12 @@
 //import PropTypes from 'prop-types';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Constants from '../constants/config';
 import { updateNote } from '../services/updateNote';
 import { createNote } from '../services/createNote';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
 import NoteForm from './NoteForm.jsx';
+import SuccessMessageContext from '../providers/SuccessMessageContext';
 
 import '../styles/TiptapStyles.scss';
 
@@ -16,10 +17,7 @@ export default function NoteInfo() {
     userName: '',
     description: '',
   }); //json object
-  //const [title, setTitle] = useState(''); //string
-  //const [description, setDescription] = useState(''); //string of initial note
-  const [preview, setPreview] = useState(''); //string of html data
-  const [text, setText] = useState(''); //string of testing independent editor component
+  const [successMessage, setSuccessMessage] = useState({ message: '' });
   const { noteId } = useParams(); //noteId: "id"
   const navigate = useNavigate();
   const handleNoteInfo = useCallback(async (noteId) => {
@@ -55,7 +53,13 @@ export default function NoteInfo() {
       };
 
       createNote(Constants.USER, note)
-        .then(() => navigate('/notes'))
+        .then((res) => {
+          console.log('res', res);
+          setSuccessMessage({
+            message: `Create new note successfully`,
+          });
+          navigate('/notes');
+        })
         .catch((error) => {
           console.log(error);
         });
@@ -69,7 +73,13 @@ export default function NoteInfo() {
       };
 
       updateNote(username, noteId, note)
-        .then(() => navigate('/notes'))
+        .then((res) => {
+          console.log('res', res);
+          setSuccessMessage({
+            message: `Update note ${noteId} successfully`,
+          });
+          navigate('/notes');
+        })
         .catch((error) => {
           console.log(error);
         });
@@ -97,7 +107,6 @@ export default function NoteInfo() {
     };
   }, [handleNoteInfo, keyDownHandler, noteId]);
 
-  //TODO formik
   return (
     <div className="container">
       <h3>Note Details</h3>
@@ -105,14 +114,16 @@ export default function NoteInfo() {
       <div>{noteData.noteName}</div>
       <div>{noteData.description}</div> */}
       <p></p>
-      <div className="container">
-        <NoteForm
-          initialValues={noteData}
-          onSubmit={handleSubmit}
-          //update the note description realtime, child to parent
-          // onNoteChange={(value) => setPreview(value)}
-        />
-      </div>
+      <SuccessMessageContext.Provider value={successMessage}>
+        <div className="container">
+          <NoteForm
+            initialValues={noteData}
+            onSubmit={handleSubmit}
+            //update the note description realtime, child to parent
+            // onNoteChange={(value) => setPreview(value)}
+          />
+        </div>
+      </SuccessMessageContext.Provider>
       {/* <div className="ProseMirror"> {parse(preview)} </div> */}
     </div>
   );

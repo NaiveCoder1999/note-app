@@ -76,7 +76,6 @@ const NoteForm = ({ initialValues, onSubmit }) => {
                   setFieldValue('description', value); //set formik internal values
                   //onNoteChange(value); //pass HTML string to NoteInfo
                 }}
-                // getHTML={(value) => onNoteChange(value)} //set description as get HTML
               />
             </div>
           </fieldset>

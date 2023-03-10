@@ -161,6 +161,8 @@ function MenuBar({ editor }) {
   );
 }
 
+//initialContent: NoteForm -> Tiptap
+//onChange: Tiptap to NoteForm's setFieldValue
 export default function Tiptap({ initialContent, onChange }) {
   // export default function Tiptap({ initialContent, onChange, getHTML }) {
   const [editable, setEditable] = useState(false);
