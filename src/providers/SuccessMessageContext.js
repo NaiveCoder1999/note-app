@@ -1,5 +1,23 @@
-import { createContext, useContext } from 'react';
+import PropTypes from 'prop-types';
+import React, { useState, createContext } from 'react';
 
-const SuccessMessageContext = createContext(null); //object message
+export const SuccessMessageContext = createContext({
+  successMessage: '',
+  setSuccessMessage: () => {},
+});
 
-export default SuccessMessageContext;
+export const SuccessMessageProvider = ({ children }) => {
+  const [successMessage, setSuccessMessage] = useState(''); //store message in context globally
+
+  return (
+    <SuccessMessageContext.Provider
+      value={{ successMessage, setSuccessMessage }}
+    >
+      {children}
+    </SuccessMessageContext.Provider>
+  );
+};
+
+SuccessMessageProvider.propTypes = {
+  children: PropTypes.any,
+};

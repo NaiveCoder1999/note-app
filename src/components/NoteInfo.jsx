@@ -6,7 +6,8 @@ import { createNote } from '../services/createNote';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
 import NoteForm from './NoteForm.jsx';
-import SuccessMessageContext from '../providers/SuccessMessageContext';
+//import method of context
+import {SuccessMessageContext} from '../providers/SuccessMessageContext';
 
 import '../styles/TiptapStyles.scss';
 
@@ -17,7 +18,7 @@ export default function NoteInfo() {
     userName: '',
     description: '',
   }); //json object
-  const [successMessage, setSuccessMessage] = useState({ message: '' });
+  const { setSuccessMessage } = useContext(SuccessMessageContext);
   const { noteId } = useParams(); //noteId: "id"
   const navigate = useNavigate();
   const handleNoteInfo = useCallback(async (noteId) => {
@@ -55,9 +56,7 @@ export default function NoteInfo() {
       createNote(Constants.USER, note)
         .then((res) => {
           console.log('res', res);
-          setSuccessMessage({
-            message: `Create new note successfully`,
-          });
+          setSuccessMessage('Create new note successfully');
           navigate('/notes');
         })
         .catch((error) => {
@@ -75,9 +74,7 @@ export default function NoteInfo() {
       updateNote(username, noteId, note)
         .then((res) => {
           console.log('res', res);
-          setSuccessMessage({
-            message: `Update note ${noteId} successfully`,
-          });
+          setSuccessMessage('Create new note successfully');
           navigate('/notes');
         })
         .catch((error) => {
@@ -86,7 +83,8 @@ export default function NoteInfo() {
     }
   }
 
-  // by passing empty array at the end, this will always return the same function, compatible with removeEventListener
+  // by passing empty array at the end, this will always return the same function,
+  // compatible with removeEventListener
   const keyDownHandler = useCallback((keyEvent) => {
     //if ((keyEvent.charCode || keyEvent.keyCode) === 13) {
     if (keyEvent.keyCode === 13 && keyEvent.target.nodeName === 'INPUT') {
@@ -114,16 +112,14 @@ export default function NoteInfo() {
       <div>{noteData.noteName}</div>
       <div>{noteData.description}</div> */}
       <p></p>
-      <SuccessMessageContext.Provider value={successMessage}>
-        <div className="container">
-          <NoteForm
-            initialValues={noteData}
-            onSubmit={handleSubmit}
-            //update the note description realtime, child to parent
-            // onNoteChange={(value) => setPreview(value)}
-          />
-        </div>
-      </SuccessMessageContext.Provider>
+      <div className="container">
+        <NoteForm
+          initialValues={noteData}
+          onSubmit={handleSubmit}
+          //update the note description realtime, child to parent
+          // onNoteChange={(value) => setPreview(value)}
+        />
+      </div>
       {/* <div className="ProseMirror"> {parse(preview)} </div> */}
     </div>
   );
