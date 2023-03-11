@@ -38,6 +38,20 @@ export default function NoteList() {
     getNotesList(Constants.USER);
   }, []);
 
+  const handleAlertMessage = useCallback(async () => {
+    if (successMessage) {
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
+    }
+
+    if (deleteAlertMessage) {
+      setTimeout(() => {
+        setDeleteAlertMessage(null);
+      }, 5000);
+    }
+  }, [deleteAlertMessage, setSuccessMessage, successMessage]);
+
   async function getNotesList(userName) {
     // var res = await refreshNotes();
     let response = await getAllNotes(userName); //axios response type
@@ -49,11 +63,6 @@ export default function NoteList() {
     //     setSuccessMessage(null);
     //   }, 5000);
     // }
-    // if (deleteAlertMessage) {
-    //   setTimeout(() => {
-    //     setDeleteAlertMessage('');
-    //   }, 5000);
-    // }
   }
 
   function handleDelete(userName, noteId) {
@@ -63,10 +72,10 @@ export default function NoteList() {
         const del = notes.filter((note) => note.id !== noteId);
         setNotes(del);
         console.log('res', res);
-        // setDeleteAlertMessage({
-        //   message: `Delete note ${noteId} successfully`,
-        // });
         setDeleteAlertMessage('Note ' + noteId + ' deleted successfully');
+        // setTimeout(() => {
+        //   setDeleteAlertMessage(null);
+        // }, 5000);
       })
       .catch((error) => {
         console.log(error);
@@ -88,7 +97,8 @@ export default function NoteList() {
     // use empty depend array ->
     //fuction will only run once when the component will load initially
     handleNotesList();
-  }, [handleNotesList]);
+    handleAlertMessage();
+  }, [handleNotesList, handleAlertMessage]);
 
   // Parse the HTML content from the TiptapEditor into React components with syntax highlighting
   const renderContent = (htmlString) => {
