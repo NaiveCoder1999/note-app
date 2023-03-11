@@ -1,10 +1,8 @@
-import PropTypes from 'prop-types';
+/* eslint-disable react/prop-types */
+// SuccessMessageContext.js
 import React, { useState, createContext } from 'react';
 
-export const SuccessMessageContext = createContext({
-  successMessage: '',
-  setSuccessMessage: () => {},
-});
+export const SuccessMessageContext = createContext(null);
 
 export const SuccessMessageProvider = ({ children }) => {
   const [successMessage, setSuccessMessage] = useState(''); //store message in context globally
@@ -16,8 +14,4 @@ export const SuccessMessageProvider = ({ children }) => {
       {children}
     </SuccessMessageContext.Provider>
   );
-};
-
-SuccessMessageProvider.propTypes = {
-  children: PropTypes.any,
 };

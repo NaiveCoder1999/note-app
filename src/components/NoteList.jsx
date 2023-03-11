@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Constants from '../constants/config';
+//import method of context
 import { SuccessMessageContext } from '../providers/SuccessMessageContext';
 
 import { getAllNotes } from '../services/getAllNotes'; //non-default export
@@ -19,7 +20,10 @@ export default function NoteList() {
   const [isDeleteModalOpen, toggleDeleteModal] = useState(false);
   const [isPreviewModalOpen, togglePreviewModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null); //passed item object to control modal
-  const { successMessage } = useContext(SuccessMessageContext); //create and update success message
+  //create and update success message
+  const { successMessage, setSuccessMessage } = useContext(
+    SuccessMessageContext
+  );
   const handlePreviewModal = (item) => {
     setSelectedNote(item);
     togglePreviewModal(true);
@@ -40,6 +44,16 @@ export default function NoteList() {
     console.log(response);
     let tableData = response.data;
     setNotes(tableData); //change promise to list
+    // if (successMessage) {
+    //   setTimeout(() => {
+    //     setSuccessMessage(null);
+    //   }, 5000);
+    // }
+    // if (deleteAlertMessage) {
+    //   setTimeout(() => {
+    //     setDeleteAlertMessage('');
+    //   }, 5000);
+    // }
   }
 
   function handleDelete(userName, noteId) {
@@ -52,7 +66,7 @@ export default function NoteList() {
         // setDeleteAlertMessage({
         //   message: `Delete note ${noteId} successfully`,
         // });
-        setDeleteAlertMessage('Delete note ' + noteId + ' successfully');
+        setDeleteAlertMessage('Note ' + noteId + ' deleted successfully');
       })
       .catch((error) => {
         console.log(error);
@@ -165,10 +179,7 @@ export default function NoteList() {
       <div className="container">
         <h3>All Notes</h3>
         {deleteAlertMessage && (
-          <div className="alert alert-success">
-            {/* {deleteAlertMessage.message} */}
-            {deleteAlertMessage}
-          </div>
+          <div className="alert alert-success">{deleteAlertMessage}</div>
         )}
         {successMessage && (
           <div className="alert alert-success">{successMessage}</div>

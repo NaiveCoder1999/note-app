@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
 import NoteForm from './NoteForm.jsx';
 //import method of context
-import {SuccessMessageContext} from '../providers/SuccessMessageContext';
+import { SuccessMessageContext } from '../providers/SuccessMessageContext';
 
 import '../styles/TiptapStyles.scss';
 
@@ -18,7 +18,9 @@ export default function NoteInfo() {
     userName: '',
     description: '',
   }); //json object
-  const { setSuccessMessage } = useContext(SuccessMessageContext);
+  const { successMessage, setSuccessMessage } = useContext(
+    SuccessMessageContext
+  );
   const { noteId } = useParams(); //noteId: "id"
   const navigate = useNavigate();
   const handleNoteInfo = useCallback(async (noteId) => {
@@ -56,7 +58,7 @@ export default function NoteInfo() {
       createNote(Constants.USER, note)
         .then((res) => {
           console.log('res', res);
-          setSuccessMessage('Create new note successfully');
+          setSuccessMessage('Note created successfully');
           navigate('/notes');
         })
         .catch((error) => {
@@ -74,7 +76,7 @@ export default function NoteInfo() {
       updateNote(username, noteId, note)
         .then((res) => {
           console.log('res', res);
-          setSuccessMessage('Create new note successfully');
+          setSuccessMessage('Note ' + noteId + ' updated successfully');
           navigate('/notes');
         })
         .catch((error) => {
@@ -116,8 +118,6 @@ export default function NoteInfo() {
         <NoteForm
           initialValues={noteData}
           onSubmit={handleSubmit}
-          //update the note description realtime, child to parent
-          // onNoteChange={(value) => setPreview(value)}
         />
       </div>
       {/* <div className="ProseMirror"> {parse(preview)} </div> */}
