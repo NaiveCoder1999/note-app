@@ -16,6 +16,9 @@ public interface NoteUserRepository extends JpaRepository<NoteUser, Long> {
     Optional<NoteUser> findByUsername(String username);
     Optional<NoteUser> findByUsernameOrId(String username, Long id);
 
+    Boolean existsByUsername(String username);
+
+
 
 
 
