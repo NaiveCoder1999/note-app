@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getSingleNote } from '../services/getSingleNote';
 import NoteForm from './NoteForm.jsx';
 //import method of context
-import { SuccessMessageContext } from '../providers/SuccessMessageContext';
+import { SuccessAlertMessageContext } from '../providers/SuccessAlertMessageContext';
 
 import '../styles/TiptapStyles.scss';
 
@@ -18,8 +18,8 @@ export default function NoteInfo() {
     userName: '',
     description: '',
   }); //json object
-  const { successMessage, setSuccessMessage } = useContext(
-    SuccessMessageContext
+  const { successAlertMessage, setSuccessAlertMessage } = useContext(
+    SuccessAlertMessageContext
   );
   const { noteId } = useParams(); //noteId: "id"
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ export default function NoteInfo() {
       createNote(Constants.USER, note)
         .then((res) => {
           console.log('res', res);
-          setSuccessMessage('Note created successfully');
+          setSuccessAlertMessage('Note created successfully');
           navigate('/notes');
         })
         .catch((error) => {
@@ -76,7 +76,7 @@ export default function NoteInfo() {
       updateNote(username, noteId, note)
         .then((res) => {
           console.log('res', res);
-          setSuccessMessage('Note ' + noteId + ' updated successfully');
+          setSuccessAlertMessage('Note ' + noteId + ' updated successfully');
           navigate('/notes');
         })
         .catch((error) => {
@@ -115,10 +115,7 @@ export default function NoteInfo() {
       <div>{noteData.description}</div> */}
       <p></p>
       <div className="container">
-        <NoteForm
-          initialValues={noteData}
-          onSubmit={handleSubmit}
-        />
+        <NoteForm initialValues={noteData} onSubmit={handleSubmit} />
       </div>
       {/* <div className="ProseMirror"> {parse(preview)} </div> */}
     </div>

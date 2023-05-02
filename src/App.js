@@ -3,13 +3,13 @@ import './styles/App.css';
 import React from 'react';
 import NoteList from './components/NoteList';
 import NoteInfo from './components/NoteInfo';
-import { SuccessMessageProvider } from './providers/SuccessMessageContext';
+import { SuccessAlertMessageProvider } from './providers/SuccessAlertMessageContext';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 function App() {
   return (
     <>
-      <SuccessMessageProvider>
+      <SuccessAlertMessageProvider>
         <div className="container">
           <h1> Note User Application</h1>
         </div>
@@ -19,7 +19,7 @@ function App() {
           <Route path="/notes" element={<NoteList />} />
           <Route path="/notes/:noteId" element={<NoteInfo />} />
         </Routes>
-      </SuccessMessageProvider>
+      </SuccessAlertMessageProvider>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Constants from '../constants/config';
 //import method of context
-import { SuccessMessageContext } from '../providers/SuccessMessageContext';
+import { SuccessAlertMessageContext } from '../providers/SuccessAlertMessageContext';
 
 import { getAllNotes } from '../services/getAllNotes'; //non-default export
 import { deleteNote } from '../services/deleteNote';
@@ -15,14 +15,13 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
-  // const [deleteAlertMessage, setDeleteAlertMessage] = useState(null); //delete message alert
-  const [deleteAlertMessage, setDeleteAlertMessage] = useState(''); //delete message alert
+  // const [deleteAlertMessage, setDeleteAlertMessage] = useState(''); //delete message alert
   const [isDeleteModalOpen, toggleDeleteModal] = useState(false);
   const [isPreviewModalOpen, togglePreviewModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null); //passed item object to control modal
   //create and update success message
-  const { successMessage, setSuccessMessage } = useContext(
-    SuccessMessageContext
+  const { successAlertMessage, setSuccessAlertMessage } = useContext(
+    SuccessAlertMessageContext
   );
   const handlePreviewModal = (item) => {
     setSelectedNote(item);
@@ -39,18 +38,19 @@ export default function NoteList() {
   }, []);
 
   const handleAlertMessage = useCallback(async () => {
-    if (successMessage) {
+    if (successAlertMessage) {
       setTimeout(() => {
-        setSuccessMessage(null);
+        setSuccessAlertMessage(null);
       }, 5000);
     }
 
-    if (deleteAlertMessage) {
-      setTimeout(() => {
-        setDeleteAlertMessage(null);
-      }, 5000);
-    }
-  }, [deleteAlertMessage, setSuccessMessage, successMessage]);
+    // if (deleteAlertMessage) {
+    //   setTimeout(() => {
+    //     setDeleteAlertMessage(null);
+    //   }, 5000);
+    // }
+    // }, [deleteAlertMessage, setSuccessMessage, successMessage]);
+  }, [successAlertMessage, setSuccessAlertMessage]);
 
   async function getNotesList(userName) {
     // var res = await refreshNotes();
@@ -58,11 +58,6 @@ export default function NoteList() {
     console.log(response);
     let tableData = response.data;
     setNotes(tableData); //change promise to list
-    // if (successMessage) {
-    //   setTimeout(() => {
-    //     setSuccessMessage(null);
-    //   }, 5000);
-    // }
   }
 
   function handleDelete(userName, noteId) {
@@ -72,10 +67,8 @@ export default function NoteList() {
         const del = notes.filter((note) => note.id !== noteId);
         setNotes(del);
         console.log('res', res);
-        setDeleteAlertMessage('Note ' + noteId + ' deleted successfully');
-        // setTimeout(() => {
-        //   setDeleteAlertMessage(null);
-        // }, 5000);
+        //setDeleteAlertMessage('Note ' + noteId + ' deleted successfully');
+        setSuccessAlertMessage('Note ' + noteId + ' deleted successfully');
       })
       .catch((error) => {
         console.log(error);
@@ -188,11 +181,11 @@ export default function NoteList() {
     <>
       <div className="container">
         <h3>All Notes</h3>
-        {deleteAlertMessage && (
+        {/* {deleteAlertMessage && (
           <div className="alert alert-success">{deleteAlertMessage}</div>
-        )}
-        {successMessage && (
-          <div className="alert alert-success">{successMessage}</div>
+        )} */}
+        {successAlertMessage && (
+          <div className="alert alert-success">{successAlertMessage}</div>
         )}
 
         <div className="container">
