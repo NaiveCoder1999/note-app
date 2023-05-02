@@ -1,0 +1,186 @@
+/* text and menu border */
+.textEditor {
+  border-radius: 5px;
+  border: 1px solid grey;
+}
+
+.menuBar {
+  padding-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; //make undo and redo
+
+  button {
+    font-size: 22px; //TODO
+    //margin: 5px;
+    margin-right: 14px;
+    outline: none;
+    border: none;
+    background: none;
+    color: rgb(70, 70, 70);
+    cursor: pointer;
+  }
+}
+
+button.is-active {
+  //fix to match with tiptap button is-active
+  background: rgb(197, 197, 197);
+  //padding: 2px 3px;
+  border-radius: 2px; //round corner
+}
+
+//code block component
+.code-block {
+  position: relative;
+
+  select {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+  }
+}
+
+//checkbox style
+.checkbox {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  margin-left: 0.5rem;
+  input[type='checkbox'] {
+    margin-right: 0.5rem;
+  }
+}
+
+[contenteditable='false'] {
+  //color: #999;
+  cursor: not-allowed;
+}
+
+// transfer from css
+// set center position
+.Tiptap {
+  max-width: 700px;
+  // margin: 1rem auto;
+  font-family: Poppins, sans-serif;
+}
+/* Basic editor styles */
+.ProseMirror {
+  padding: 10px;
+  border-top: 1px solid grey;
+  background: white;
+  border-radius: 0 0 5px 5px;
+  min-height: 100px;
+
+  * {
+    //white-space: pre-wrap;
+    white-space: break-spaces;
+    word-break: break-word;
+  }
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  ul,
+  ol {
+    padding: 0 2rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
+  code {
+    // background-color: rgba(#616161, 0.1);
+    background-color: #cfcfcf;
+    color: #616161;
+  }
+
+  pre {
+    background: #0d0d0d;
+    color: #fff;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+
+    code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.8rem;
+    }
+
+    .hljs-comment,
+    .hljs-quote {
+      color: #616161;
+    }
+
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-attribute,
+    .hljs-tag,
+    .hljs-name,
+    .hljs-regexp,
+    .hljs-link,
+    .hljs-name,
+    .hljs-selector-id,
+    .hljs-selector-class {
+      color: #f98181;
+    }
+
+    .hljs-number,
+    .hljs-meta,
+    .hljs-built_in,
+    .hljs-builtin-name,
+    .hljs-literal,
+    .hljs-type,
+    .hljs-params {
+      color: #fbbc88;
+    }
+
+    .hljs-string,
+    .hljs-symbol,
+    .hljs-bullet {
+      color: #b9f18d;
+    }
+
+    .hljs-title,
+    .hljs-section {
+      color: #faf594;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag {
+      color: #70cff8;
+    }
+
+    .hljs-emphasis {
+      font-style: italic;
+    }
+
+    .hljs-strong {
+      font-weight: 700;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  blockquote {
+    padding-left: 1rem;
+    // border-left: 2px solid rgba(#0D0D0D, 0.1);
+    border-left: 2px solid #9c9c9c;
+  }
+
+  hr {
+    border: none;
+    // border-top: 2px solid rgba(#0D0D0D, 0.1);
+    border-top: 2px solid #9c9c9c;
+    margin: 2rem 0;
+  }
+}

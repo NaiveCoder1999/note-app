@@ -1,0 +1,11 @@
+//code block component
+.code-block {
+  position: relative;
+
+  select {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    border-radius: 5px; //add round cornor
+  }
+}
