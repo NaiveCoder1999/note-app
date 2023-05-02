@@ -1,5 +1,4 @@
-#backend
-
+### Backend ###
 **/HELP.md
 **/target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -34,13 +33,11 @@
 ### VS Code ###
 **/.vscode/
 
-# Mac OS
-
+### Mac OS ###
 **/.DS_Store
 
 
-# frontend
-
+### Frontend ###
 # dependencies
 **/node_modules
 **/.pnp
