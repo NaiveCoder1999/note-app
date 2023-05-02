@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface NoteUserRepository extends JpaRepository<NoteUser, Long> {
 
-    Optional<NoteUser> findById(Long id);
+    //Optional<NoteUser> findById(Long id);
     Optional<NoteUser> findByUsername(String username);
     Optional<NoteUser> findByUsernameOrId(String username, Long id);
 
