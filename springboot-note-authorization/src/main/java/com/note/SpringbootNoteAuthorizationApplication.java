@@ -1,4 +1,4 @@
-package com.authorization;
+package com.note;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
