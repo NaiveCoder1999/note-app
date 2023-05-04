@@ -33,27 +33,36 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.*;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext;
+import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * @author Joe Grandja
@@ -61,18 +70,44 @@ import java.util.UUID;
  * @since 0.0.1
  */
 @Configuration(proxyBeanMethods = false)
+//@Configuration
 public class AuthorizationServerConfig {
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .oidc(Customizer.withDefaults());    // Enable OpenID Connect 1.0
 
-        http.exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(
-                new LoginUrlAuthenticationEntryPoint("/login")))
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
+                new OAuth2AuthorizationServerConfigurer();
+        RequestMatcher endpointsMatcher = authorizationServerConfigurer
+                .getEndpointsMatcher();
+
+        Function<OidcUserInfoAuthenticationContext, OidcUserInfo> userInfoMapper = (context) -> {
+            OAuth2AccessToken accessToken = context.getAccessToken();
+            Map<String, Object> claims = new HashMap<>();
+            claims.put(OidcScopes.EMAIL, "dxchen1999@gmail.com");
+            claims.put("accessToken", accessToken);
+            return new OidcUserInfo(claims);
+        };
+
+        authorizationServerConfigurer
+                .oidc((oidc) -> oidc.userInfoEndpoint((userInfo) -> userInfo
+                                .userInfoMapper(userInfoMapper)));
+
+//        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+//        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+//                .oidc(Customizer.withDefaults());    // Enable OpenID Connect 1.0
+
+
+        http
+                .securityMatcher(endpointsMatcher)
+                .authorizeHttpRequests((authorize) -> authorize
+                        .anyRequest().authenticated())
+                .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
+                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(
+                        new LoginUrlAuthenticationEntryPoint("/login")))
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .apply(authorizationServerConfigurer);
 
         return http.build();
     }
@@ -81,7 +116,8 @@ public class AuthorizationServerConfig {
     @Bean
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("note-client").clientSecret("{noop}secret")
+                .clientId("note-client") //secret with basic auth
+                .clientSecret("{bcrypt}$2a$10$hP9wcBYsTP8w6vb76MAdLuHZa.fokYoxqW9l6UVNXG8IVLcP1q6BC")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
 //                .clientAuthenticationMethods(s -> {
@@ -99,9 +135,9 @@ public class AuthorizationServerConfig {
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
                         .idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)
-                .accessTokenTimeToLive(Duration.ofSeconds(30 * 60))
-                .refreshTokenTimeToLive(Duration.ofSeconds(60 * 60))
-                .reuseRefreshTokens(true).build())
+                        .accessTokenTimeToLive(Duration.ofSeconds(30 * 60))
+                        .refreshTokenTimeToLive(Duration.ofSeconds(60 * 60))
+                        .reuseRefreshTokens(true).build())
                 .build();
 
         // Save registered client in db as if in-memory
@@ -110,7 +146,6 @@ public class AuthorizationServerConfig {
 
         return registeredClientRepository;
     }
-
 
     @Bean
     public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
@@ -134,6 +169,28 @@ public class AuthorizationServerConfig {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
 
+    // Reference:
+    // https://docs.spring.io/spring-authorization-server/docs/current/reference/html/core-model-components.html#oauth2-token-customizer
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
+        return context -> {
+//            JwsHeader.Builder headers = context.getJwsHeader();
+//            JwtClaimsSet.Builder claims = context.getClaims();
+            if (context.getTokenType().equals(OAuth2TokenType.ACCESS_TOKEN)) {
+                context.getClaims().claims((claims) -> {
+                    // Customize headers/claims for access_token
+                    claims.put(OidcScopes.EMAIL, "dxchen1999@gmail.com");
+                });
+            }
+            if (context.getTokenType().getValue().equals(OidcParameterNames.ID_TOKEN)) {
+                context.getClaims().claims((claims) -> {
+                    // Customize headers/claims for id_token
+                    claims.put(OidcScopes.EMAIL, "dxchen1999@gmail.com");
+                });
+            }
+        };
+    }
+
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder().build();
@@ -141,7 +198,6 @@ public class AuthorizationServerConfig {
 
     @Bean
     public EmbeddedDatabase embeddedDatabase() {
-        // @formatter:off
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.H2)
