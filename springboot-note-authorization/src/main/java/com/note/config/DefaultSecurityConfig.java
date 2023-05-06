@@ -57,7 +57,7 @@ public class DefaultSecurityConfig {
 //                .username("nocoder")
                 UserDetails user = User.withUsername("nocoder")
                 .password(ENCODED_PASSWORD)
-                .roles("USER","ADMIN")
+                .roles("USER","ADMIN") //define the user authorities
                 .build();
         return new InMemoryUserDetailsManager(user);
     }

@@ -31,6 +31,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -63,6 +64,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author Joe Grandja
@@ -83,20 +85,17 @@ public class AuthorizationServerConfig {
                 .getEndpointsMatcher();
 
         Function<OidcUserInfoAuthenticationContext, OidcUserInfo> userInfoMapper = (context) -> {
-            OAuth2AccessToken accessToken = context.getAccessToken();
-            Map<String, Object> claims = new HashMap<>();
-            claims.put(OidcScopes.EMAIL, "dxchen1999@gmail.com");
-            claims.put("accessToken", accessToken);
-            return new OidcUserInfo(claims);
+            //OAuth2AccessToken accessToken = context.getAccessToken();
+            OidcUserInfoAuthenticationToken authentication = context.getAuthentication();
+            JwtAuthenticationToken principal = (JwtAuthenticationToken) authentication.getPrincipal();
+
+            return new OidcUserInfo(principal.getToken().getClaims()); // same as access token
         };
 
         authorizationServerConfigurer
                 .oidc((oidc) -> oidc.userInfoEndpoint((userInfo) -> userInfo
                                 .userInfoMapper(userInfoMapper)));
 
-//        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-//        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-//                .oidc(Customizer.withDefaults());    // Enable OpenID Connect 1.0
 
 
         http
@@ -180,12 +179,16 @@ public class AuthorizationServerConfig {
                 context.getClaims().claims((claims) -> {
                     // Customize headers/claims for access_token
                     claims.put(OidcScopes.EMAIL, "dxchen1999@gmail.com");
+                    claims.put("role", context.getPrincipal().getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
                 });
             }
             if (context.getTokenType().getValue().equals(OidcParameterNames.ID_TOKEN)) {
                 context.getClaims().claims((claims) -> {
                     // Customize headers/claims for id_token
                     claims.put(OidcScopes.EMAIL, "dxchen1999@gmail.com");
+                    claims.put("role", context.getPrincipal().getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
                 });
             }
         };
