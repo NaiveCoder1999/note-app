@@ -37,7 +37,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
 public class DefaultSecurityConfig {
-    private static final String ENCODED_PASSWORD = "{bcrypt}$2a$10$FqKCo2nMKOhXKtFs3Nk3yu3y2MQEV6k5Y9XCtUNF9Zpm/V0VyeB0O";
+    private static final String ENCODED_PASSWORD_NOCODER = "{bcrypt}$2a$10$FqKCo2nMKOhXKtFs3Nk3yu3y2MQEV6k5Y9XCtUNF9Zpm/V0VyeB0O";
+    private static final String ENCODED_PASSWORD_CODER = "{bcrypt}$2a$10$STkACKFURfwdkgPBaYtlMOodB6FfC/I1qicYZKPA3lqi7fAOpvc8m";
 
     // @formatter:off
     @Bean
@@ -56,10 +57,15 @@ public class DefaultSecurityConfig {
 //        UserDetails user = User.withDefaultPasswordEncoder()
 //                .username("nocoder")
                 UserDetails user = User.withUsername("nocoder")
-                .password(ENCODED_PASSWORD)
-                .roles("USER","ADMIN") //define the user authorities
+                .password(ENCODED_PASSWORD_NOCODER)
+                .roles("USER","ADMIN") //define the user authorities, e.g. ROLE_ADMIN
                 .build();
-        return new InMemoryUserDetailsManager(user);
+
+        UserDetails noteUser = User.withUsername("coder")
+                .password(ENCODED_PASSWORD_CODER)
+                .roles("USER","ADMIN") //define the user authorities, e.g. ROLE_ADMIN
+                .build();
+        return new InMemoryUserDetailsManager(user, noteUser);
     }
 
     @Bean

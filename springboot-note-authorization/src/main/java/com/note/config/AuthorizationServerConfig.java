@@ -96,8 +96,6 @@ public class AuthorizationServerConfig {
                 .oidc((oidc) -> oidc.userInfoEndpoint((userInfo) -> userInfo
                                 .userInfoMapper(userInfoMapper)));
 
-
-
         http
                 .securityMatcher(endpointsMatcher)
                 .authorizeHttpRequests((authorize) -> authorize
@@ -179,7 +177,7 @@ public class AuthorizationServerConfig {
                 context.getClaims().claims((claims) -> {
                     // Customize headers/claims for access_token
                     claims.put(OidcScopes.EMAIL, "dxchen1999@gmail.com");
-                    claims.put("role", context.getPrincipal().getAuthorities().stream()
+                    claims.put("authority", context.getPrincipal().getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
                 });
             }

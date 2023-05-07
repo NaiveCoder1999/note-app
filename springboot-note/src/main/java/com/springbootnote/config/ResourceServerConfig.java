@@ -18,11 +18,10 @@ public class ResourceServerConfig {
                 .cors()
                 .and()
                 .csrf().disable()
-                .securityMatcher("/user/**")
-                .authorizeHttpRequests()
-                .requestMatchers("/user/**")
-                .hasAnyAuthority("OIDC_USER", "SCOPE_read", "SCOPE_write")
-                .and()
+                //.securityMatcher("/user/**")
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/user/**")
+                        .hasAnyAuthority("OIDC_USER", "SCOPE_read", "SCOPE_write", "ROLE_USER", "ROLE_ADMIN"))
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
         return http.build();
     }

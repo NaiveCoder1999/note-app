@@ -1,6 +1,6 @@
 #FileLock
-#Sat May 06 06:26:40 IST 2023
-server=localhost\:65535
-hostName=localhost
+#Sun May 07 02:45:36 IST 2023
+server=192.168.50.92\:53976
+hostName=192.168.50.92
 method=file
-id=187ef86c90b70752b37150dbc81b5b1f2c90502e71d
+id=187f3e2c06acf952dcdae425670e51ede3f3d83a44d
