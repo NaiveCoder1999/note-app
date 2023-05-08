@@ -185,7 +185,7 @@ public class AuthorizationServerConfig {
                 context.getClaims().claims((claims) -> {
                     // Customize headers/claims for id_token
                     claims.put(OidcScopes.EMAIL, "dxchen1999@gmail.com");
-                    claims.put("role", context.getPrincipal().getAuthorities().stream()
+                    claims.put("authority", context.getPrincipal().getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
                 });
             }

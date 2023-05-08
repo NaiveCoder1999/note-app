@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.authorization</groupId>
-	<artifactId>springboot-note-authorization</artifactId>
+	<artifactId>springboot-note-authorization-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>springboot-note-authorization</name>
 	<description>springboot-note-authorization</description>

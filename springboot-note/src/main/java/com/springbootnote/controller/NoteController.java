@@ -4,6 +4,9 @@ import com.springbootnote.model.Note;
 import com.springbootnote.service.NoteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -36,7 +39,16 @@ public class NoteController {
     }
 
     @GetMapping("/{userName}/notes")
+    //@PreAuthorize("#userName == authentication.name")
     public List<Note> getAllNotes(@PathVariable String userName) {
+//        // Get the Authentication object from the SecurityContextHolder
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        // Get the authentication.name
+//        String authenticatedUserName = authentication.getName();
+//
+//        // Debug output
+//        System.out.println("Authenticated user name: " + authenticatedUserName);
         return noteService.getAllNotes(userName);
     }
 
