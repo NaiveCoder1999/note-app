@@ -26,6 +26,7 @@ public class NoteController {
     }
 
     @PostMapping("/{userName}/notes")
+    @PreAuthorize("#userName == authentication.name")
     public ResponseEntity<Void> createNote(@PathVariable String userName, @RequestBody Note note) {
         note.setUserName(userName);
         Note createdNote = noteService.createNote(note);
@@ -39,7 +40,7 @@ public class NoteController {
     }
 
     @GetMapping("/{userName}/notes")
-    //@PreAuthorize("#userName == authentication.name")
+    @PreAuthorize("#userName == authentication.name")
     public List<Note> getAllNotes(@PathVariable String userName) {
 //        // Get the Authentication object from the SecurityContextHolder
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -53,11 +54,13 @@ public class NoteController {
     }
 
     @GetMapping("/{userName}/notes/{id}")
+    @PreAuthorize("#userName == authentication.name")
     public Note getNote(@PathVariable long id, @PathVariable String userName) {
         return noteService.getNote(id, userName);
     }
 
     @PutMapping("/{userName}/notes/{id}")
+    @PreAuthorize("#userName == authentication.name")
     public ResponseEntity<Note> updateNote(@PathVariable long id, @PathVariable String userName,
                                            @RequestBody Note note) {
         note.setUserName(userName);
@@ -66,6 +69,7 @@ public class NoteController {
     }
 
     @DeleteMapping("/{userName}/notes/{id}")
+    @PreAuthorize("#userName == authentication.name")
     public ResponseEntity<Void> deleteNote(@PathVariable long id, @PathVariable String userName) {
         noteService.deleteNote(id, userName); //TODO scan the delete status?
         return ResponseEntity.noContent().build();
