@@ -118,13 +118,14 @@ public class AuthorizationServerConfig {
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("note-client") //secret with basic auth
-                .clientSecret("{bcrypt}$2a$10$2RjplWIrwNu5LHAi4v9YquSjjbvJP1EQtAJ8j9RaGWFNO/awbO3dS")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-//                .clientAuthenticationMethods(s -> {
-//                    s.add(ClientAuthenticationMethod.CLIENT_SECRET_POST);
-//                    s.add(ClientAuthenticationMethod.CLIENT_SECRET_BASIC);
-//                })
+                //.clientSecret("{bcrypt}$2a$10$2RjplWIrwNu5LHAi4v9YquSjjbvJP1EQtAJ8j9RaGWFNO/awbO3dS") //note_secret
+                //.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                //.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                .clientAuthenticationMethods(s -> {
+                    //s.add(ClientAuthenticationMethod.CLIENT_SECRET_POST);
+                    //s.add(ClientAuthenticationMethod.CLIENT_SECRET_BASIC);
+                    s.add(ClientAuthenticationMethod.NONE);// client authentication set to none for pkce
+                })
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
@@ -132,7 +133,10 @@ public class AuthorizationServerConfig {
                 //.redirectUri("http://127.0.0.1:8090/login/oauth2/code/messaging-client-oidc")
                 .scope(OidcScopes.OPENID).scope(OidcScopes.PROFILE)
                 .scope("read").scope("write")
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .clientSettings(ClientSettings.builder()
+                        .requireAuthorizationConsent(true)
+                        .requireProofKey(true) //Only PKCE is supported
+                        .build())
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
                         .idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)

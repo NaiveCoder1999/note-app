@@ -42,13 +42,13 @@ public class NoteController {
     @GetMapping("/{userName}/notes")
     @PreAuthorize("#userName == authentication.name")
     public List<Note> getAllNotes(@PathVariable String userName) {
-//        // Get the Authentication object from the SecurityContextHolder
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        // Get the authentication.name
-//        String authenticatedUserName = authentication.getName();
-//
-//        // Debug output
-//        System.out.println("Authenticated user name: " + authenticatedUserName);
+        // Get the Authentication object from the SecurityContextHolder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Get the authentication.name
+        String authenticatedUserName = authentication.getName();
+
+        // Debug output
+        System.out.println("Authenticated user name: " + authenticatedUserName);
         return noteService.getAllNotes(userName);
     }
 
