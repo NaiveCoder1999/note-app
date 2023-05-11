@@ -57,6 +57,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.time.Duration;
@@ -93,6 +94,9 @@ public class AuthorizationServerConfig {
         };
 
         authorizationServerConfigurer
+//                .authorizationEndpoint(authorizationEndpoint ->
+//                        authorizationEndpoint.errorResponseHandler(
+//                                new SimpleUrlAuthenticationFailureHandler("/error")))
                 .oidc((oidc) -> oidc.userInfoEndpoint((userInfo) -> userInfo
                                 .userInfoMapper(userInfoMapper)));
 
@@ -114,7 +118,7 @@ public class AuthorizationServerConfig {
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("note-client") //secret with basic auth
-                .clientSecret("{bcrypt}$2a$10$hP9wcBYsTP8w6vb76MAdLuHZa.fokYoxqW9l6UVNXG8IVLcP1q6BC")
+                .clientSecret("{bcrypt}$2a$10$2RjplWIrwNu5LHAi4v9YquSjjbvJP1EQtAJ8j9RaGWFNO/awbO3dS")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
 //                .clientAuthenticationMethods(s -> {
@@ -124,8 +128,8 @@ public class AuthorizationServerConfig {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .redirectUri("http://localhost:3000") //matched with react frontend app
-                .redirectUri("http://127.0.0.1:8090/login/oauth2/code/messaging-client-oidc")
+                .redirectUri("http://127.0.0.1:3000") //matched with react frontend app
+                //.redirectUri("http://127.0.0.1:8090/login/oauth2/code/messaging-client-oidc")
                 .scope(OidcScopes.OPENID).scope(OidcScopes.PROFILE)
                 .scope("read").scope("write")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
@@ -134,7 +138,8 @@ public class AuthorizationServerConfig {
                         .idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)
                         .accessTokenTimeToLive(Duration.ofSeconds(30 * 60))
                         .refreshTokenTimeToLive(Duration.ofSeconds(60 * 60))
-                        .reuseRefreshTokens(true).build())
+                        .reuseRefreshTokens(true)
+                        .build())
                 .build();
 
         // Save registered client in db as if in-memory

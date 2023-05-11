@@ -19,7 +19,7 @@ import java.util.List;
 public class NoteController {
 
     //@Autowired
-    private NoteService noteService;
+    private final NoteService noteService;
 
     public NoteController(NoteService noteService) {
         this.noteService = noteService;
@@ -44,7 +44,6 @@ public class NoteController {
     public List<Note> getAllNotes(@PathVariable String userName) {
 //        // Get the Authentication object from the SecurityContextHolder
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
 //        // Get the authentication.name
 //        String authenticatedUserName = authentication.getName();
 //
@@ -74,7 +73,5 @@ public class NoteController {
         noteService.deleteNote(id, userName); //TODO scan the delete status?
         return ResponseEntity.noContent().build();
     }
-
-
 
 }

@@ -37,8 +37,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
 public class DefaultSecurityConfig {
-    private static final String ENCODED_PASSWORD_NOCODER = "{bcrypt}$2a$10$FqKCo2nMKOhXKtFs3Nk3yu3y2MQEV6k5Y9XCtUNF9Zpm/V0VyeB0O";
-    private static final String ENCODED_PASSWORD_CODER = "{bcrypt}$2a$10$STkACKFURfwdkgPBaYtlMOodB6FfC/I1qicYZKPA3lqi7fAOpvc8m";
+    private static final String ENCODED_PASSWORD_NOCODER = "{bcrypt}$2a$10$Fq4H5l.G6pEzxy/UA/FLCOp6xIEvXGyefXZgY6X1oz/sljXEkmrTi";
+    private static final String ENCODED_PASSWORD_CODER = "{bcrypt}$2a$10$nAyI3nrm7J4Die.lAZ0wBOgJ2znIOPVOLLvh8gNo6jYlqqNfByDeO"; //coderCdx
 
     // @formatter:off
     @Bean
