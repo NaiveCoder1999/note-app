@@ -8,6 +8,7 @@ import HomePage from './components/HomePage';
 
 import { SuccessAlertMessageProvider } from './providers/SuccessAlertMessageContext';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/notes" element={<NoteList />} />
           <Route path="/notes/:noteId" element={<NoteInfo />} />
         </Routes>
+
       </SuccessAlertMessageProvider>
     </>
   );

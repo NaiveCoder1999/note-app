@@ -10,7 +10,7 @@ const Navbar = () => {
     >
       <div className="container-fluid">
         <a className="navbar-brand" href="/">
-          <svg 
+          <svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
             height="22"

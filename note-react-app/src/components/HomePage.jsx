@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Footer from '../components/Footer';
 // import * as Constants from '../constants/config';
 
 const HomePage = () => {
@@ -26,6 +27,7 @@ const HomePage = () => {
           </button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
