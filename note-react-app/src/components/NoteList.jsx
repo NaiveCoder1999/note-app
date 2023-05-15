@@ -181,9 +181,6 @@ export default function NoteList() {
     <>
       <div className="container">
         <h3>All Notes</h3>
-        {/* {deleteAlertMessage && (
-          <div className="alert alert-success">{deleteAlertMessage}</div>
-        )} */}
         {successAlertMessage && (
           <div className="alert alert-success">{successAlertMessage}</div>
         )}
