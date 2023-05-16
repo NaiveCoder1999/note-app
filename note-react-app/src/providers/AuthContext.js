@@ -45,8 +45,12 @@ const AuthProvider = ({ children }) => {
     );
     authUrl.searchParams.append('code_challenge', codeChallenge);
     authUrl.searchParams.append('code_challenge_method', 'S256');
-    //window.location.href = authUrl.href;
-    navigate(authUrl.href, { replace: true });
+    //Go to auithz login while preserving session history.
+    const loginString = decodeURIComponent(authUrl.href);
+    window.location.href = loginString; //external link with CORS enabled
+    // console.log(loginString);
+    // console.log('------');
+    //console.log(authUrl.searchParams.toString());
   };
 
   const handleLogout = () => {

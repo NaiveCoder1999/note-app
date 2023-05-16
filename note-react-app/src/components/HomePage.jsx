@@ -8,7 +8,6 @@ const HomePage = () => {
   const { handleLogin } = useAuth();
   const handleLoginClick = () => {
     handleLogin();
-    // TODO direct to OAuth2 link
     //console.log('Login button clicked');
   };
 

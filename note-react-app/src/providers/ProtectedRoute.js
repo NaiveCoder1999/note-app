@@ -5,7 +5,8 @@ import { useAuth } from './AuthContext';
 export const ProtectedRoute = ({ children }) => {
   const { accessToken } = useAuth();
   if (!accessToken) {
-    return <Navigate to="/login" />;
+    // Redirect to login HomePage
+    return <Navigate to="/" />;
   }
   return children;
 };
