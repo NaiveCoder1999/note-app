@@ -1,9 +1,11 @@
 import React, { useEffect, useContext } from 'react';
-import { useNavigate, useHistory } from 'react-router-dom';
-import { AuthContext } from './AuthContext';
+// import { useNavigate, useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../providers/AuthContext';
 
+//component for handling authorization code and then execute authentication
 const Callback = () => {
-  const history = useHistory();
+  //const history = useHistory();
   const navigate = useNavigate();
   const { handleAuthCallback } = useContext(AuthContext);
 
@@ -16,20 +18,22 @@ const Callback = () => {
       handleAuthCallback(code)
         .then(() => {
           //   history.push('/'); // Redirect to the home page or another protected route
-          navigate(`/`);
+          navigate('/notes');
         })
         .catch((err) => {
           console.error('Error during authentication:', err);
           //history.push('/login'); // Redirect to the login page on error
-          navigate(`/login`);
+          navigate('/', { replace: true });
         });
-    } else if (error) {
-      console.error('Error during authorization:', error);
-      //history.push('/login'); // Redirect to the login page on error
-      navigate(`/login`);
-    } else {
+    }
+    // else if (error) {
+    //   console.error('Error during authorization:', error);
+    //   //history.push('/login'); // Redirect to the login page on error
+    //   navigate('/', { replace: true });
+    // }
+    else {
       //history.push('/'); // Redirect to the home page if no code or error is present
-      navigate(`/`);
+      navigate('/notes', { replace: true });
     }
     //   }, [handleAuthCallback, history]);
   }, [handleAuthCallback, navigate]);

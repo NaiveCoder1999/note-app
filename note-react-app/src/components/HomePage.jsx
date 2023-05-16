@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Footer from '../components/Footer';
+import { useAuth } from '../providers/AuthContext';
 // import * as Constants from '../constants/config';
 
 const HomePage = () => {
+  const { handleLogin } = useAuth();
   const handleLoginClick = () => {
+    handleLogin();
     // TODO direct to OAuth2 link
-    console.log('Login button clicked');
+    //console.log('Login button clicked');
   };
 
   return (
@@ -27,6 +30,7 @@ const HomePage = () => {
           </button>
         </div>
       </div>
+
       <Footer />
     </div>
   );
