@@ -70,14 +70,23 @@ const AuthProvider = ({ children }) => {
   const exchangeCodeForAccessToken = async (code, codeVerifier) => {
     try {
       //TODO not working
-      const response = await axios.post(process.env.REACT_APP_TOKEN_ENDPOINT, {
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: process.env.REACT_APP_REDIRECT_URI,
-        code_verifier: codeVerifier,
-        client_id: process.env.REACT_APP_CLIENT_ID,
-        client_secret: process.env.REACT_APP_CLIENT_SECRET,
-      });
+      const response = await axios.post(
+        process.env.REACT_APP_TOKEN_ENDPOINT,
+        {
+          grant_type: 'authorization_code',
+          code: code,
+          redirect_uri: process.env.REACT_APP_REDIRECT_URI,
+          code_verifier: codeVerifier,
+          client_id: process.env.REACT_APP_CLIENT_ID,
+          client_secret: process.env.REACT_APP_CLIENT_SECRET,
+        },
+        //TODO set URL encoded form header to post auth request
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
 
       const {
         access_token: accessToken,
