@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 // import { useHistory, useNavigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { generateCodeVerifier, generateCodeChallenge } from '../services/pkce';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -29,12 +30,14 @@ const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const handleLogin = async () => {
+  // const handleLogin = async () => {
+  const handleLogin = () => {
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = generateCodeChallenge(codeVerifier);
 
-    sessionStorage.setItem('code_verifier', codeVerifier);
-
+    //sessionStorage.setItem('code_verifier', codeVerifier);
+    localStorage.setItem('code_verifier', codeVerifier);
+    console.log('verifier: ' + localStorage.getItem('code_verifier'));
     const authUrl = new URL(process.env.REACT_APP_AUTHZ_ENDPOINT);
     authUrl.searchParams.append('response_type', 'code');
     authUrl.searchParams.append('client_id', process.env.REACT_APP_CLIENT_ID);
@@ -47,9 +50,8 @@ const AuthProvider = ({ children }) => {
     authUrl.searchParams.append('code_challenge_method', 'S256');
     //Go to auithz login while preserving session history.
     const loginString = decodeURIComponent(authUrl.href);
-    window.location.href = loginString; //external link with CORS enabled
-    // console.log(loginString);
-    // console.log('------');
+    //window.location.href = loginString; //external link
+    console.log(loginString); //TODO to be deleted after debugging
     //console.log(authUrl.searchParams.toString());
   };
 
@@ -67,6 +69,7 @@ const AuthProvider = ({ children }) => {
   // TODO modified to pkce version, tokenEndpoint TODO
   const exchangeCodeForAccessToken = async (code, codeVerifier) => {
     try {
+      //TODO not working
       const response = await axios.post(process.env.REACT_APP_TOKEN_ENDPOINT, {
         grant_type: 'authorization_code',
         code: code,
@@ -85,6 +88,7 @@ const AuthProvider = ({ children }) => {
       // localStorage.setItem('access_token', accessToken);
       // localStorage.setItem('refresh_token', refreshToken);
       // localStorage.setItem('id_token', idToken);
+      console.log(response.data);
       return { accessToken, refreshToken, idToken };
     } catch (error) {
       console.error('Error exchanging code for access token:', error);
@@ -94,10 +98,13 @@ const AuthProvider = ({ children }) => {
 
   // triggered on auth callback of Callback component
   // to save tokens for access, refresh and id info
-  const handleAuthCallback = async (code) => {
-    const codeVerifier = sessionStorage.getItem('code_verifier');
-    sessionStorage.removeItem('code_verifier');
+  const handleAuthCallback = async (code, codeVerifier) => {
+    // const codeVerifier = sessionStorage.getItem('code_verifier');
+    //sessionStorage.removeItem('code_verifier');
+    //const codeVerifier = localStorage.getItem('code_verifier');
 
+    console.log('verifier in handleAuth: ' + codeVerifier);
+    //localStorage.removeItem('code_verifier');
     if (codeVerifier) {
       const { accessToken, refreshToken, idToken } =
         await exchangeCodeForAccessToken(code, codeVerifier);
@@ -110,7 +117,7 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem('refresh_token', refreshToken);
       localStorage.setItem('id_token', idToken);
       //history.push('/');
-      navigate('/'); // TODO Redirect to the home page or another protected route
+      //navigate('/'); // TODO Redirect to the home page or another protected route
     } else {
       console.error('Missing code verifier');
     }

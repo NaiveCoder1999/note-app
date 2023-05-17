@@ -13,30 +13,33 @@ const Callback = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     const error = urlParams.get('error');
-
-    if (code) {
-      handleAuthCallback(code)
+    const codeVerifier = localStorage.getItem('code_verifier');
+    if (code && codeVerifier) {
+      console.log('code: ' + code);
+      console.log(
+        'verifier in Callback: ' + localStorage.getItem('code_verifier')
+      );
+      localStorage.removeItem('code_verifier');
+      handleAuthCallback(code, codeVerifier) //TODO
         .then(() => {
           //   history.push('/'); // Redirect to the home page or another protected route
-          navigate('/notes');
+          // navigate('/notes');
         })
         .catch((err) => {
           console.error('Error during authentication:', err);
           //history.push('/login'); // Redirect to the login page on error
-          navigate('/', { replace: true });
+          //navigate('/', { replace: true });
         });
-    }
-    // else if (error) {
-    //   console.error('Error during authorization:', error);
-    //   //history.push('/login'); // Redirect to the login page on error
-    //   navigate('/', { replace: true });
-    // }
-    else {
+    } else if (error) {
+      console.error('Error during authorization:', error);
+      //history.push('/login'); // Redirect to the login page on error
+      //navigate('/', { replace: true });
+    } else {
       //history.push('/'); // Redirect to the home page if no code or error is present
-      navigate('/notes', { replace: true });
+      //navigate('/', { replace: true });
     }
-    //   }, [handleAuthCallback, history]);
-  }, [handleAuthCallback, navigate]);
+    // }, [handleAuthCallback, navigate]);
+  });
   return (
     <div>
       <h1>Redirecting...</h1>

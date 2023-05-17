@@ -59,6 +59,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -67,11 +70,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * @author Joe Grandja
- * @author Dmitriy Dubson
- * @since 0.0.1
- */
 @Configuration(proxyBeanMethods = false)
 //@Configuration
 public class AuthorizationServerConfig {
@@ -105,13 +103,18 @@ public class AuthorizationServerConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
+                //.cors().configurationSource(corsConfigurationSource())
+                //.cors(cors -> cors.disable())
+                //.cors(Customizer.withDefaults())
                 .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(
                         new LoginUrlAuthenticationEntryPoint("/login")))
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .apply(authorizationServerConfigurer);
-
+        // @formatter:on
+        http.cors(Customizer.withDefaults());
         return http.build();
     }
+
 
 
     @Bean
@@ -129,7 +132,8 @@ public class AuthorizationServerConfig {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .redirectUri("http://127.0.0.1:3000") //matched with react frontend app
+                .redirectUri("http://127.0.0.1:3000/callback") //matched with react frontend app
+                //.redirectUri("http://127.0.0.1:3000") //matched with react frontend app
                 //.redirectUri("http://127.0.0.1:8090/login/oauth2/code/messaging-client-oidc")
                 .scope(OidcScopes.OPENID).scope(OidcScopes.PROFILE)
                 .scope("read").scope("write")

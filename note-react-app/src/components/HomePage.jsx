@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import React from 'react';
 import Footer from '../components/Footer';
 import { useAuth } from '../providers/AuthContext';
@@ -7,8 +7,11 @@ import { useAuth } from '../providers/AuthContext';
 const HomePage = () => {
   const { handleLogin } = useAuth();
   const handleLoginClick = () => {
+    console.log('Login button clicked');
+    // const timer = setTimeout(() => {
+    //   handleLogin();
+    // }, 2500);
     handleLogin();
-    //console.log('Login button clicked');
   };
 
   return (
