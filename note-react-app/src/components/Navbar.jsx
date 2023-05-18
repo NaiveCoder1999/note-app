@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useAuth } from '../providers/AuthContext';
 // import * as Constants from '../constants/config';
 
 const Navbar = () => {
+  const { handleLogin } = useAuth();
   return (
     <nav
       className="navbar navbar-dark bg-dark navbar-expand-lg bg-body-tertiary"
@@ -45,7 +47,7 @@ const Navbar = () => {
                 Notes
               </a>
             </li>
-            {/* <li className="nav-item dropdown">
+            <li className="nav-item dropdown">
               <a
                 className="nav-link dropdown-toggle"
                 href="#"
@@ -75,7 +77,7 @@ const Navbar = () => {
                   </a>
                 </li>
               </ul>
-            </li> */}
+            </li>
             <li className="nav-item">
               <a className="nav-link disabled">Disabled</a>
             </li>
@@ -89,7 +91,11 @@ const Navbar = () => {
             />
           </form>
           <div className="text-end">
-            <button type="button" className="btn btn-warning">
+            <button
+              type="button"
+              className="btn btn-warning"
+              onClick={() => handleLogin()}
+            >
               Login
             </button>
           </div>

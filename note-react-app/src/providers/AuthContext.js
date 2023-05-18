@@ -37,7 +37,7 @@ const AuthProvider = ({ children }) => {
 
     //sessionStorage.setItem('code_verifier', codeVerifier);
     localStorage.setItem('code_verifier', codeVerifier);
-    console.log('verifier: ' + localStorage.getItem('code_verifier'));
+    //console.log('verifier: ' + localStorage.getItem('code_verifier'));
     const authUrl = new URL(process.env.REACT_APP_AUTHZ_ENDPOINT);
     authUrl.searchParams.append('response_type', 'code');
     authUrl.searchParams.append('client_id', process.env.REACT_APP_CLIENT_ID);
@@ -50,9 +50,8 @@ const AuthProvider = ({ children }) => {
     authUrl.searchParams.append('code_challenge_method', 'S256');
     //Go to auithz login while preserving session history.
     const loginString = decodeURIComponent(authUrl.href);
-    //window.location.href = loginString; //external link
-    console.log(loginString); //TODO to be deleted after debugging
-    //console.log(authUrl.searchParams.toString());
+    window.location.href = loginString; //external link
+    //console.log(loginString + authUrl.searchParams.toString());
   };
 
   const handleLogout = () => {
@@ -69,7 +68,6 @@ const AuthProvider = ({ children }) => {
   // TODO modified to pkce version, tokenEndpoint TODO
   const exchangeCodeForAccessToken = async (code, codeVerifier) => {
     try {
-      //TODO not working
       const response = await axios.post(
         process.env.REACT_APP_TOKEN_ENDPOINT,
         {
@@ -80,7 +78,6 @@ const AuthProvider = ({ children }) => {
           client_id: process.env.REACT_APP_CLIENT_ID,
           client_secret: process.env.REACT_APP_CLIENT_SECRET,
         },
-        //TODO set URL encoded form header to post auth request
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -93,7 +90,6 @@ const AuthProvider = ({ children }) => {
         refresh_token: refreshToken,
         id_token: idToken,
       } = response.data;
-      // TODO set localStorage or hooks?
       // localStorage.setItem('access_token', accessToken);
       // localStorage.setItem('refresh_token', refreshToken);
       // localStorage.setItem('id_token', idToken);
@@ -111,9 +107,7 @@ const AuthProvider = ({ children }) => {
     // const codeVerifier = sessionStorage.getItem('code_verifier');
     //sessionStorage.removeItem('code_verifier');
     //const codeVerifier = localStorage.getItem('code_verifier');
-
     console.log('verifier in handleAuth: ' + codeVerifier);
-    //localStorage.removeItem('code_verifier');
     if (codeVerifier) {
       const { accessToken, refreshToken, idToken } =
         await exchangeCodeForAccessToken(code, codeVerifier);
@@ -126,7 +120,7 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem('refresh_token', refreshToken);
       localStorage.setItem('id_token', idToken);
       //history.push('/');
-      //navigate('/'); // TODO Redirect to the home page or another protected route
+      navigate('/notes'); // TODO Redirect to the home page or another protected route
     } else {
       console.error('Missing code verifier');
     }
