@@ -6,6 +6,7 @@ import NoteInfo from './components/NoteInfo';
 import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
 import Callback from './components/Callback';
+import Test from './components/Test';
 
 import { SuccessAlertMessageProvider } from './providers/SuccessAlertMessageContext';
 import { AuthProvider } from './providers/AuthContext';
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/callback" element={<Callback />} />
+            <Route path="/test" element={<Test />} />
             <Route path="/notes" element={<NoteList />} />
             <Route path="/notes/:noteId" element={<NoteInfo />} />
           </Routes>

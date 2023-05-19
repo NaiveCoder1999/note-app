@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as Constants from '../constants/config';
+
 // post request to get access token, refresh token, and id token
 export const exchangeCodeForAccessToken = async (code, codeVerifier) => {
   try {
@@ -26,10 +26,7 @@ export const exchangeCodeForAccessToken = async (code, codeVerifier) => {
       refresh_token: refreshToken,
       id_token: idToken,
     } = response.data;
-    // localStorage.setItem('access_token', accessToken);
-    // localStorage.setItem('refresh_token', refreshToken);
-    // localStorage.setItem('id_token', idToken);
-    console.log(response.data); //TODO removed when finished
+    //console.log(response.data); //TODO removed when finished
     return { accessToken, refreshToken, idToken };
   } catch (error) {
     console.error('Error exchanging code for access token:', error);
@@ -37,5 +34,58 @@ export const exchangeCodeForAccessToken = async (code, codeVerifier) => {
   }
 };
 
-// post method with params to exchange new access token
-export const refreshAccessToken = async (refreshCode) => {};
+// post method with params of refresh token to exchange new access token
+export const refreshAccessToken = async (refreshToken) => {
+  try {
+    const response = await axios.post(
+      process.env.REACT_APP_TOKEN_ENDPOINT,
+      {},
+      {
+        params: {
+          grant_type: 'refresh_token',
+          refresh_token: refreshToken,
+          client_id: process.env.REACT_APP_CLIENT_ID,
+          client_secret: process.env.REACT_APP_CLIENT_SECRET,
+        },
+      }
+    );
+
+    //const { access_token: newAccessToken } = response.data;
+    const newAccessToken = response.data.access_token;
+    //console.log('new access token: ' + newAccessToken);
+    return newAccessToken;
+  } catch (error) {
+    console.error('Error refershing access token:', error);
+    throw error;
+  }
+};
+
+// export const refreshAccessToken = (refreshToken) => {
+//   axios
+//     .post(
+//       process.env.REACT_APP_TOKEN_ENDPOINT,
+//       {},
+//       {
+//         params: {
+//           grant_type: 'refresh_token',
+//           refresh_token: refreshToken,
+//           client_id: process.env.REACT_APP_CLIENT_ID,
+//           client_secret: process.env.REACT_APP_CLIENT_SECRET,
+//         },
+//       }
+//     )
+//     .then((response) => {
+//       const {
+//         access_token: accessToken,
+//         refresh_token: refreshToken,
+//         id_token: idToken,
+//       } = response.data;
+//       console.log(response.data); //TODO removed when finished
+//       console.log('new access token: ' + accessToken);
+//       return { accessToken, refreshToken, idToken };
+//     })
+//     .catch((error) => {
+//       console.error('Error refershing access token:', error);
+//       throw error;
+//     });
+// };

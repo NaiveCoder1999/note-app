@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { refreshAccessToken } from '../services/tokenService';
 import * as Constants from '../constants/config';
 
 function getLocalAccessToken() {
@@ -6,6 +7,9 @@ function getLocalAccessToken() {
   return accessToken;
 }
 
+function setLocalAccessToken(newAccessToken) {
+  localStorage.setItem('access_token', newAccessToken);
+}
 function getLocalRefreshToken() {
   const refreshToken = localStorage.getItem('refresh_token');
   return refreshToken;
@@ -26,7 +30,7 @@ const instance = axios.create({
 //TODO interceptor for access token
 const requestInterceptor = instance.interceptors.request.use(
   function (config) {
-    // Do something before request is sent
+    // set access token in header before request is sent
     const token = getLocalAccessToken();
     if (token) {
       config.headers['Authorization'] = 'Bearer ' + token; // for Spring Boot back-end
@@ -54,11 +58,14 @@ const responseInterceptor = instance.interceptors.use(
       if (error.response.status === 401 && !originalConfig._retry) {
         originalConfig._retry = true;
         // TODO call refreshToken() request for example;
+        const { newAccessToken } = await refreshAccessToken(
+          getLocalRefreshToken()
+        );
+        setLocalAccessToken(newAccessToken);
         // return a request
         return instance(originalConfig);
-      }
-
-      if (error.response.status === 403) {
+      } else {
+        //TODO
         // Do something
         return Promise.reject(error.response.data);
       }

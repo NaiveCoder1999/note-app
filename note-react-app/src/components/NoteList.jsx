@@ -161,17 +161,6 @@ export default function NoteList() {
           );
         } else {
           return parse(snippet.content);
-          // return parse(snippet.content, {
-          //   replace: (domNode) => {
-          //     if (domNode.name === 'a') {
-          //       return (
-          //         <a href={domNode.attribs.href} key={index}>
-          //           {domToReact(domNode.children)}
-          //         </a>
-          //       );
-          //     }
-          //   },
-          // });
         }
       });
     }
