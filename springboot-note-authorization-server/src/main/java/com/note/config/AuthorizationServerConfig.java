@@ -105,13 +105,13 @@ public class AuthorizationServerConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
                 //.cors().configurationSource(corsConfigurationSource())
                 //.cors(cors -> cors.disable())
-                //.cors(Customizer.withDefaults())
+                .cors(Customizer.withDefaults()) // overwritten with CorsConfig class
                 .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(
                         new LoginUrlAuthenticationEntryPoint("/login")))
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .apply(authorizationServerConfigurer);
         // @formatter:on
-        http.cors(Customizer.withDefaults());
+        //http.cors(Customizer.withDefaults());
         return http.build();
     }
 

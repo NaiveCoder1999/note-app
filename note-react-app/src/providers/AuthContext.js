@@ -65,7 +65,6 @@ const AuthProvider = ({ children }) => {
   };
 
   // post request to get access token, refresh token, and id token
-  // TODO modified to pkce version, tokenEndpoint TODO
   const exchangeCodeForAccessToken = async (code, codeVerifier) => {
     try {
       const response = await axios.post(
@@ -80,6 +79,7 @@ const AuthProvider = ({ children }) => {
         },
         {
           headers: {
+            // Automatic serialization of form data
             'Content-Type': 'application/x-www-form-urlencoded',
           },
         }
@@ -93,7 +93,7 @@ const AuthProvider = ({ children }) => {
       // localStorage.setItem('access_token', accessToken);
       // localStorage.setItem('refresh_token', refreshToken);
       // localStorage.setItem('id_token', idToken);
-      console.log(response.data);
+      console.log(response.data); //TODO removed when finished
       return { accessToken, refreshToken, idToken };
     } catch (error) {
       console.error('Error exchanging code for access token:', error);
