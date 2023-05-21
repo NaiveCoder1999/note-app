@@ -52,14 +52,19 @@ export const refreshAccessToken = async (refreshToken) => {
 
     //const { access_token: newAccessToken } = response.data;
     const newAccessToken = response.data.access_token;
-    //console.log('new access token: ' + newAccessToken);
-    return newAccessToken;
+    const newRefreshToken = response.data.refresh_token;
+    const newIdToken = response.data.id_token;
+    console.log('new access token: ' + newAccessToken);
+    console.log('new refresh token: ' + newRefreshToken);
+    console.log('new id token: ' + newIdToken);
+    return { newAccessToken, newRefreshToken, newIdToken };
   } catch (error) {
     console.error('Error refershing access token:', error);
     throw error;
   }
 };
 
+// // sync method of exchanging new access token with refresh token
 // export const refreshAccessToken = (refreshToken) => {
 //   axios
 //     .post(

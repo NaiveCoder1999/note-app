@@ -3,8 +3,7 @@ import * as Constants from '../constants/config';
 //import method of context
 import { SuccessAlertMessageContext } from '../providers/SuccessAlertMessageContext';
 
-import { getAllNotes } from '../services/getAllNotes'; //non-default export
-import { deleteNote } from '../services/deleteNote';
+import { getAllNotes, deleteNote } from '../services/noteService'; //non-default export
 import { useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 

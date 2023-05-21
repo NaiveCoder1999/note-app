@@ -1,10 +1,8 @@
 //import PropTypes from 'prop-types';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Constants from '../constants/config';
-import { updateNote } from '../services/updateNote';
-import { createNote } from '../services/createNote';
+import { getSingleNote, createNote, updateNote } from '../services/noteService';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSingleNote } from '../services/getSingleNote';
 import NoteForm from './NoteForm.jsx';
 //import method of context
 import { SuccessAlertMessageContext } from '../providers/SuccessAlertMessageContext';

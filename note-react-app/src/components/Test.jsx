@@ -2,16 +2,20 @@ import { refreshAccessToken } from '../services/tokenService';
 import React, { useState, useEffect } from 'react';
 
 export default function Test() {
-  const [newAccessToken, setNewAccessToken] = useState('');
-  //const refreshToken = localStorage.getItem('refresh_token');
+  const [accessToken, setAccessToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
+  const [idToken, setIdToken] = useState(null);
   useEffect(() => {
     const fetchAccessToken = async () => {
       try {
-        const token = await refreshAccessToken(
-          localStorage.getItem('refresh_token')
-          //refreshToken
-        );
-        setNewAccessToken(token);
+        const { newAccessToken, newRefreshToken, newIdToken } =
+          await refreshAccessToken(
+            localStorage.getItem('refresh_token')
+            //refreshToken
+          );
+        setAccessToken(newAccessToken);
+        setRefreshToken(newRefreshToken);
+        setIdToken(newIdToken);
       } catch (error) {
         console.error('Error refreshing access token:', error);
       }
@@ -22,12 +26,18 @@ export default function Test() {
   //setToken(newAccessToken);
   return (
     <div>
-      <h1>New Access Token</h1>
-      {newAccessToken ? (
-        <p>New access token: {newAccessToken}</p>
+      <h1>Test</h1>
+      {accessToken ? (
+        <p>Access token: {accessToken}</p>
       ) : (
-        <p>Loading new access token...</p>
+        <p>Loading access token...</p>
       )}
+      {refreshToken ? (
+        <p>Refresh token: {refreshToken}</p>
+      ) : (
+        <p>Loading refresh token...</p>
+      )}
+      {idToken ? <p>ID token: {idToken}</p> : <p>Loading ID token...</p>}
     </div>
   );
 }

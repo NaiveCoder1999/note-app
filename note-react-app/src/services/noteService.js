@@ -15,11 +15,18 @@ function getLocalRefreshToken() {
   return refreshToken;
 }
 
+function setLocalRefreshToken(newRefreshToken) {
+  localStorage.setItem('refresh_token', newRefreshToken);
+}
+
 function getLocalIDToken() {
   const idToken = localStorage.getItem('id_token');
   return idToken;
 }
 
+function setLocalIdToken(newIdToken) {
+  localStorage.setItem('id_token', newIdToken);
+}
 // basic axios instance for notes api
 const instance = axios.create({
   //baseURL: Constants.COURSE_API_URL,
@@ -33,46 +40,59 @@ const requestInterceptor = instance.interceptors.request.use(
     // set access token in header before request is sent
     const token = getLocalAccessToken();
     if (token) {
+      // config.headers.common['Authorization'] = 'Bearer ' + token; // for Spring Boot back-end
       config.headers['Authorization'] = 'Bearer ' + token; // for Spring Boot back-end
     }
     return config;
   },
   function (error) {
     // Do something with request error
-    return Promise.reject(error);
+    // return Promise.reject(error);
+    return Promise.reject(error.response || error.message);
   }
 );
 
 //TODO
-const responseInterceptor = instance.interceptors.use(
+const responseInterceptor = instance.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
     return response;
   },
   async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
     const originalConfig = error.config;
+    const refreshToken = getLocalRefreshToken();
     if (error.response) {
-      if (error.response.status === 401 && !originalConfig._retry) {
+      if (
+        refreshToken &&
+        error.response.status === 401 &&
+        !originalConfig._retry
+      ) {
         originalConfig._retry = true;
-        // TODO call refreshToken() request for example;
-        const { newAccessToken } = await refreshAccessToken(
-          getLocalRefreshToken()
-        );
-        setLocalAccessToken(newAccessToken);
-        // return a request
-        return instance(originalConfig);
-      } else {
-        //TODO
-        // Do something
-        return Promise.reject(error.response.data);
+        // call refreshToken() request
+        try {
+          const { newAccessToken, newRefreshToken, newIdToken } =
+            await refreshAccessToken(
+              //localStorage.getItem('refresh_token')
+              refreshToken
+            );
+          setLocalAccessToken(newAccessToken);
+          setLocalRefreshToken(newRefreshToken);
+          setLocalIdToken(newIdToken);
+
+          originalConfig.headers['Authorization'] = 'Bearer ' + newAccessToken;
+          // return a modified instance
+          return instance(originalConfig);
+        } catch (error) {
+          return Promise.reject(error.response.data);
+          // TODO logout function to be implemented
+        }
       }
     }
     return Promise.reject(error);
   }
 );
+
 export async function getSingleNote(name, id) {
   return instance({
     url: name + '/notes' + '/' + id,
