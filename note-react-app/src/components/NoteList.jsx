@@ -97,7 +97,7 @@ export default function NoteList() {
     const parser = new DOMParser();
     // parse the HTML string into a DOM tree
     const html = parser.parseFromString(htmlString, 'text/html');
-    // find all the <code> tags in the DOM tree
+    // find all the <code> tagged strings in the DOM tree
     const codeTags = html.getElementsByTagName('code');
     if (codeTags.length === 0) {
       // If there are no code snippets,
@@ -105,9 +105,11 @@ export default function NoteList() {
       return parse(htmlString);
     } else {
       const snippets = [];
-      let lastIndex = -1; // last character of string already processed
+      let lastIndex = -1; // location of last character of string already processed
       // allocate each snippet a unique index property, independent
       let codeSnippetIndex = 0;
+      let snippetIndex = 0; // global index number for each snippet (code + non-code)
+      //pre-process the <language-xxx> tag to <xxx> tag inside <code> tags for syntax rendering
       for (let i = 0; i < codeTags.length; i++) {
         const codeTag = codeTags[i];
         const classAttr = codeTag.getAttribute('class');
@@ -115,14 +117,15 @@ export default function NoteList() {
           classAttr && classAttr.startsWith('language-')
             ? classAttr.replace('language-', '')
             : 'text';
-
-        const code = codeTag.innerHTML; //notes inside the <code> tag
-        // starting index of each code snippet by string.indexOf(searchvalue, startIndex)
+        //notes content which is inside the <code> tag
+        const code = codeTag.innerHTML;
+        // find starting index of each code snippet by string.indexOf(searchvalue, startIndex)
         const codeSnippetStartIdx = htmlString.indexOf(
           codeTag.outerHTML,
           lastIndex + 1
         );
         // used to find the ending index of each code snippet
+        // codeTag.outerHTML.length is the length of string contains two <code> tag
         const codeSnippetEndIdx =
           codeSnippetStartIdx + codeTag.outerHTML.length;
         //new <code> start index is greater than processed string's last index
@@ -131,35 +134,50 @@ export default function NoteList() {
           snippets.push({
             type: 'nonCode',
             content: htmlString.substring(lastIndex + 1, codeSnippetStartIdx),
+            index: snippetIndex++,
+            codeIndex: -1,
           });
         }
         snippets.push({
           type: 'code',
           content: { language, code },
-          index: codeSnippetIndex++,
+          index: snippetIndex++,
+          codeIndex: codeSnippetIndex++,
         });
         //point to last last character in the code snippet,
         // not the character immediately after it
         lastIndex = codeSnippetEndIdx - 1;
       }
       // checks if we've reached the end of the input HTML string
-      // and there are no more <code> tags to process.
+      // it means there are no more <code> tags to process, only remains non-code string
       if (lastIndex < htmlString.length - 1) {
         snippets.push({
           type: 'nonCode',
           content: htmlString.substring(lastIndex + 1),
+          index: snippetIndex++,
+          codeIndex: -1,
         });
       }
       return snippets.map((snippet, index) => {
         if (snippet.type === 'code') {
           const { language, code } = snippet.content;
           return (
-            <SyntaxHighlighter key={index} language={language} style={oneDark}>
+            <div key={snippet.index}>
+            <SyntaxHighlighter
+              // key={snippet.codeIndex}
+              language={language}
+              style={oneDark}
+            >
               {code}
             </SyntaxHighlighter>
+            </div>
           );
         } else {
-          return parse(snippet.content);
+          return (
+            <div key={snippet.index}>
+              {parse(snippet.content)}
+            </div>
+          );
         }
       });
     }
@@ -193,7 +211,10 @@ export default function NoteList() {
                   <td>
                     <button
                       className="btn btn-secondary"
-                      onClick={() => handlePreviewModal(note)}
+                      onClick={() => {
+                        handlePreviewModal(note);
+                        //console.log(note.id);
+                      }}
                     >
                       Preview
                     </button>

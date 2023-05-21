@@ -84,7 +84,7 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem('refresh_token', refreshToken);
       localStorage.setItem('id_token', idToken);
       //history.push('/');
-      navigate('/notes'); // TODO Redirect to the home page or another protected route
+      //navigate('/notes'); // Redirect to the home page or another protected route
     } else {
       console.error('Missing code verifier');
     }

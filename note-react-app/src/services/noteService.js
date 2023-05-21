@@ -1,6 +1,9 @@
 import axios from 'axios';
+import React, { useEffect, useContext } from 'react';
 import { refreshAccessToken } from '../services/tokenService';
+import { AuthContext } from '../providers/AuthContext';
 import * as Constants from '../constants/config';
+import { useNavigate } from 'react-router-dom';
 
 function getLocalAccessToken() {
   const accessToken = localStorage.getItem('access_token');
@@ -85,7 +88,7 @@ const responseInterceptor = instance.interceptors.response.use(
           return instance(originalConfig);
         } catch (error) {
           return Promise.reject(error.response.data);
-          // TODO logout function to be implemented
+          // TODO handle logout function to be implemented
         }
       }
     }
