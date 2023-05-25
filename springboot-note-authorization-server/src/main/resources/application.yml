@@ -1,0 +1,10 @@
+logging:
+    level:
+        org:
+            springframework:
+                security: INFO
+                security.oauth2: INFO
+                web: INFO
+        root: INFO
+server:
+    port: 8090

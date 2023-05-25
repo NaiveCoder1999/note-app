@@ -8,10 +8,10 @@ const HomePage = () => {
   const { handleLogin } = useAuth();
   const handleLoginClick = () => {
     console.log('Login button clicked');
+    handleLogin();
     // const timer = setTimeout(() => {
     //   handleLogin();
     // }, 2500);
-    handleLogin();
   };
 
   return (

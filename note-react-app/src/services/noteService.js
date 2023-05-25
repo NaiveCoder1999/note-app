@@ -1,10 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useContext } from 'react';
 import { refreshAccessToken } from '../services/tokenService';
-import { AuthContext } from '../providers/AuthContext';
+import { useAuth, AuthContext } from '../providers/AuthContext';
 import * as Constants from '../constants/config';
 import { useNavigate } from 'react-router-dom';
 
+function refreshPage() {
+  window.location.reload(true);
+}
 function getLocalAccessToken() {
   const accessToken = localStorage.getItem('access_token');
   return accessToken;
@@ -49,9 +52,8 @@ const requestInterceptor = instance.interceptors.request.use(
     return config;
   },
   function (error) {
-    // Do something with request error
-    // return Promise.reject(error);
-    return Promise.reject(error.response || error.message);
+    return Promise.reject(error);
+    // return Promise.reject(error.response || error.message);
   }
 );
 
@@ -84,11 +86,16 @@ const responseInterceptor = instance.interceptors.response.use(
           setLocalIdToken(newIdToken);
 
           originalConfig.headers['Authorization'] = 'Bearer ' + newAccessToken;
-          // return a modified instance
+          //refreshPage();
+          window.location.reload();
           return instance(originalConfig);
         } catch (error) {
+          // Refresh token missing or expired => logout user...
+          // and quit app: windows.location.href = '/login';
+          // TODO invoke handle logout function to be implemented:
+          //handleLogout();
+          window.location.href = 'http://127.0.0.1:3000';
           return Promise.reject(error.response.data);
-          // TODO handle logout function to be implemented
         }
       }
     }

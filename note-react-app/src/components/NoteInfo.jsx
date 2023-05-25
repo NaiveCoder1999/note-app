@@ -115,7 +115,6 @@ export default function NoteInfo() {
       <div className="container">
         <NoteForm initialValues={noteData} onSubmit={handleSubmit} />
       </div>
-      {/* <div className="ProseMirror"> {parse(preview)} </div> */}
     </div>
   );
 }

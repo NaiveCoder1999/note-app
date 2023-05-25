@@ -48,7 +48,10 @@ public class DefaultSecurityConfig {
                         authorize.anyRequest().authenticated()
                 )
                 .cors(withDefaults())
+                // use default login page provided by spring-security
+                // https://github.com/spring-projects/spring-authorization-server/issues/533#issuecomment-1448611820
                 .formLogin(withDefaults());
+                //TODO logout settings
         return http.build();
     }
 
