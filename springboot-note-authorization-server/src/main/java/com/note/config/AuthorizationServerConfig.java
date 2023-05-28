@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -58,6 +59,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -106,9 +108,16 @@ public class AuthorizationServerConfig {
                 //.cors().configurationSource(corsConfigurationSource())
                 //.cors(cors -> cors.disable())
                 .cors(Customizer.withDefaults()) // overwritten with CorsConfig class
-                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(
-                        new LoginUrlAuthenticationEntryPoint("/login")))
-                //.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+//                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(
+//                        new LoginUrlAuthenticationEntryPoint("/login")))
+                // Redirect to the login page when not authenticated from the
+                // authorization endpoint
+                .exceptionHandling((exceptions) -> exceptions
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                        )
+                )
                 .oauth2ResourceServer(oauth2ResourceServer ->
                         oauth2ResourceServer.jwt(Customizer.withDefaults()))
                 .apply(authorizationServerConfigurer);
@@ -135,8 +144,7 @@ public class AuthorizationServerConfig {
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .redirectUri("http://127.0.0.1:3000/callback") //matched with react frontend app
-                //.redirectUri("http://127.0.0.1:3000") //matched with react frontend app
-                //.redirectUri("http://127.0.0.1:8090/login/oauth2/code/messaging-client-oidc")
+                .postLogoutRedirectUri("http://127.0.0.1:3000/logout")
                 .scope(OidcScopes.OPENID).scope(OidcScopes.PROFILE)
                 .scope("read").scope("write")
                 .clientSettings(ClientSettings.builder()
@@ -148,7 +156,9 @@ public class AuthorizationServerConfig {
                         .idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)
                         .accessTokenTimeToLive(Duration.ofSeconds(30 * 60))
                         .refreshTokenTimeToLive(Duration.ofSeconds(60 * 60))
-                        .reuseRefreshTokens(true)
+//                        .reuseRefreshTokens(true)
+                        // when returning the access token response, return new refresh token for security
+                        .reuseRefreshTokens(false)
                         .build())
                 .build();
 

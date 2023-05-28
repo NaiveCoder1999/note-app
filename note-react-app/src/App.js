@@ -5,6 +5,7 @@ import NoteList from './components/NoteList';
 import NoteInfo from './components/NoteInfo';
 import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
+import Logout from './components/Logout';
 import Callback from './components/Callback';
 import Test from './components/Test';
 
@@ -22,6 +23,7 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/logout" element={<Logout />} />
             <Route path="/callback" element={<Callback />} />
             <Route path="/test" element={<Test />} />
             <Route path="/notes" element={<NoteList />} />

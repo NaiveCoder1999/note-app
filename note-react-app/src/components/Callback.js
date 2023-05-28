@@ -20,7 +20,8 @@ const Callback = () => {
       localStorage.removeItem('code_verifier');
       handleAuthCallback(code, codeVerifier)
         .then(() => {
-          navigate('/notes'); // Redirect to the home page or another protected route
+          //navigate('/notes', { replace: true }); // Redirect to the home page or another protected route
+          window.location.replace('http://127.0.0.1:3000/notes');
         })
         .catch((err) => {
           console.error('Error during authentication:', err);

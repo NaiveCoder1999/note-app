@@ -7,10 +7,9 @@ import org.hibernate.annotations.GenericGenerator;
 public class Note {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
-    //@GeneratedValue(strategy = GenerationType.AUTO, generator = "manual-generator")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "manual-generator")
-    @GenericGenerator(name = "manual-generator", strategy = "com.springbootnote.model.generator.ManualInsertGenerator")
+//    @GenericGenerator(name = "manual-generator", type = com.springbootnote.model.generator.ManualInsertGenerator.class, strategy = "com.springbootnote.model.generator.ManualInsertGenerator")
+    @GenericGenerator(name = "manual-generator", type = com.springbootnote.model.generator.ManualInsertGenerator.class)
     private Long id;
     private String noteName;
     private String userName;

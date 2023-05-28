@@ -2,6 +2,7 @@ package com.springbootnote.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,16 +20,18 @@ public class ResourceServerConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
-                .csrf().disable()
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
                 //.securityMatcher("/user/**")
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api-docs/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/h2-ui/**")).permitAll()
-                        .requestMatchers("/user/**").hasAnyAuthority("OIDC_USER", "SCOPE_read", "SCOPE_write", "ROLE_USER", "ROLE_ADMIN"))
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+                        .requestMatchers("/user/**").hasAnyAuthority(
+                                "OIDC_USER", "SCOPE_read", "SCOPE_write",
+                                    "ROLE_USER", "ROLE_ADMIN"))
+                .oauth2ResourceServer(oauth2ResourceServer ->
+                        oauth2ResourceServer.jwt(Customizer.withDefaults()));
         return http.build();
     }
     // @formatter:on
