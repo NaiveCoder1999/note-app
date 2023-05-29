@@ -146,7 +146,7 @@ public class AuthorizationServerConfig {
                 .redirectUri("http://127.0.0.1:3000/callback") //matched with react frontend app
                 .postLogoutRedirectUri("http://127.0.0.1:3000/logout")
                 .scope(OidcScopes.OPENID).scope(OidcScopes.PROFILE)
-                .scope("read").scope("write")
+                .scope("note:read").scope("note:write")
                 .clientSettings(ClientSettings.builder()
                         .requireAuthorizationConsent(true)
                         .requireProofKey(true) //Only PKCE is supported

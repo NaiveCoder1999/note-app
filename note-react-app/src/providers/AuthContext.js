@@ -42,7 +42,7 @@ const AuthProvider = ({ children }) => {
     const authUrl = new URL(process.env.REACT_APP_AUTHZ_ENDPOINT);
     authUrl.searchParams.append('response_type', 'code');
     authUrl.searchParams.append('client_id', process.env.REACT_APP_CLIENT_ID);
-    authUrl.searchParams.append('scope', 'openid+read+write');
+    authUrl.searchParams.append('scope', process.env.REACT_APP_OAUTH2_SCOPE);
     authUrl.searchParams.append(
       'redirect_uri',
       process.env.REACT_APP_REDIRECT_URI

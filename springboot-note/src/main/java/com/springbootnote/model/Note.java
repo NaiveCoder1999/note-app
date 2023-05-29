@@ -8,7 +8,6 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "manual-generator")
-//    @GenericGenerator(name = "manual-generator", type = com.springbootnote.model.generator.ManualInsertGenerator.class, strategy = "com.springbootnote.model.generator.ManualInsertGenerator")
     @GenericGenerator(name = "manual-generator", type = com.springbootnote.model.generator.ManualInsertGenerator.class)
     private Long id;
     private String noteName;

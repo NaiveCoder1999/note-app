@@ -28,7 +28,7 @@ public class ResourceServerConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api-docs/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/h2-ui/**")).permitAll()
                         .requestMatchers("/user/**").hasAnyAuthority(
-                                "OIDC_USER", "SCOPE_read", "SCOPE_write",
+                                "OIDC_USER", "SCOPE_note:read", "SCOPE_note:write",
                                     "ROLE_USER", "ROLE_ADMIN"))
                 .oauth2ResourceServer(oauth2ResourceServer ->
                         oauth2ResourceServer.jwt(Customizer.withDefaults()));
