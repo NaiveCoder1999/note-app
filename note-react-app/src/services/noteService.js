@@ -35,7 +35,6 @@ function setLocalIdToken(newIdToken) {
 }
 // basic axios instance for notes api
 const instance = axios.create({
-  //baseURL: Constants.COURSE_API_URL,
   baseURL: process.env.REACT_APP_NOTE_URI,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -91,10 +90,9 @@ const responseInterceptor = instance.interceptors.response.use(
           return instance(originalConfig);
         } catch (error) {
           // Refresh token missing or expired => logout user...
-          // and quit app: windows.location.href = '/login';
-          // TODO invoke handle logout function to be implemented:
-          //handleLogout();
-          window.location.href = 'http://127.0.0.1:3000';
+          //invoke handleExpiredToken() to clear expired login status in Logout component page;
+          // window.location.href = 'http://127.0.0.1:3000/logout';
+          window.location.href = process.env.REACT_APP_POST_LOGOUT_URI;
           return Promise.reject(error.response.data);
         }
       }

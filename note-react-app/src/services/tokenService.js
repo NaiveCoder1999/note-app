@@ -26,7 +26,7 @@ export const exchangeCodeForAccessToken = async (code, codeVerifier) => {
       refresh_token: refreshToken,
       id_token: idToken,
     } = response.data;
-    //console.log(response.data); //TODO removed when finished
+    //console.log(response.data);
     return { accessToken, refreshToken, idToken };
   } catch (error) {
     console.error('Error exchanging code for access token:', error);

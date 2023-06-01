@@ -15,7 +15,6 @@ const AuthProvider = ({ children }) => {
   const [idToken, setIDToken] = useState(null);
   //const history = useHistory();
   const navigate = useNavigate();
-  //const tokenEndpoint;
 
   useEffect(() => {
     const storedAccessToken = localStorage.getItem('access_token');
@@ -31,12 +30,10 @@ const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // const handleLogin = async () => {
   const handleLogin = () => {
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = generateCodeChallenge(codeVerifier);
 
-    //sessionStorage.setItem('code_verifier', codeVerifier);
     localStorage.setItem('code_verifier', codeVerifier);
     //console.log('verifier: ' + localStorage.getItem('code_verifier'));
     const authUrl = new URL(process.env.REACT_APP_AUTHZ_ENDPOINT);
@@ -55,7 +52,10 @@ const AuthProvider = ({ children }) => {
     //console.log(loginString + authUrl.searchParams.toString());
   };
 
-  const handleLogout = () => {
+  // TODO initiate RP logout with GET method
+  const handleLogout = () => {};
+
+  const handleExpiredToken = () => {
     setIsAuthenticated(false);
     setAccessToken(null);
     setRefreshToken(null);
@@ -76,7 +76,7 @@ const AuthProvider = ({ children }) => {
       const { accessToken, refreshToken, idToken } =
         await exchangeCodeForAccessToken(code, codeVerifier);
       //const token = await exchangeCodeForAccessToken(code, codeVerifier);
-      setIsAuthenticated(true);
+      setIsAuthenticated(true); //set auth status to true
       setAccessToken(accessToken);
       setRefreshToken(refreshToken);
       setIDToken(idToken);
@@ -99,6 +99,7 @@ const AuthProvider = ({ children }) => {
         idToken,
         handleLogin,
         handleLogout,
+        handleExpiredToken,
         handleAuthCallback,
       }}
     >
