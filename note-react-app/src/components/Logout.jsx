@@ -16,7 +16,6 @@ const Logout = () => {
   const navigate = useNavigate();
   const { handleExpiredToken } = useAuth();
   const handleClick = () => {
-    //window.location.href = 'http://127.0.0.1:3000';
     navigate('/', { replace: true });
   };
   useEffect(() => {

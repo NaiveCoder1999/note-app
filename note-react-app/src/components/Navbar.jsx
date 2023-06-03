@@ -11,7 +11,7 @@ const Navbar = () => {
       data-bs-theme="dark"
     >
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">
+        <a className="navbar-brand" href="#">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
@@ -55,7 +55,7 @@ const Navbar = () => {
                 <a className="nav-link disabled">Notes</a>
               </li>
             )}
-            <li className="nav-item dropdown">
+            {/* <li className="nav-item dropdown">
               <a
                 className="nav-link dropdown-toggle"
                 href="#"
@@ -84,25 +84,75 @@ const Navbar = () => {
                   </a>
                 </li>
               </ul>
-            </li>
+            </li> */}
           </ul>
-          <form className="d-flex" role="search">
-            <input
-              type="search"
-              className="form-control me-3 form-control-dark text-bg-dark"
-              placeholder="Search..."
-              aria-label="Search"
-            />
-          </form>
-          <div className="text-end">
-            <button
-              type="button"
-              className="btn btn-warning"
-              onClick={() => handleLogin()}
+          {isAuthenticated && (
+            <form className="d-flex" role="search">
+              <input
+                type="search"
+                className="form-control me-3 form-control-dark text-bg-dark"
+                placeholder="Search..."
+                aria-label="Search"
+              />
+            </form>
+          )}
+          {!isAuthenticated && (
+            <div className="text-end">
+              <button
+                type="button"
+                className="btn btn-warning"
+                onClick={() => handleLogin()}
+              >
+                Login
+              </button>
+            </div>
+          )}
+          {isAuthenticated && (
+            <div
+              className="d-flex"
+              style={{ color: '#A0A0A0', marginRight: '10px' }}
             >
-              Login
-            </button>
-          </div>
+              username
+            </div>
+          )}
+          {isAuthenticated && (
+            <div className="flex-shrink-0 dropdown">
+              <a
+                href="#"
+                className="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <img
+                  src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg"
+                  alt="mdo"
+                  width="32"
+                  height="32"
+                  className="rounded-circle"
+                ></img>
+              </a>
+
+              <ul className="dropdown-menu dropdown-menu-end shadow">
+                <li>
+                  <a className="dropdown-item" href="#">
+                    Profile
+                  </a>
+                </li>
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() => handleLogout()}
+                  >
+                    Sign out
+                  </a>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </nav>

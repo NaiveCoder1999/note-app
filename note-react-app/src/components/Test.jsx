@@ -1,4 +1,12 @@
-import { refreshAccessToken } from '../services/tokenService';
+import {
+  getLocalAccessToken,
+  setLocalAccessToken,
+  getLocalRefreshToken,
+  setLocalRefreshToken,
+  getLocalIdToken,
+  setLocalIdToken,
+  refreshAccessToken,
+} from '../services/tokenService';
 import React, { useState, useEffect } from 'react';
 
 export default function Test() {
@@ -13,6 +21,9 @@ export default function Test() {
             localStorage.getItem('refresh_token')
             //refreshToken
           );
+        setLocalAccessToken(newAccessToken);
+        setLocalRefreshToken(newRefreshToken);
+        setLocalIdToken(newIdToken);
         setAccessToken(newAccessToken);
         setRefreshToken(newRefreshToken);
         setIdToken(newIdToken);
@@ -26,7 +37,7 @@ export default function Test() {
   //setToken(newAccessToken);
   return (
     <div>
-      <h1>Test</h1>
+      <h1>Testing refresh token</h1>
       {accessToken ? (
         <p>Access token: {accessToken}</p>
       ) : (

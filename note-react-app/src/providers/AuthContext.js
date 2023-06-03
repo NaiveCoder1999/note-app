@@ -102,13 +102,6 @@ const AuthProvider = ({ children }) => {
       } else {
         console.error('Missing access token');
       }
-      // localStorage.setItem('access_token', accessToken);
-      // localStorage.setItem('refresh_token', refreshToken);
-      // localStorage.setItem('id_token', idToken);
-      // setIsAuthenticated(true); //set auth status to true
-      // setAccessToken(accessToken);
-      // setRefreshToken(refreshToken);
-      // setIDToken(idToken);
     } else {
       console.error('Missing code verifier');
     }
