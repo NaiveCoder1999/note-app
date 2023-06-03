@@ -133,12 +133,12 @@ public class AuthorizationServerConfig {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("note-client") //secret with basic auth
                 .clientSecret("{bcrypt}$2a$10$2RjplWIrwNu5LHAi4v9YquSjjbvJP1EQtAJ8j9RaGWFNO/awbO3dS") //note_secret
-                //.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                //.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .clientAuthenticationMethods(s -> {
                     s.add(ClientAuthenticationMethod.CLIENT_SECRET_POST);
-                    //s.add(ClientAuthenticationMethod.CLIENT_SECRET_BASIC);
-                    //s.add(ClientAuthenticationMethod.NONE);// client authentication set to none for pkce
+//                    s.add(ClientAuthenticationMethod.CLIENT_SECRET_BASIC);
+//                    s.add(ClientAuthenticationMethod.NONE);// client authentication set to none for pkce
                 })
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)

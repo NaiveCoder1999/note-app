@@ -42,13 +42,6 @@ export default function NoteList() {
         setSuccessAlertMessage(null);
       }, 5000);
     }
-
-    // if (deleteAlertMessage) {
-    //   setTimeout(() => {
-    //     setDeleteAlertMessage(null);
-    //   }, 5000);
-    // }
-    // }, [deleteAlertMessage, setSuccessMessage, successMessage]);
   }, [successAlertMessage, setSuccessAlertMessage]);
 
   async function getNotesList(userName) {
@@ -163,21 +156,17 @@ export default function NoteList() {
           const { language, code } = snippet.content;
           return (
             <div key={snippet.index}>
-            <SyntaxHighlighter
-              // key={snippet.codeIndex}
-              language={language}
-              style={oneDark}
-            >
-              {code}
-            </SyntaxHighlighter>
+              <SyntaxHighlighter
+                // key={snippet.codeIndex}
+                language={language}
+                style={oneDark}
+              >
+                {code}
+              </SyntaxHighlighter>
             </div>
           );
         } else {
-          return (
-            <div key={snippet.index}>
-              {parse(snippet.content)}
-            </div>
-          );
+          return <div key={snippet.index}>{parse(snippet.content)}</div>;
         }
       });
     }

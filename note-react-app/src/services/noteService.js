@@ -1,6 +1,14 @@
 import axios from 'axios';
 import React, { useEffect, useContext } from 'react';
-import { refreshAccessToken } from '../services/tokenService';
+import {
+  getLocalAccessToken,
+  setLocalAccessToken,
+  getLocalRefreshToken,
+  setLocalRefreshToken,
+  getLocalIdToken,
+  setLocalIdToken,
+  refreshAccessToken,
+} from '../services/tokenService';
 import { useAuth, AuthContext } from '../providers/AuthContext';
 import * as Constants from '../constants/config';
 import { useNavigate } from 'react-router-dom';
@@ -8,31 +16,7 @@ import { useNavigate } from 'react-router-dom';
 function refreshPage() {
   window.location.reload(true);
 }
-function getLocalAccessToken() {
-  const accessToken = localStorage.getItem('access_token');
-  return accessToken;
-}
 
-function setLocalAccessToken(newAccessToken) {
-  localStorage.setItem('access_token', newAccessToken);
-}
-function getLocalRefreshToken() {
-  const refreshToken = localStorage.getItem('refresh_token');
-  return refreshToken;
-}
-
-function setLocalRefreshToken(newRefreshToken) {
-  localStorage.setItem('refresh_token', newRefreshToken);
-}
-
-function getLocalIDToken() {
-  const idToken = localStorage.getItem('id_token');
-  return idToken;
-}
-
-function setLocalIdToken(newIdToken) {
-  localStorage.setItem('id_token', newIdToken);
-}
 // basic axios instance for notes api
 const instance = axios.create({
   baseURL: process.env.REACT_APP_NOTE_URI,
@@ -45,7 +29,6 @@ const requestInterceptor = instance.interceptors.request.use(
     // set access token in header before request is sent
     const token = getLocalAccessToken();
     if (token) {
-      // config.headers.common['Authorization'] = 'Bearer ' + token; // for Spring Boot back-end
       config.headers['Authorization'] = 'Bearer ' + token; // for Spring Boot back-end
     }
     return config;

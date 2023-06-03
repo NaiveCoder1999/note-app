@@ -3,7 +3,10 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 // import { useHistory, useNavigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { generateCodeVerifier, generateCodeChallenge } from '../services/pkce';
-import { exchangeCodeForAccessToken } from '../services/tokenService';
+import {
+  getLocalIDToken,
+  exchangeCodeForAccessToken,
+} from '../services/tokenService';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -20,13 +23,15 @@ const AuthProvider = ({ children }) => {
     const storedAccessToken = localStorage.getItem('access_token');
     const storedRefreshToken = localStorage.getItem('refresh_token');
     const storedIDToken = localStorage.getItem('id_token');
-    if (storedAccessToken) {
+    if (storedAccessToken && storedIDToken) {
       setIsAuthenticated(true);
       setAccessToken(storedAccessToken);
       setIDToken(storedIDToken);
       if (storedRefreshToken) {
         setRefreshToken(storedRefreshToken);
       }
+    } else {
+      setIsAuthenticated(false);
     }
   }, []);
 
@@ -52,8 +57,23 @@ const AuthProvider = ({ children }) => {
     //console.log(loginString + authUrl.searchParams.toString());
   };
 
-  // TODO initiate RP logout with GET method
-  const handleLogout = () => {};
+  // TODO
+  // initiate RP logout with GET method
+  const handleLogout = () => {
+    const idToken = getLocalIDToken();
+    const logoutUrl = new URL(process.env.REACT_APP_END_SESSION_ENDPOINT);
+    logoutUrl.searchParams.append('id_token_hint', idToken);
+    logoutUrl.searchParams.append(
+      'post_logout_redirect_uri',
+      process.env.REACT_APP_POST_LOGOUT_URI
+    );
+    logoutUrl.searchParams.append('client_id', process.env.REACT_APP_CLIENT_ID);
+    //Go to openid end session logout page
+    const logoutString = decodeURIComponent(logoutUrl.href);
+    //window.location.href = logoutString; //external link
+    console.log(logoutString + logoutUrl.searchParams.toString());
+    console.log(logoutUrl.toString());
+  };
 
   const handleExpiredToken = () => {
     setIsAuthenticated(false);
@@ -68,23 +88,28 @@ const AuthProvider = ({ children }) => {
   // triggered on auth callback of Callback component
   // to save tokens for access, refresh and id info
   const handleAuthCallback = async (code, codeVerifier) => {
-    // const codeVerifier = sessionStorage.getItem('code_verifier');
-    //sessionStorage.removeItem('code_verifier');
-    //const codeVerifier = localStorage.getItem('code_verifier');
     console.log('verifier in handleAuth: ' + codeVerifier);
     if (codeVerifier) {
       const { accessToken, refreshToken, idToken } =
         await exchangeCodeForAccessToken(code, codeVerifier);
-      //const token = await exchangeCodeForAccessToken(code, codeVerifier);
-      setIsAuthenticated(true); //set auth status to true
-      setAccessToken(accessToken);
-      setRefreshToken(refreshToken);
-      setIDToken(idToken);
-      localStorage.setItem('access_token', accessToken);
-      localStorage.setItem('refresh_token', refreshToken);
-      localStorage.setItem('id_token', idToken);
-      //history.push('/');
-      //navigate('/notes'); // Redirect to the home page or another protected route
+      if (accessToken && idToken) {
+        localStorage.setItem('access_token', accessToken);
+        localStorage.setItem('refresh_token', refreshToken);
+        localStorage.setItem('id_token', idToken);
+        setIsAuthenticated(true); //set auth status to true
+        setAccessToken(accessToken);
+        setRefreshToken(refreshToken);
+        setIDToken(idToken);
+      } else {
+        console.error('Missing access token');
+      }
+      // localStorage.setItem('access_token', accessToken);
+      // localStorage.setItem('refresh_token', refreshToken);
+      // localStorage.setItem('id_token', idToken);
+      // setIsAuthenticated(true); //set auth status to true
+      // setAccessToken(accessToken);
+      // setRefreshToken(refreshToken);
+      // setIDToken(idToken);
     } else {
       console.error('Missing code verifier');
     }

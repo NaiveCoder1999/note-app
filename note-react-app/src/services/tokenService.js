@@ -64,6 +64,32 @@ export const refreshAccessToken = async (refreshToken) => {
   }
 };
 
+export function getLocalAccessToken() {
+  const accessToken = localStorage.getItem('access_token');
+  return accessToken;
+}
+
+export function setLocalAccessToken(newAccessToken) {
+  localStorage.setItem('access_token', newAccessToken);
+}
+export function getLocalRefreshToken() {
+  const refreshToken = localStorage.getItem('refresh_token');
+  return refreshToken;
+}
+
+export function setLocalRefreshToken(newRefreshToken) {
+  localStorage.setItem('refresh_token', newRefreshToken);
+}
+
+export function getLocalIDToken() {
+  const idToken = localStorage.getItem('id_token');
+  return idToken;
+}
+
+export function setLocalIdToken(newIdToken) {
+  localStorage.setItem('id_token', newIdToken);
+}
+
 // // sync method of exchanging new access token with refresh token
 // export const refreshAccessToken = (refreshToken) => {
 //   axios

@@ -20,8 +20,9 @@ const Callback = () => {
       localStorage.removeItem('code_verifier');
       handleAuthCallback(code, codeVerifier)
         .then(() => {
-          navigate('/notes', { replace: true }); // Redirect to the home page or another protected route
-          //window.location.replace('http://127.0.0.1:3000/notes');
+          // Redirect to the home page or another protected route
+          // force refresh the page to make interceptor configure bearer header
+          window.location.replace('http://127.0.0.1:3000/notes');
         })
         .catch((err) => {
           console.error('Error during authentication:', err);
