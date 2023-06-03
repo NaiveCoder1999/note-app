@@ -4,7 +4,7 @@ import { useAuth } from '../providers/AuthContext';
 // import * as Constants from '../constants/config';
 
 const Navbar = () => {
-  const { handleLogin } = useAuth();
+  const { isAuthenticated, handleLogin, handleLogout } = useAuth();
   return (
     <nav
       className="navbar navbar-dark bg-dark navbar-expand-lg bg-body-tertiary"
@@ -42,11 +42,19 @@ const Navbar = () => {
                 Home
               </a>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="/notes">
-                Notes
-              </a>
-            </li>
+            {isAuthenticated && (
+              <li className="nav-item">
+                <a className="nav-link" href="/notes">
+                  Notes
+                </a>
+              </li>
+            )}
+
+            {!isAuthenticated && (
+              <li className="nav-item">
+                <a className="nav-link disabled">Notes</a>
+              </li>
+            )}
             <li className="nav-item dropdown">
               <a
                 className="nav-link dropdown-toggle"
@@ -55,31 +63,27 @@ const Navbar = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                UserPlaceHolder
+                Username
               </a>
               <ul className="dropdown-menu">
                 <li>
                   <a className="dropdown-item" href="#">
-                    Action
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Another action
+                    Profile
                   </a>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#">
-                    Something else here
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() => handleLogout()}
+                  >
+                    Logout
                   </a>
                 </li>
               </ul>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link disabled">Disabled</a>
             </li>
           </ul>
           <form className="d-flex" role="search">

@@ -54,7 +54,7 @@ const AuthProvider = ({ children }) => {
     //Go to auithz login while preserving session history.
     const loginString = decodeURIComponent(authUrl.href);
     window.location.href = loginString; //external link
-    //console.log(loginString + authUrl.searchParams.toString());
+    //console.log(loginString);
   };
 
   // TODO
@@ -70,9 +70,8 @@ const AuthProvider = ({ children }) => {
     logoutUrl.searchParams.append('client_id', process.env.REACT_APP_CLIENT_ID);
     //Go to openid end session logout page
     const logoutString = decodeURIComponent(logoutUrl.href);
-    //window.location.href = logoutString; //external link
-    console.log(logoutString + logoutUrl.searchParams.toString());
-    console.log(logoutUrl.toString());
+    window.location.href = logoutString; //external link
+    // console.log(logoutString);
   };
 
   const handleExpiredToken = () => {
