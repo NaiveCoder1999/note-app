@@ -54,9 +54,9 @@ export const refreshAccessToken = async (refreshToken) => {
     const newAccessToken = response.data.access_token;
     const newRefreshToken = response.data.refresh_token;
     const newIdToken = response.data.id_token;
-    console.log('new access token: ' + newAccessToken);
-    console.log('new refresh token: ' + newRefreshToken);
-    console.log('new id token: ' + newIdToken);
+    // console.log('new access token: ' + newAccessToken);
+    // console.log('new refresh token: ' + newRefreshToken);
+    // console.log('new id token: ' + newIdToken);
     return { newAccessToken, newRefreshToken, newIdToken };
   } catch (error) {
     console.error('Error refershing access token:', error);
@@ -89,34 +89,3 @@ export function getLocalIDToken() {
 export function setLocalIdToken(newIdToken) {
   localStorage.setItem('id_token', newIdToken);
 }
-
-// // sync method of exchanging new access token with refresh token
-// export const refreshAccessToken = (refreshToken) => {
-//   axios
-//     .post(
-//       process.env.REACT_APP_TOKEN_ENDPOINT,
-//       {},
-//       {
-//         params: {
-//           grant_type: 'refresh_token',
-//           refresh_token: refreshToken,
-//           client_id: process.env.REACT_APP_CLIENT_ID,
-//           client_secret: process.env.REACT_APP_CLIENT_SECRET,
-//         },
-//       }
-//     )
-//     .then((response) => {
-//       const {
-//         access_token: accessToken,
-//         refresh_token: refreshToken,
-//         id_token: idToken,
-//       } = response.data;
-//       console.log(response.data); //TODO removed when finished
-//       console.log('new access token: ' + accessToken);
-//       return { accessToken, refreshToken, idToken };
-//     })
-//     .catch((error) => {
-//       console.error('Error refershing access token:', error);
-//       throw error;
-//     });
-// };

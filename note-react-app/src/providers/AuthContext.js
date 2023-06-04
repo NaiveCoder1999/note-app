@@ -57,7 +57,6 @@ const AuthProvider = ({ children }) => {
     //console.log(loginString);
   };
 
-  // TODO
   // initiate RP logout with GET method
   const handleLogout = () => {
     const idToken = getLocalIDToken();
@@ -89,16 +88,16 @@ const AuthProvider = ({ children }) => {
   const handleAuthCallback = async (code, codeVerifier) => {
     console.log('verifier in handleAuth: ' + codeVerifier);
     if (codeVerifier) {
-      const { accessToken, refreshToken, idToken } =
+      const { accessToken: remoteAccessToken, refreshToken: remoteRefreshToken, idToken: remoteIdToken } =
         await exchangeCodeForAccessToken(code, codeVerifier);
-      if (accessToken && idToken) {
-        localStorage.setItem('access_token', accessToken);
-        localStorage.setItem('refresh_token', refreshToken);
-        localStorage.setItem('id_token', idToken);
+      if (remoteAccessToken && remoteIdToken) {
+        localStorage.setItem('access_token', remoteAccessToken);
+        localStorage.setItem('refresh_token', remoteRefreshToken);
+        localStorage.setItem('id_token', remoteIdToken);
         setIsAuthenticated(true); //set auth status to true
-        setAccessToken(accessToken);
-        setRefreshToken(refreshToken);
-        setIDToken(idToken);
+        setAccessToken(remoteAccessToken);
+        setRefreshToken(remoteRefreshToken);
+        setIDToken(remoteIdToken);
       } else {
         console.error('Missing access token');
       }
