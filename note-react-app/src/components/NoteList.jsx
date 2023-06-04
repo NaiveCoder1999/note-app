@@ -259,43 +259,49 @@ export default function NoteList() {
             )}
 
             {selectedNote && (
-              <Modal
-                centered
-                show={isDeleteModalOpen}
-                onHide={() => {
-                  toggleDeleteModal(false);
-                  setSelectedNote(null);
-                }}
-              >
-                <Modal.Header closeButton>
-                  <Modal.Title>Delete Confirmation</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  Do you really want to delete this note?<p></p> This process
-                  cannot be undone.
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      toggleDeleteModal(false);
-                      setSelectedNote(null);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => {
-                      handleDelete(Constants.USER, selectedNote.id);
-                      toggleDeleteModal(false);
-                      setSelectedNote(null);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </Modal.Footer>
-              </Modal>
+              <div className="position-static d-block p-4 py-md-5">
+                <Modal
+                  centered
+                  show={isDeleteModalOpen}
+                  onHide={() => {
+                    toggleDeleteModal(false);
+                    setSelectedNote(null);
+                  }}
+                  contentClassName="rounded-4 shadow"
+                >
+                  <Modal.Header closeButton className="border-bottom-0">
+                    <Modal.Title>
+                      <h3>Delete Confirmation</h3>
+                    </Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body className="py-0">
+                    <p>Do you really want to delete this note?</p>
+                    <p>This process cannot be undone.</p>
+                  </Modal.Body>
+
+                  <Modal.Footer className="flex-column align-items-stretch w-100 gap-2 pb-3 border-top-0">
+                    <Button
+                      variant="danger"
+                      onClick={() => {
+                        handleDelete(Constants.USER, selectedNote.id);
+                        toggleDeleteModal(false);
+                        setSelectedNote(null);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        toggleDeleteModal(false);
+                        setSelectedNote(null);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              </div>
             )}
           </table>
         </div>

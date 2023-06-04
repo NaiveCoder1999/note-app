@@ -7,9 +7,7 @@ import { Modal, Button } from 'react-bootstrap';
 const Navbar = () => {
   const [isLogoutModalOpen, toggleLogoutModal] = useState(false);
   const { isAuthenticated, handleLogin, handleLogout } = useAuth();
-  const handleLogoutModal = () => {
-    toggleLogoutModal(true);
-  };
+
   return (
     <div>
       <nav
@@ -151,7 +149,6 @@ const Navbar = () => {
                     <a
                       className="dropdown-item"
                       href="#"
-                      // onClick={() => handleLogout()}
                       onClick={() => toggleLogoutModal(true)}
                     >
                       Sign out
@@ -172,7 +169,7 @@ const Navbar = () => {
           }}
           contentClassName="rounded-4 shadow"
         >
-          <Modal.Header closeButton className="border-bottom-0 fs-5">
+          <Modal.Header closeButton className="border-bottom-0">
             <Modal.Title>
               <h3>Sign out Confirmation</h3>
             </Modal.Title>
