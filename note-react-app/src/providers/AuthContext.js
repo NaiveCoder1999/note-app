@@ -86,23 +86,30 @@ const AuthProvider = ({ children }) => {
   // triggered on auth callback of Callback component
   // to save tokens for access, refresh and id info
   const handleAuthCallback = async (code, codeVerifier) => {
-    console.log('verifier in handleAuth: ' + codeVerifier);
-    if (codeVerifier) {
-      const { accessToken: remoteAccessToken, refreshToken: remoteRefreshToken, idToken: remoteIdToken } =
-        await exchangeCodeForAccessToken(code, codeVerifier);
-      if (remoteAccessToken && remoteIdToken) {
-        localStorage.setItem('access_token', remoteAccessToken);
-        localStorage.setItem('refresh_token', remoteRefreshToken);
-        localStorage.setItem('id_token', remoteIdToken);
-        setIsAuthenticated(true); //set auth status to true
-        setAccessToken(remoteAccessToken);
-        setRefreshToken(remoteRefreshToken);
-        setIDToken(remoteIdToken);
+    try {
+      console.log('verifier in handleAuth: ' + codeVerifier);
+      if (codeVerifier) {
+        const {
+          accessToken: remoteAccessToken,
+          refreshToken: remoteRefreshToken,
+          idToken: remoteIdToken,
+        } = await exchangeCodeForAccessToken(code, codeVerifier);
+        if (remoteAccessToken && remoteIdToken) {
+          localStorage.setItem('access_token', remoteAccessToken);
+          localStorage.setItem('refresh_token', remoteRefreshToken);
+          localStorage.setItem('id_token', remoteIdToken);
+          setIsAuthenticated(true); //set auth status to true
+          setAccessToken(remoteAccessToken);
+          setRefreshToken(remoteRefreshToken);
+          setIDToken(remoteIdToken);
+        } else {
+          console.error('Missing access token');
+        }
       } else {
-        console.error('Missing access token');
+        console.error('Missing code verifier');
       }
-    } else {
-      console.error('Missing code verifier');
+    } catch (error) {
+      throw error;
     }
   };
 

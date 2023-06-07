@@ -5,7 +5,7 @@ import { getSingleNote, createNote, updateNote } from '../services/noteService';
 import { useParams, useNavigate } from 'react-router-dom';
 import NoteForm from './NoteForm.jsx';
 //import method of context
-import { SuccessAlertMessageContext } from '../providers/SuccessAlertMessageContext';
+import { AlertMessageContext } from '../providers/AlertMessageContext';
 
 import '../styles/TiptapStyles.scss';
 
@@ -16,9 +16,8 @@ export default function NoteInfo() {
     userName: '',
     description: '',
   }); //json object
-  const { successAlertMessage, setSuccessAlertMessage } = useContext(
-    SuccessAlertMessageContext
-  );
+  const { alertMessage, setAlertMessage } =
+    useContext(AlertMessageContext);
   const { noteId } = useParams(); //noteId: "id"
   const navigate = useNavigate();
   const handleNoteInfo = useCallback(async (noteId) => {
@@ -56,7 +55,7 @@ export default function NoteInfo() {
       createNote(Constants.USER, note)
         .then((res) => {
           console.log('res', res);
-          setSuccessAlertMessage('Note created successfully');
+          setAlertMessage('Note created successfully');
           navigate('/notes');
         })
         .catch((error) => {
@@ -74,7 +73,7 @@ export default function NoteInfo() {
       updateNote(username, noteId, note)
         .then((res) => {
           console.log('res', res);
-          setSuccessAlertMessage('Note ' + noteId + ' updated successfully');
+          setAlertMessage('Note ' + noteId + ' updated successfully');
           navigate('/notes');
         })
         .catch((error) => {

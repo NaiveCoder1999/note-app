@@ -1,11 +1,13 @@
 import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../providers/AuthContext';
+import { AlertMessageContext } from '../providers/AlertMessageContext';
 
 //component for handling authorization code and then execute authentication
 const Callback = () => {
   const navigate = useNavigate();
   const { handleAuthCallback } = useContext(AuthContext);
+  const { alertMessage, setAlertMessage } = useContext(AlertMessageContext);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -26,13 +28,16 @@ const Callback = () => {
         })
         .catch((err) => {
           console.error('Error during authentication:', err);
-          //history.push('/login'); // Redirect to the login page on error
-          navigate('/', { replace: true });
+          setAlertMessage('Authentication Error: ' + err);
+
+          navigate('/', { replace: true }); // Redirect to the login page
         });
     } else if (error) {
       console.error('Error during authorization:', error);
+      setAlertMessage('Authorization Error: ' + error);
       navigate('/', { replace: true });
     } else {
+      setAlertMessage('OAuth2 Login Error');
       navigate('/', { replace: true });
     }
   });

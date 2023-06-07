@@ -2,9 +2,11 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useAuth } from '../providers/AuthContext';
 import { Modal, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 // import * as Constants from '../constants/config';
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isLogoutModalOpen, toggleLogoutModal] = useState(false);
   const { isAuthenticated, handleLogin, handleLogout } = useAuth();
 
@@ -138,7 +140,11 @@ const Navbar = () => {
 
                 <ul className="dropdown-menu dropdown-menu-end shadow">
                   <li>
-                    <a className="dropdown-item" href="#">
+                    <a
+                      className="dropdown-item"
+                      href="#"
+                      onClick={() => navigate('/profile')}
+                    >
                       Profile
                     </a>
                   </li>

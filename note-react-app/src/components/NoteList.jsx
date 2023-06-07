@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Constants from '../constants/config';
 //import method of context
-import { SuccessAlertMessageContext } from '../providers/SuccessAlertMessageContext';
+import { AlertMessageContext } from '../providers/AlertMessageContext';
 
 import { getAllNotes, deleteNote } from '../services/noteService'; //non-default export
 import { useNavigate } from 'react-router-dom';
@@ -14,14 +14,11 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
-  // const [deleteAlertMessage, setDeleteAlertMessage] = useState(''); //delete message alert
   const [isDeleteModalOpen, toggleDeleteModal] = useState(false);
   const [isPreviewModalOpen, togglePreviewModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null); //passed item object to control modal
   //create and update success message
-  const { successAlertMessage, setSuccessAlertMessage } = useContext(
-    SuccessAlertMessageContext
-  );
+  const { alertMessage, setAlertMessage } = useContext(AlertMessageContext);
   const handlePreviewModal = (item) => {
     setSelectedNote(item);
     togglePreviewModal(true);
@@ -37,12 +34,12 @@ export default function NoteList() {
   }, []);
 
   const handleAlertMessage = useCallback(async () => {
-    if (successAlertMessage) {
+    if (alertMessage) {
       setTimeout(() => {
-        setSuccessAlertMessage(null);
+        setAlertMessage(null);
       }, 5000);
     }
-  }, [successAlertMessage, setSuccessAlertMessage]);
+  }, [alertMessage, setAlertMessage]);
 
   async function getNotesList(userName) {
     // var res = await refreshNotes();
@@ -60,7 +57,7 @@ export default function NoteList() {
         setNotes(del);
         console.log('res', res);
         //setDeleteAlertMessage('Note ' + noteId + ' deleted successfully');
-        setSuccessAlertMessage('Note ' + noteId + ' deleted successfully');
+        setAlertMessage('Note ' + noteId + ' deleted successfully');
       })
       .catch((error) => {
         console.log(error);
@@ -78,9 +75,8 @@ export default function NoteList() {
     navigate(`/notes/-1`);
   }
 
+  // update status of notes and alert messages
   useEffect(() => {
-    // use empty depend array ->
-    //fuction will only run once when the component will load initially
     handleNotesList();
     handleAlertMessage();
   }, [handleNotesList, handleAlertMessage]);
@@ -176,8 +172,8 @@ export default function NoteList() {
     <>
       <div className="container">
         <h3>All Notes</h3>
-        {successAlertMessage && (
-          <div className="alert alert-success">{successAlertMessage}</div>
+        {alertMessage && (
+          <div className="alert alert-success">{alertMessage}</div>
         )}
 
         <div className="container">
