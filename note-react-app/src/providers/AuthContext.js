@@ -24,14 +24,17 @@ const AuthProvider = ({ children }) => {
     const storedRefreshToken = localStorage.getItem('refresh_token');
     const storedIDToken = localStorage.getItem('id_token');
     if (storedAccessToken && storedIDToken) {
-      setIsAuthenticated(true);
       setAccessToken(storedAccessToken);
       setIDToken(storedIDToken);
+      setIsAuthenticated(true);
       if (storedRefreshToken) {
         setRefreshToken(storedRefreshToken);
       }
     } else {
       setIsAuthenticated(false);
+      setAccessToken(null);
+      setRefreshToken(null);
+      setIDToken(null);
     }
   }, []);
 

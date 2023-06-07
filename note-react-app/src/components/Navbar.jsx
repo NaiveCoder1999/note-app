@@ -2,13 +2,18 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useAuth } from '../providers/AuthContext';
 import { Modal, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 // import * as Constants from '../constants/config';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [activeItem, setActiveItem] = useState('Home');
   const [isLogoutModalOpen, toggleLogoutModal] = useState(false);
   const { isAuthenticated, handleLogin, handleLogout } = useAuth();
+
+  const handleClick = (name) => {
+    setActiveItem(name);
+  };
 
   return (
     <div>
@@ -43,23 +48,91 @@ const Navbar = () => {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <a className="nav-link" href="/">
                   Home
                 </a>
+              </li> */}
+              <li
+                className={`nav-item${activeItem === 'Home' ? 'active' : ''}`}
+              >
+                <NavLink
+                  className="nav-link"
+                  aria-current="page"
+                  to="/"
+                  onClick={() => handleClick('Home')}
+                >
+                  Home
+                </NavLink>
               </li>
               {isAuthenticated && (
-                <li className="nav-item">
-                  <a className="nav-link active" href="/notes">
+                <li
+                  className={`nav-item${
+                    activeItem === 'Notes' ? 'active' : ''
+                  }`}
+                >
+                  <NavLink
+                    className="nav-link"
+                    to="/notes"
+                    onClick={() => handleClick('Notes')}
+                  >
                     Notes
-                  </a>
+                  </NavLink>
                 </li>
+                // <li className="nav-item">
+                //   <a className="nav-link active" href="/notes">
+                //     Notes
+                //   </a>
+                // </li>
               )}
 
               {!isAuthenticated && (
-                <li className="nav-item">
-                  <a className="nav-link disabled">Notes</a>
+                <li
+                  className={`nav-item${
+                    activeItem === 'Notes' ? 'active' : ''
+                  }`}
+                >
+                  <NavLink className="nav-link disabled" to="/notes">
+                    Notes
+                  </NavLink>
                 </li>
+                // <li className="nav-item">
+                //   <a className="nav-link disabled">Notes</a>
+                // </li>
+              )}
+              {isAuthenticated && (
+                <li
+                  className={`nav-item${
+                    activeItem === 'Profile' ? 'active' : ''
+                  }`}
+                >
+                  <NavLink
+                    className="nav-link"
+                    to="/profile"
+                    onClick={() => handleClick('Profile')}
+                  >
+                    Profile
+                  </NavLink>
+                </li>
+                // <li className="nav-item">
+                //   <a className="nav-link active" href="/notes">
+                //     Notes
+                //   </a>
+                // </li>
+              )}
+              {!isAuthenticated && (
+                <li
+                  className={`nav-item${
+                    activeItem === 'Profile' ? 'active' : ''
+                  }`}
+                >
+                  <NavLink className="nav-link disabled" to="/profile">
+                    Profile
+                  </NavLink>
+                </li>
+                // <li className="nav-item">
+                //   <a className="nav-link disabled">Notes</a>
+                // </li>
               )}
               {/* <li className="nav-item dropdown">
               <a

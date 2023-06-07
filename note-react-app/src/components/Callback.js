@@ -7,7 +7,7 @@ import { AlertMessageContext } from '../providers/AlertMessageContext';
 const Callback = () => {
   const navigate = useNavigate();
   const { handleAuthCallback } = useContext(AuthContext);
-  const { alertMessage, setAlertMessage } = useContext(AlertMessageContext);
+  const { setAlertMessage } = useContext(AlertMessageContext);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -37,7 +37,8 @@ const Callback = () => {
       setAlertMessage('Authorization Error: ' + error);
       navigate('/', { replace: true });
     } else {
-      setAlertMessage('OAuth2 Login Error');
+      // already authenticated
+      //setAlertMessage('OAuth2 Login Error');
       navigate('/', { replace: true });
     }
   });

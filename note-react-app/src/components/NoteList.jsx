@@ -44,7 +44,7 @@ export default function NoteList() {
   async function getNotesList(userName) {
     // var res = await refreshNotes();
     let response = await getAllNotes(userName); //axios response type
-    console.log(response);
+    //console.log(response);
     let tableData = response.data;
     setNotes(tableData); //change promise to list
   }
