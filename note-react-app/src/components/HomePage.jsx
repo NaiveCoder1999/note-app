@@ -8,15 +8,12 @@ import { AlertMessageContext } from '../providers/AlertMessageContext';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, handleLogin } = useAuth();
+  const { loginUserName, isAuthenticated, handleLogin } = useAuth();
   const { alertMessage, setAlertMessage } = useContext(AlertMessageContext);
 
   const handleLoginClick = () => {
     console.log('Login button clicked');
     handleLogin();
-    // const timer = setTimeout(() => {
-    //   handleLogin();
-    // }, 2500);
   };
 
   const handleAlertMessage = useCallback(async () => {
@@ -46,8 +43,9 @@ const HomePage = () => {
           )}
           {isAuthenticated && (
             <div className="col-md-12">
-              <h2>Welcome Back!</h2>
-              <h4>User Placehoder TODO</h4>
+              <h1>Welcome Back!</h1>
+              <p></p>
+              <h3>{loginUserName}</h3>
             </div>
           )}
         </div>

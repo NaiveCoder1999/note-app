@@ -9,13 +9,6 @@ import {
   setLocalIdToken,
   refreshAccessToken,
 } from '../services/tokenService';
-import { useAuth, AuthContext } from '../providers/AuthContext';
-import * as Constants from '../constants/config';
-import { useNavigate } from 'react-router-dom';
-
-function refreshPage() {
-  window.location.reload(true);
-}
 
 // basic axios instance for notes api
 const instance = axios.create({
@@ -35,11 +28,10 @@ const requestInterceptor = instance.interceptors.request.use(
   },
   function (error) {
     return Promise.reject(error);
-    // return Promise.reject(error.response || error.message);
   }
 );
 
-//TODO
+
 const responseInterceptor = instance.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
@@ -68,7 +60,6 @@ const responseInterceptor = instance.interceptors.response.use(
           setLocalIdToken(newIdToken);
 
           originalConfig.headers['Authorization'] = 'Bearer ' + newAccessToken;
-          //refreshPage();
           window.location.reload();
           return instance(originalConfig);
         } catch (error) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Constants from '../constants/config';
 //import method of context
 import { AlertMessageContext } from '../providers/AlertMessageContext';
-
+import { useAuth } from '../providers/AuthContext';
 import { getAllNotes, deleteNote } from '../services/noteService'; //non-default export
 import { useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
@@ -19,6 +19,10 @@ export default function NoteList() {
   const [selectedNote, setSelectedNote] = useState(null); //passed item object to control modal
   //create and update success message
   const { alertMessage, setAlertMessage } = useContext(AlertMessageContext);
+  const { loginUserName } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const handlePreviewModal = (item) => {
     setSelectedNote(item);
     togglePreviewModal(true);
@@ -30,8 +34,8 @@ export default function NoteList() {
   };
 
   const handleNotesList = useCallback(async () => {
-    getNotesList(Constants.USER);
-  }, []);
+    getNotesList(loginUserName);
+  }, [loginUserName]);
 
   const handleAlertMessage = useCallback(async () => {
     if (alertMessage) {
@@ -42,11 +46,16 @@ export default function NoteList() {
   }, [alertMessage, setAlertMessage]);
 
   async function getNotesList(userName) {
-    // var res = await refreshNotes();
-    let response = await getAllNotes(userName); //axios response type
-    //console.log(response);
-    let tableData = response.data;
-    setNotes(tableData); //change promise to list
+    try {
+      if (userName !== null && userName !== undefined) {
+        let response = await getAllNotes(userName); //axios response type
+        //console.log(response);
+        setNotes(response.data); //change promise to list}
+      }
+    } catch (err) {
+      console.error('Error load note list:', err);
+      throw err;
+    }
   }
 
   function handleDelete(userName, noteId) {
@@ -279,7 +288,7 @@ export default function NoteList() {
                     <Button
                       variant="danger"
                       onClick={() => {
-                        handleDelete(Constants.USER, selectedNote.id);
+                        handleDelete(loginUserName, selectedNote.id);
                         toggleDeleteModal(false);
                         setSelectedNote(null);
                       }}

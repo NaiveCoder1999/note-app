@@ -1,13 +1,11 @@
 /* eslint-disable react/prop-types */
 import React, { createContext, useContext, useState, useEffect } from 'react';
-// import { useHistory, useNavigate } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import { generateCodeVerifier, generateCodeChallenge } from '../services/pkce';
 import {
   getLocalIDToken,
   exchangeCodeForAccessToken,
+  introspectAccessToken,
 } from '../services/tokenService';
-import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -16,26 +14,58 @@ const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
   const [idToken, setIDToken] = useState(null);
-  //const history = useHistory();
-  const navigate = useNavigate();
+  const [loginUserName, setLoginUserName] = useState(null); //TODO extract username from introspection
 
   useEffect(() => {
     const storedAccessToken = localStorage.getItem('access_token');
     const storedRefreshToken = localStorage.getItem('refresh_token');
     const storedIDToken = localStorage.getItem('id_token');
-    if (storedAccessToken && storedIDToken) {
-      setAccessToken(storedAccessToken);
-      setIDToken(storedIDToken);
-      setIsAuthenticated(true);
-      if (storedRefreshToken) {
-        setRefreshToken(storedRefreshToken);
+    // TODO check if token is still valid
+    const checkAuthenticationStatus = async () => {
+      // Make an API call to check if the user is logged in
+      // Replace this with your actual API call
+      const introspectData = await introspectAccessToken(storedAccessToken);
+      const isTokenActive = introspectData.active;
+      if (isTokenActive === true && storedAccessToken && storedIDToken) {
+        setIsAuthenticated(true);
+        setAccessToken(storedAccessToken);
+        setIDToken(storedIDToken);
+        setLoginUserName(introspectData.sub); //extract userName from introspection response
+        if (storedRefreshToken) {
+          setRefreshToken(storedRefreshToken);
+        }
+      } else {
+        // already expired and redirect to post logout page
+        handleExpiredToken();
+        window.location.href = process.env.REACT_APP_POST_LOGOUT_URI;
       }
-    } else {
-      setIsAuthenticated(false);
-      setAccessToken(null);
-      setRefreshToken(null);
-      setIDToken(null);
-    }
+    };
+    // Call the function initially
+    checkAuthenticationStatus();
+
+    // Set up the interval to check the logged-in status
+    const intervalId = setInterval(checkAuthenticationStatus, 300000); // 300 seconds
+
+    // Clean up the interval when the component is unmounted
+    return () => {
+      clearInterval(intervalId);
+    };
+    // if (storedAccessToken && storedIDToken) {
+    //   setAccessToken(storedAccessToken);
+    //   setIDToken(storedIDToken);
+    //   setIsAuthenticated(true);
+    //   // TODO set userName with AuthContext
+    //   if (storedRefreshToken) {
+    //     setRefreshToken(storedRefreshToken);
+    //   }
+    // } else {
+    //   handleExpiredToken();
+    //   setIsAuthenticated(false);
+    //   setAccessToken(null);
+    //   setRefreshToken(null);
+    //   setIDToken(null);
+    //   setUserName(null);
+    // }
   }, []);
 
   const handleLogin = () => {
@@ -81,6 +111,7 @@ const AuthProvider = ({ children }) => {
     setAccessToken(null);
     setRefreshToken(null);
     setIDToken(null);
+    setLoginUserName(null);
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('id_token');
@@ -120,6 +151,7 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        loginUserName,
         accessToken,
         refreshToken,
         idToken,

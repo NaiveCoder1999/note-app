@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import NoteForm from './NoteForm.jsx';
 //import method of context
 import { AlertMessageContext } from '../providers/AlertMessageContext';
-
+import { useAuth } from '../providers/AuthContext';
 import '../styles/TiptapStyles.scss';
 
 export default function NoteInfo() {
@@ -16,13 +16,16 @@ export default function NoteInfo() {
     userName: '',
     description: '',
   }); //json object
-  const { alertMessage, setAlertMessage } =
-    useContext(AlertMessageContext);
+  const { alertMessage, setAlertMessage } = useContext(AlertMessageContext);
+  const { loginUserName } = useAuth();
   const { noteId } = useParams(); //noteId: "id"
   const navigate = useNavigate();
-  const handleNoteInfo = useCallback(async (noteId) => {
-    fetchNoteData(Constants.USER, noteId);
-  }, []);
+  const handleNoteInfo = useCallback(
+    async (noteId) => {
+      fetchNoteData(loginUserName, noteId);
+    },
+    [loginUserName]
+  );
 
   async function fetchNoteData(userName, id) {
     //get note json object
@@ -39,20 +42,20 @@ export default function NoteInfo() {
     //console.log(values);
     const { id, noteName, userName, description } = values;
     let noteid = noteId;
-    let username = userName;
+    let noteUsername = userName;
     let noteTitle = noteName;
     let noteDescription = description;
 
     if (noteid === `-1`) {
+      //create a new note with current user
       // add function
-      //string compare
       let note = {
         noteName: noteTitle,
-        userName: Constants.USER,
+        userName: loginUserName,
         description: noteDescription,
       };
 
-      createNote(Constants.USER, note)
+      createNote(loginUserName, note)
         .then((res) => {
           console.log('res', res);
           setAlertMessage('Note created successfully');
@@ -66,11 +69,11 @@ export default function NoteInfo() {
         //update function
         id: noteId,
         noteName: noteTitle,
-        userName: username,
+        userName: noteUsername,
         description: noteDescription,
       };
 
-      updateNote(username, noteId, note)
+      updateNote(noteUsername, noteId, note)
         .then((res) => {
           console.log('res', res);
           setAlertMessage('Note ' + noteId + ' updated successfully');
@@ -107,9 +110,6 @@ export default function NoteInfo() {
   return (
     <div className="container">
       <h3>Note Details</h3>
-      {/* <div>{noteData.id}</div>
-      <div>{noteData.noteName}</div>
-      <div>{noteData.description}</div> */}
       <p></p>
       <div className="container">
         <NoteForm initialValues={noteData} onSubmit={handleSubmit} />

@@ -9,7 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState('Home');
   const [isLogoutModalOpen, toggleLogoutModal] = useState(false);
-  const { isAuthenticated, handleLogin, handleLogout } = useAuth();
+  const { loginUserName, isAuthenticated, handleLogin, handleLogout } = useAuth();
 
   const handleClick = (name) => {
     setActiveItem(name);
@@ -134,6 +134,7 @@ const Navbar = () => {
                 //   <a className="nav-link disabled">Notes</a>
                 // </li>
               )}
+
               {/* <li className="nav-item dropdown">
               <a
                 className="nav-link dropdown-toggle"
@@ -191,7 +192,7 @@ const Navbar = () => {
                 className="d-flex"
                 style={{ color: '#A0A0A0', marginRight: '10px' }}
               >
-                username
+                {loginUserName}
               </div>
             )}
             {isAuthenticated && (
