@@ -35,10 +35,6 @@ const NoteForm = ({ initialValues, onSubmit }) => {
       validateOnBlur={true}
       initialValues={initialValues}
       onSubmit={(values) => onSubmit(values)} //important
-
-      // onSubmit={() => {
-      //   !isValid && JSON.stringify(errors);
-      // }}
     >
       {(
         //props' methods
@@ -57,10 +53,23 @@ const NoteForm = ({ initialValues, onSubmit }) => {
             className="alert alert-danger"
             role="alert"
           />
-          <fieldset className="form-group">
-            <label htmlFor="id">ID</label>
-            <Field id="id" className="form-control" name="id" disabled />
-          </fieldset>
+          {initialValues.id !== '-1' && (
+            <fieldset className="form-group">
+              <label htmlFor="id">ID</label>
+              <Field id="id" className="form-control" name="id" disabled />
+            </fieldset>
+          )}
+          {initialValues.id === '-1' && (
+            <fieldset className="form-group">
+              <Field
+                type="hidden"
+                id="id"
+                className="form-control"
+                name="id"
+                disabled
+              />
+            </fieldset>
+          )}
           <p></p>
           <fieldset className="form-group">
             <label htmlFor="noteName">Title</label>

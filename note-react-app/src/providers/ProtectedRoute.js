@@ -6,8 +6,8 @@ export const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    // Redirect to login HomePage
-    return <Navigate to="/logout" replace />;
+    // Redirect to the HomePage
+    return <Navigate to="/" replace />;
   }
   return children;
 };

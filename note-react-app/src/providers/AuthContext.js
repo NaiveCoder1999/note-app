@@ -26,7 +26,7 @@ const AuthProvider = ({ children }) => {
       try {
         let introspectData = null;
         let isTokenActive = false;
-
+        // null or undefined check not working
         if (storedAccessToken) {
           introspectData = await introspectAccessToken(storedAccessToken);
           isTokenActive = introspectData.active;
@@ -65,28 +65,12 @@ const AuthProvider = ({ children }) => {
     // Call the function initially
     checkAuthenticationStatus();
     // Set up the interval to check the logged-in status
-    //const intervalId = setInterval(checkAuthenticationStatus, 300000); // 300 seconds
-    const intervalId = setInterval(checkAuthenticationStatus, 3000); // TODO to change
+    const intervalId = setInterval(checkAuthenticationStatus, 300000); // 300 seconds
+    // const intervalId = setInterval(checkAuthenticationStatus, 3000); // TODO to change
     // Clean up the interval when the component is unmounted
     return () => {
       clearInterval(intervalId);
     };
-    // if (storedAccessToken && storedIDToken) {
-    //   setAccessToken(storedAccessToken);
-    //   setIDToken(storedIDToken);
-    //   setIsAuthenticated(true);
-    //   // TODO set userName with AuthContext
-    //   if (storedRefreshToken) {
-    //     setRefreshToken(storedRefreshToken);
-    //   }
-    // } else {
-    //   handleExpiredToken();
-    //   setIsAuthenticated(false);
-    //   setAccessToken(null);
-    //   setRefreshToken(null);
-    //   setIDToken(null);
-    //   setUserName(null);
-    // }
   }, []);
 
   const redirectTo = (url) => {
