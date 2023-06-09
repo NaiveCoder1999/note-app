@@ -17,35 +17,56 @@ const AuthProvider = ({ children }) => {
   const [loginUserName, setLoginUserName] = useState(null); //TODO extract username from introspection
 
   useEffect(() => {
-    const storedAccessToken = localStorage.getItem('access_token');
-    const storedRefreshToken = localStorage.getItem('refresh_token');
-    const storedIDToken = localStorage.getItem('id_token');
-    // TODO check if token is still valid
+    // check if token is still valid
+
     const checkAuthenticationStatus = async () => {
-      // Make an API call to check if the user is logged in
-      // Replace this with your actual API call
-      const introspectData = await introspectAccessToken(storedAccessToken);
-      const isTokenActive = introspectData.active;
-      if (isTokenActive === true && storedAccessToken && storedIDToken) {
-        setIsAuthenticated(true);
-        setAccessToken(storedAccessToken);
-        setIDToken(storedIDToken);
-        setLoginUserName(introspectData.sub); //extract userName from introspection response
-        if (storedRefreshToken) {
-          setRefreshToken(storedRefreshToken);
+      const storedAccessToken = localStorage.getItem('access_token');
+      const storedRefreshToken = localStorage.getItem('refresh_token');
+      const storedIDToken = localStorage.getItem('id_token');
+      try {
+        let introspectData = null;
+        let isTokenActive = false;
+
+        if (storedAccessToken) {
+          introspectData = await introspectAccessToken(storedAccessToken);
+          isTokenActive = introspectData.active;
+          console.log('isTokenActive', isTokenActive); // TODO to delete
+
+          // token is valid
+          if (isTokenActive === true) {
+            setIsAuthenticated(true);
+            setAccessToken(storedAccessToken);
+            setIDToken(storedIDToken);
+            setLoginUserName(introspectData.sub); //extract userName from introspection response
+            if (storedRefreshToken) {
+              setRefreshToken(storedRefreshToken);
+            }
+            if (storedIDToken) {
+              setIDToken(storedIDToken);
+            }
+          }
+        } else {
+          setIsAuthenticated(false);
+          // already expired and redirect to post logout page
+          //handleExpiredToken();
+          // if (
+          //   window.location.href !== 'http://127.0.0.1:3000/' &&
+          //   window.location.href !== process.env.REACT_APP_POST_LOGOUT_URI
+          // ) {
+          //   redirectTo(process.env.REACT_APP_POST_LOGOUT_URI);
+          // }
         }
-      } else {
-        // already expired and redirect to post logout page
-        handleExpiredToken();
-        window.location.href = process.env.REACT_APP_POST_LOGOUT_URI;
+      } catch (error) {
+        console.error('Error introspect for access token:', error);
+        setIsAuthenticated(false);
+        //handleExpiredToken();
       }
     };
     // Call the function initially
     checkAuthenticationStatus();
-
     // Set up the interval to check the logged-in status
-    const intervalId = setInterval(checkAuthenticationStatus, 300000); // 300 seconds
-
+    //const intervalId = setInterval(checkAuthenticationStatus, 300000); // 300 seconds
+    const intervalId = setInterval(checkAuthenticationStatus, 3000); // TODO to change
     // Clean up the interval when the component is unmounted
     return () => {
       clearInterval(intervalId);
@@ -68,6 +89,14 @@ const AuthProvider = ({ children }) => {
     // }
   }, []);
 
+  const redirectTo = (url) => {
+    // check if the page is on the post logout
+    const currentUrl = window.location.href;
+    // console.log(currentUrl);
+    if (currentUrl !== url) {
+      window.location.href = url; //redirect to post logout page
+    }
+  };
   const handleLogin = () => {
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = generateCodeChallenge(codeVerifier);

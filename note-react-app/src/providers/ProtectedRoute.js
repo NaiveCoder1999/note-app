@@ -7,7 +7,7 @@ export const ProtectedRoute = ({ children }) => {
 
   if (!isAuthenticated) {
     // Redirect to login HomePage
-    return <Navigate to="/" replace />;
+    return <Navigate to="/logout" replace />;
   }
   return children;
 };
