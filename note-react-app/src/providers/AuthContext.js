@@ -37,8 +37,23 @@ const AuthProvider = ({ children }) => {
           const introspectData = await introspectAccessToken(storedAccessToken);
           const isTokenActive = introspectData.active;
           console.log('isTokenActive', isTokenActive); // TODO to delete
-          // token is valid
-          if (isTokenActive) {
+
+          if (!isTokenActive) {
+            // when token is expired
+            // TODO refresh token
+            const { newAccessToken, newRefreshToken, newIdToken } =
+              await refreshAccessToken(storedRefreshToken);
+            setIsAuthenticated(true);
+            setLocalAccessToken(newAccessToken);
+            setLocalRefreshToken(newRefreshToken);
+            setLocalIdToken(newIdToken);
+            setAccessToken(newAccessToken);
+            setRefreshToken(newRefreshToken);
+            setIDToken(newIdToken);
+
+            window.location.reload();
+          } else if (isTokenActive) {
+            // token is valid
             setIsAuthenticated(true);
             setAccessToken(storedAccessToken);
             setIDToken(storedIDToken);
@@ -47,10 +62,11 @@ const AuthProvider = ({ children }) => {
             if (storedIDToken) setIDToken(storedIDToken);
           }
         } else {
+          // no access token stored in local storage, auth status is false
           setIsAuthenticated(false);
           setLoginUserName(null);
           removeLocalAccessToken(); // To avoid trigger checkAuthenticationStatus() infinitely
-          //window.location.reload(true); // would trap into infinite refresh loop
+          // window.location.reload(); // would trap into infinite refresh loop
         }
       } catch (error) {
         console.error('Error introspect for access token:', error);
@@ -64,7 +80,7 @@ const AuthProvider = ({ children }) => {
     // Call the validation function everytime the component is mounted
     checkAuthenticationStatus();
     // Set up the interval to check the logged-in status
-    const intervalId = setInterval(checkAuthenticationStatus, 300000); // 300 seconds
+    const intervalId = setInterval(checkAuthenticationStatus, 600000); // 300 seconds
     // const intervalId = setInterval(checkAuthenticationStatus, 3000); // TODO to change
     return () => {
       clearInterval(intervalId);

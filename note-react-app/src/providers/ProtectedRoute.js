@@ -18,8 +18,8 @@ export const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    // Redirect to the HomePage
-    return <Navigate to="/" replace />;
+    // Redirect to the post logout page
+    return <Navigate to="/logout" replace />;
   }
   return children;
 };

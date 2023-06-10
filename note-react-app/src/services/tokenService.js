@@ -121,3 +121,19 @@ export function removeLocalRefreshToken() {
 export function removeLocalIdToken() {
   localStorage.removeItem('id_token');
 }
+
+export function setLocalTokens(
+  newAccessToken,
+  newLocalRefreshToken,
+  newIdToken
+) {
+  setLocalAccessToken(newAccessToken);
+  setLocalRefreshToken(newLocalRefreshToken);
+  setLocalIdToken(newIdToken);
+}
+
+export function removeLocalTokens() {
+  removeLocalAccessToken();
+  removeLocalRefreshToken();
+  removeLocalIdToken();
+}

@@ -50,10 +50,7 @@ const responseInterceptor = instance.interceptors.response.use(
         // call refreshToken() request
         try {
           const { newAccessToken, newRefreshToken, newIdToken } =
-            await refreshAccessToken(
-              //localStorage.getItem('refresh_token')
-              refreshToken
-            );
+            await refreshAccessToken(refreshToken);
           setLocalAccessToken(newAccessToken);
           setLocalRefreshToken(newRefreshToken);
           setLocalIdToken(newIdToken);
@@ -64,7 +61,6 @@ const responseInterceptor = instance.interceptors.response.use(
         } catch (error) {
           // Refresh token missing or expired => logout user...
           //invoke handleExpiredToken() to clear expired login status in Logout component page;
-          // window.location.href = 'http://127.0.0.1:3000/logout';
           window.location.href = process.env.REACT_APP_POST_LOGOUT_URI;
           return Promise.reject(error.response.data);
         }
