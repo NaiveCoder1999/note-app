@@ -14,35 +14,51 @@ import { useNavigate } from 'react-router-dom';
  */
 const Logout = () => {
   const navigate = useNavigate();
-  const { handleExpiredToken } = useAuth();
+  const { isLoading, isAuthenticated, handleExpiredToken } = useAuth();
   const handleClick = () => {
     navigate('/', { replace: true });
   };
   useEffect(() => {
     // clean the login status when logout page is loaded
-    handleExpiredToken();
+    // handleExpiredToken();
+    console.log('isAuthenticated:', isAuthenticated);
   });
-  return (
-    <div className="container">
-      <div className="row mt-5">
-        <div className="col-md-12">
-          <h2>You have logout!</h2>
-        </div>
+
+  if (isLoading) {
+    return (
+      <div>
+        <h1>Loading...</h1>
       </div>
-      <div className="row mt-3">
-        <div className="col-md-12">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleClick}
-          >
-            Home
-          </button>
+    );
+  }
+
+  if (isAuthenticated) {
+    // Redirect to the HomePage if logged in
+    window.location.href = 'http://127.0.0.1:3000/';
+  } else {
+    handleExpiredToken();
+    return (
+      <div className="container">
+        <div className="row mt-5">
+          <div className="col-md-12">
+            <h2>You have logout!</h2>
+          </div>
         </div>
+        <div className="row mt-3">
+          <div className="col-md-12">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleClick}
+            >
+              Home
+            </button>
+          </div>
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
-  );
+    );
+  }
 };
 
 export default Logout;

@@ -35,8 +35,12 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div>
-        <h1>Loading...</h1>
+      <div className="container">
+        <div className="row mt-5 ">
+          <div className="col-md-12">
+            <h2>Loading...</h2>
+          </div>
+        </div>
       </div>
     );
   }
@@ -46,7 +50,7 @@ const Profile = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <h1>Profile of user</h1>
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>

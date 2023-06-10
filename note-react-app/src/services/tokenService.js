@@ -109,3 +109,15 @@ export function getLocalIDToken() {
 export function setLocalIdToken(newIdToken) {
   localStorage.setItem('id_token', newIdToken);
 }
+
+export function removeLocalAccessToken() {
+  localStorage.removeItem('access_token');
+}
+
+export function removeLocalRefreshToken() {
+  localStorage.removeItem('refresh_token');
+}
+
+export function removeLocalIdToken() {
+  localStorage.removeItem('id_token');
+}

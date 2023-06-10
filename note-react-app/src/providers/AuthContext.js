@@ -5,6 +5,13 @@ import {
   getLocalIDToken,
   exchangeCodeForAccessToken,
   introspectAccessToken,
+  getLocalAccessToken,
+  setLocalAccessToken,
+  getLocalRefreshToken,
+  setLocalRefreshToken,
+  getLocalIdToken,
+  setLocalIdToken,
+  refreshAccessToken,
 } from '../services/tokenService';
 
 const AuthContext = createContext();
@@ -96,6 +103,9 @@ const AuthProvider = ({ children }) => {
     logoutUrl.searchParams.append('client_id', process.env.REACT_APP_CLIENT_ID);
     //Go to openid end session logout page
     const logoutString = decodeURIComponent(logoutUrl.href);
+    setLocalAccessToken(null); // To avoid trigger checkAuthenticationStatus()
+    setIsAuthenticated(false);
+    setLoginUserName(null);
     window.location.href = logoutString; //external link
     // console.log(logoutString);
   };

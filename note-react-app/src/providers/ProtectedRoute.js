@@ -7,8 +7,12 @@ export const ProtectedRoute = ({ children }) => {
   // console.log('isAuthenticated:', isAuthenticated);
   if (isLoading) {
     return (
-      <div>
-        <h1>Loading...</h1>
+      <div className="container">
+        <div className="row mt-5 ">
+          <div className="col-md-12">
+            <h2>Loading...</h2>
+          </div>
+        </div>
       </div>
     );
   }

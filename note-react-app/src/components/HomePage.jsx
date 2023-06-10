@@ -8,7 +8,7 @@ import { AlertMessageContext } from '../providers/AlertMessageContext';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { loginUserName, isAuthenticated, handleLogin } = useAuth();
+  const { loginUserName, isLoading, isAuthenticated, handleLogin } = useAuth();
   const { alertMessage, setAlertMessage } = useContext(AlertMessageContext);
 
   const handleLoginClick = () => {
@@ -36,6 +36,19 @@ const HomePage = () => {
       clearInterval(intervalId);
     };
   }, [handleAlertMessage]);
+
+  if (isLoading) {
+    return (
+      <div className="container">
+        <div className="row mt-5 ">
+          <div className="col-md-12">
+            <h2>Loading...</h2>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <>
