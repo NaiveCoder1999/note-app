@@ -28,6 +28,15 @@ const Profile = () => {
     };
 
     fetchData();
+
+    function refreshPage() {
+      window.location.reload();
+    }
+    // Set up the interval to refresh the page
+    const intervalId = setInterval(refreshPage, 300000); // 300 seconds
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   if (loading) {

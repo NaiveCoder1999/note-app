@@ -25,6 +25,7 @@ const Callback = () => {
           // Redirect to the home page or another protected route
           // force refresh the page to make interceptor configure bearer header
           window.location.replace('http://127.0.0.1:3000/notes');
+          //navigate('/notes', { replace: true });
         })
         .catch((err) => {
           console.error('Error during authentication:', err);

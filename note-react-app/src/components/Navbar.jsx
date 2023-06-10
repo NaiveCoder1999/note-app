@@ -9,7 +9,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState('Home');
   const [isLogoutModalOpen, toggleLogoutModal] = useState(false);
-  const { loginUserName, isAuthenticated, handleLogin, handleLogout } = useAuth();
+  const { loginUserName, isAuthenticated, handleLogin, handleLogout } =
+    useAuth();
 
   const handleClick = (name) => {
     setActiveItem(name);
