@@ -1,11 +1,11 @@
 import { introspectAccessToken } from '../services/tokenService';
 import React, { useState, useEffect } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 const Profile = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -13,7 +13,11 @@ const Profile = () => {
         const response = await introspectAccessToken(
           localStorage.getItem('access_token')
         );
-        setData(response);
+        if (response.active) {
+          setData(response);
+        } else {
+          navigate('/logout');
+        }
       } catch (err) {
         setError(err);
       } finally {
@@ -31,7 +35,7 @@ const Profile = () => {
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (

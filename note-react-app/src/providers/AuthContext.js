@@ -12,6 +12,7 @@ import {
   getLocalIdToken,
   setLocalIdToken,
   refreshAccessToken,
+  removeLocalAccessToken,
 } from '../services/tokenService';
 
 const AuthContext = createContext();
@@ -48,13 +49,14 @@ const AuthProvider = ({ children }) => {
         } else {
           setIsAuthenticated(false);
           setLoginUserName(null);
+          removeLocalAccessToken(); // To avoid trigger checkAuthenticationStatus() infinitely
           //window.location.reload(true); // would trap into infinite refresh loop
         }
       } catch (error) {
         console.error('Error introspect for access token:', error);
         setIsAuthenticated(false);
         setLoginUserName(null);
-        //window.location.reload(true);
+        removeLocalAccessToken(); // To avoid trigger checkAuthenticationStatus() infinitely
       } finally {
         setLoading(false);
       }

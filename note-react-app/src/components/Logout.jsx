@@ -21,6 +21,9 @@ const Logout = () => {
   useEffect(() => {
     // clean the login status when logout page is loaded
     // handleExpiredToken();
+    if (!isAuthenticated) {
+      handleExpiredToken();
+    }
     console.log('isAuthenticated:', isAuthenticated);
   });
 
@@ -36,7 +39,6 @@ const Logout = () => {
     // Redirect to the HomePage if logged in
     window.location.href = 'http://127.0.0.1:3000/';
   } else {
-    handleExpiredToken();
     return (
       <div className="container">
         <div className="row mt-5">
