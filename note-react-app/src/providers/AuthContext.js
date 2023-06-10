@@ -15,15 +15,16 @@ const AuthProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(null);
   const [idToken, setIDToken] = useState(null);
   const [loginUserName, setLoginUserName] = useState(null);
+  const [isLoading, setLoading] = useState(true); //TODO
 
   useEffect(() => {
-    // check if token is still valid
+    // check if token is still valid; isLoading is true
     const checkAuthenticationStatus = async () => {
       const storedAccessToken = localStorage.getItem('access_token');
       const storedRefreshToken = localStorage.getItem('refresh_token');
       const storedIDToken = localStorage.getItem('id_token');
       try {
-        // null or undefined check not working
+        // default value of isAuthenticated is false
         if (storedAccessToken) {
           const introspectData = await introspectAccessToken(storedAccessToken);
           const isTokenActive = introspectData.active;
@@ -47,6 +48,8 @@ const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
         setLoginUserName(null);
         //window.location.reload(true);
+      } finally {
+        setLoading(false);
       }
     };
     // Call the validation function everytime the component is mounted
@@ -135,12 +138,15 @@ const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <AuthContext.Provider
       value={{
+        isLoading,
         isAuthenticated,
         loginUserName,
         accessToken,

@@ -88,6 +88,14 @@ export default function NoteList() {
   useEffect(() => {
     handleNotesList();
     handleAlertMessage();
+    function refreshPage() {
+      window.location.reload();
+    }
+    // Set up the interval to refresh the page
+    const intervalId = setInterval(refreshPage, 300000); // 300 seconds
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [handleNotesList, handleAlertMessage]);
 
   // Parse the HTML content from the TiptapEditor into React components with syntax highlighting

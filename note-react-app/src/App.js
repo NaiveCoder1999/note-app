@@ -26,10 +26,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/callback" element={<Callback />} />
-            {/* <Route path="/test" element={<Test />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/notes" element={<NoteList />} />
-            <Route path="/notes/:noteId" element={<NoteInfo />} /> */}
+
             <Route
               path="/test"
               element={
@@ -49,10 +46,9 @@ function App() {
             <Route
               path="/notes"
               element={
-                // <ProtectedRoute>
-                //   <NoteList />
-                // </ProtectedRoute>
-                <NoteList />
+                <ProtectedRoute>
+                  <NoteList />
+                </ProtectedRoute>
               }
             />
             <Route
@@ -63,6 +59,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            {/* <Route path="/test" element={<Test />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/notes" element={<NoteList />} />
+            <Route path="/notes/:noteId" element={<NoteInfo />} /> */}
           </Routes>
         </AlertMessageProvider>
       </AuthProvider>

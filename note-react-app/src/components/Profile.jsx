@@ -1,7 +1,4 @@
-import {
-  introspectAccessToken,
-  checkAccessToken,
-} from '../services/tokenService';
+import { introspectAccessToken } from '../services/tokenService';
 import React, { useState, useEffect } from 'react';
 
 const Profile = () => {
@@ -16,9 +13,6 @@ const Profile = () => {
         const response = await introspectAccessToken(
           localStorage.getItem('access_token')
         );
-        // const response = await checkAccessToken(
-        //   localStorage.getItem('access_token')
-        // );
         setData(response);
       } catch (err) {
         setError(err);
@@ -40,7 +34,11 @@ const Profile = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <h1>Loading...</h1>
+      </div>
+    );
   }
 
   if (error) {

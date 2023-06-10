@@ -31,7 +31,6 @@ const requestInterceptor = instance.interceptors.request.use(
   }
 );
 
-
 const responseInterceptor = instance.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger

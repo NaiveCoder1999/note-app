@@ -3,10 +3,16 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loginUserName, accessToken } = useAuth();
-  console.log('isAuthenticated:', isAuthenticated);
-  console.log('loginUserName:', loginUserName);
-  // console.log('accessToken:', accessToken);
+  const { isLoading, isAuthenticated } = useAuth();
+  // console.log('isAuthenticated:', isAuthenticated);
+  if (isLoading) {
+    return (
+      <div>
+        <h1>Loading...</h1>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     // Redirect to the HomePage
     return <Navigate to="/" replace />;
