@@ -1,9 +1,8 @@
-// import PropTypes from 'prop-types';
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+
+import React, { useEffect, useCallback, useContext } from 'react';
 import Footer from '../components/Footer';
 import { useAuth } from '../providers/AuthContext';
 import { useNavigate } from 'react-router-dom';
-// import * as Constants from '../constants/config';
 import { AlertMessageContext } from '../providers/AlertMessageContext';
 
 const HomePage = () => {
@@ -31,7 +30,7 @@ const HomePage = () => {
       window.location.reload();
     }
     // Set up the interval to refresh the page
-    const intervalId = setInterval(refreshPage, 300000); // 300 seconds
+    const intervalId = setInterval(refreshPage, 600000); // 600 seconds
     return () => {
       clearInterval(intervalId);
     };

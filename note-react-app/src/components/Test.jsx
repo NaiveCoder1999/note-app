@@ -1,13 +1,9 @@
-import {
-  getLocalAccessToken,
-  setLocalAccessToken,
-  getLocalRefreshToken,
-  setLocalRefreshToken,
-  getLocalIdToken,
-  setLocalIdToken,
-  refreshAccessToken,
-} from '../services/tokenService';
 import React, { useState, useEffect } from 'react';
+import {
+  getLocalRefreshToken,
+  refreshAccessToken,
+  setLocalTokens,
+} from '../services/tokenService';
 
 export default function Test() {
   const [accessToken, setAccessToken] = useState(null);
@@ -17,13 +13,8 @@ export default function Test() {
     const fetchAccessToken = async () => {
       try {
         const { newAccessToken, newRefreshToken, newIdToken } =
-          await refreshAccessToken(
-            localStorage.getItem('refresh_token')
-            //refreshToken
-          );
-        setLocalAccessToken(newAccessToken);
-        setLocalRefreshToken(newRefreshToken);
-        setLocalIdToken(newIdToken);
+          await refreshAccessToken(getLocalRefreshToken());
+        setLocalTokens(newAccessToken, newRefreshToken, newIdToken);
         setAccessToken(newAccessToken);
         setRefreshToken(newRefreshToken);
         setIdToken(newIdToken);

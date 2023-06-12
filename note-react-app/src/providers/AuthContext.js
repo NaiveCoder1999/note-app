@@ -2,7 +2,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { generateCodeVerifier, generateCodeChallenge } from '../services/pkce';
 import {
-  getLocalIDToken,
   exchangeCodeForAccessToken,
   introspectAccessToken,
   getLocalAccessToken,
@@ -13,6 +12,8 @@ import {
   setLocalIdToken,
   refreshAccessToken,
   removeLocalAccessToken,
+  removeLocalTokens,
+  setLocalTokens,
 } from '../services/tokenService';
 
 const AuthContext = createContext();
@@ -28,9 +29,9 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     // check if token is still valid; isLoading is true
     const checkAuthenticationStatus = async () => {
-      const storedAccessToken = localStorage.getItem('access_token');
-      const storedRefreshToken = localStorage.getItem('refresh_token');
-      const storedIDToken = localStorage.getItem('id_token');
+      const storedAccessToken = getLocalAccessToken();
+      const storedRefreshToken = getLocalRefreshToken();
+      const storedIDToken = getLocalIdToken();
       try {
         // default value of isAuthenticated is false
         if (storedAccessToken) {
@@ -111,7 +112,7 @@ const AuthProvider = ({ children }) => {
 
   // initiate RP logout with GET method
   const handleLogout = () => {
-    const idToken = getLocalIDToken();
+    const idToken = getLocalIdToken();
     const logoutUrl = new URL(process.env.REACT_APP_END_SESSION_ENDPOINT);
     logoutUrl.searchParams.append('id_token_hint', idToken);
     logoutUrl.searchParams.append(
@@ -134,9 +135,7 @@ const AuthProvider = ({ children }) => {
     setRefreshToken(null);
     setIDToken(null);
     setLoginUserName(null);
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('id_token');
+    removeLocalTokens();
   };
 
   // triggered on auth callback of Callback component
@@ -151,9 +150,7 @@ const AuthProvider = ({ children }) => {
           idToken: remoteIdToken,
         } = await exchangeCodeForAccessToken(code, codeVerifier);
         if (remoteAccessToken && remoteIdToken) {
-          localStorage.setItem('access_token', remoteAccessToken);
-          localStorage.setItem('refresh_token', remoteRefreshToken);
-          localStorage.setItem('id_token', remoteIdToken);
+          setLocalTokens(remoteAccessToken, remoteRefreshToken, remoteIdToken);
           setIsAuthenticated(true); //set auth status to true
           setAccessToken(remoteAccessToken);
           setRefreshToken(remoteRefreshToken);

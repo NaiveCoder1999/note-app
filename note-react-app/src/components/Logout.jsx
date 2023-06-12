@@ -1,9 +1,7 @@
-// import PropTypes from 'prop-types';
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useEffect } from 'react';
 import Footer from './Footer';
 import { useAuth } from '../providers/AuthContext';
 import { useNavigate } from 'react-router-dom';
-// import * as Constants from '../constants/config';
 
 /**
  * This function clears the expired tokens and give users

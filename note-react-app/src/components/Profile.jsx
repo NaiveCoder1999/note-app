@@ -1,6 +1,10 @@
-import { introspectAccessToken } from '../services/tokenService';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  getLocalAccessToken,
+  introspectAccessToken,
+} from '../services/tokenService';
+
 const Profile = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,9 +14,7 @@ const Profile = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await introspectAccessToken(
-          localStorage.getItem('access_token')
-        );
+        const response = await introspectAccessToken(getLocalAccessToken());
         if (response.active) {
           setData(response);
         } else {

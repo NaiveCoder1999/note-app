@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import * as Constants from '../constants/config';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 
@@ -20,12 +19,8 @@ const validationSchema = Yup.object().shape({
 });
 
 //function to handle update and handle create
-
 //creating formik
-//user is CONSTANT
 //enableReinitialize={true} is vital
-
-// const NoteForm = ({ initialValues, onSubmit, onNoteChange }) => {
 const NoteForm = ({ initialValues, onSubmit }) => {
   return (
     <Formik
@@ -107,7 +102,6 @@ const NoteForm = ({ initialValues, onSubmit }) => {
 NoteForm.propTypes = {
   initialValues: PropTypes.object,
   onSubmit: PropTypes.func,
-  //onNoteChange: PropTypes.func,
 };
 
 export default NoteForm;

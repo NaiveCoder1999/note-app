@@ -1,5 +1,5 @@
 // src/Tiptap.jsx
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { EditorContent, ReactNodeViewRenderer, useEditor } from '@tiptap/react';

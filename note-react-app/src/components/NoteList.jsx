@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import * as Constants from '../constants/config';
-//import method of context
+//import method of context 
 import { AlertMessageContext } from '../providers/AlertMessageContext';
 import { useAuth } from '../providers/AuthContext';
 import { getAllNotes, deleteNote } from '../services/noteService'; //non-default export
@@ -88,14 +87,15 @@ export default function NoteList() {
   useEffect(() => {
     handleNotesList();
     handleAlertMessage();
-    function refreshPage() {
-      window.location.reload();
-    }
-    // Set up the interval to refresh the page
-    const intervalId = setInterval(refreshPage, 300000); // 300 seconds
-    return () => {
-      clearInterval(intervalId);
-    };
+
+    // function refreshPage() {
+    //   window.location.reload();
+    // }
+    // // Set up the interval to refresh the page
+    // const intervalId = setInterval(refreshPage, 300000); // 300 seconds
+    // return () => {
+    //   clearInterval(intervalId);
+    // };
   }, [handleNotesList, handleAlertMessage]);
 
   // Parse the HTML content from the TiptapEditor into React components with syntax highlighting

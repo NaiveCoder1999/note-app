@@ -1,6 +1,5 @@
 //import PropTypes from 'prop-types';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import * as Constants from '../constants/config';
 import { getSingleNote, createNote, updateNote } from '../services/noteService';
 import { useParams, useNavigate } from 'react-router-dom';
 import NoteForm from './NoteForm.jsx';
@@ -33,8 +32,7 @@ export default function NoteInfo() {
     console.log(noteEntity);
     let noteData = noteEntity.data;
     setNoteData(noteData); //set a json data
-    //setTitle(noteData.noteName);
-    //setDescription(noteData.description);
+
   }
 
   //function to handle update and handle create

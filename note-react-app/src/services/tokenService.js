@@ -101,7 +101,7 @@ export function setLocalRefreshToken(newRefreshToken) {
   localStorage.setItem('refresh_token', newRefreshToken);
 }
 
-export function getLocalIDToken() {
+export function getLocalIdToken() {
   const idToken = localStorage.getItem('id_token');
   return idToken;
 }

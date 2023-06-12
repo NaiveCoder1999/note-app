@@ -5,7 +5,6 @@ import {
   setLocalAccessToken,
   getLocalRefreshToken,
   setLocalRefreshToken,
-  getLocalIdToken,
   setLocalIdToken,
   refreshAccessToken,
 } from '../services/tokenService';

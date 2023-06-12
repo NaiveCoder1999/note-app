@@ -2,7 +2,6 @@ import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../providers/AuthContext';
 import { AlertMessageContext } from '../providers/AlertMessageContext';
-
 //component for handling authorization code and then execute authentication
 const Callback = () => {
   const navigate = useNavigate();
