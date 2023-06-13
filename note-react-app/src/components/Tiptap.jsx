@@ -195,12 +195,14 @@ export default function Tiptap({ initialContent, onChange }) {
     },
     // onUpdate: ({ editor }) => {
     //   let html = editor.getHTML();
-    //   getHTML(html); //invoke parent component function
+    //   getHTML(html);
     // },
     onBlur: ({ editor }) => {
       //to fix cursor jumping in the formik field
       let html = editor.getHTML();
-      onChange(html); //invoke parent component function
+      // pass html value to upper component NoteForm
+      // invoke NoteInfo's setFieldValue of Formik, values update each rendering
+      onChange(html);
     },
   });
 

@@ -29,7 +29,7 @@ const NoteForm = ({ initialValues, onSubmit }) => {
       validateOnChange={true}
       validateOnBlur={true}
       initialValues={initialValues}
-      onSubmit={(values) => onSubmit(values)} //important
+      onSubmit={(values) => onSubmit(values)} //passing handleSubmit of upper noteInfo -> noteForm
     >
       {(
         //props' methods
@@ -76,9 +76,9 @@ const NoteForm = ({ initialValues, onSubmit }) => {
             <div className="Tiptap">
               <Tiptap
                 initialContent={values.description}
+                // pass function props from NoteForm to Tiptap component as onChange handler
                 onChange={(value) => {
-                  setFieldValue('description', value); //set formik internal values
-                  //onNoteChange(value); //pass HTML string to NoteInfo
+                  setFieldValue('description', value); //set formik internal values from Tiptap
                 }}
               />
             </div>

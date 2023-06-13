@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(null);
   const [idToken, setIDToken] = useState(null);
   const [loginUserName, setLoginUserName] = useState(null);
-  const [isLoading, setLoading] = useState(true); //TODO
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     // check if token is still valid; isLoading is true
@@ -41,7 +41,6 @@ const AuthProvider = ({ children }) => {
 
           if (!isTokenActive) {
             // when token is expired
-            // TODO refresh token
             const { newAccessToken, newRefreshToken, newIdToken } =
               await refreshAccessToken(storedRefreshToken);
             setIsAuthenticated(true);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-//import method of context 
+//import method of context
 import { AlertMessageContext } from '../providers/AlertMessageContext';
 import { useAuth } from '../providers/AuthContext';
 import { getAllNotes, deleteNote } from '../services/noteService'; //non-default export
@@ -10,9 +10,11 @@ import { Modal, Button } from 'react-bootstrap';
 import parse from 'html-react-parser';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
+import '../styles/Searchbox.css';
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
+  const [filteredNotes, setFilteredNotes] = useState([]); //filtered notes for searchbox
+  const [searchTerm, setSearchTerm] = useState(''); //searchbox's input text
   const [isDeleteModalOpen, toggleDeleteModal] = useState(false);
   const [isPreviewModalOpen, togglePreviewModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null); //passed item object to control modal
@@ -36,6 +38,11 @@ export default function NoteList() {
     getNotesList(loginUserName);
   }, [loginUserName]);
 
+  const handleSearchBarChange = (e) => {
+    const lowerCaseSearchTerm = e.target.value.toLowerCase(); //set search term to lower case for searching
+    setSearchTerm(lowerCaseSearchTerm);
+  };
+
   const handleAlertMessage = useCallback(async () => {
     if (alertMessage) {
       setTimeout(() => {
@@ -50,10 +57,15 @@ export default function NoteList() {
         let response = await getAllNotes(userName); //axios response type
         //console.log(response);
         setNotes(response.data); //change promise to list}
+        setFilteredNotes(response.data); // prerfill the searchbox data
+        setError(null);
       }
     } catch (err) {
+      setError(err.message);
       console.error('Error load note list:', err);
       throw err;
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -86,17 +98,25 @@ export default function NoteList() {
   // update status of notes and alert messages
   useEffect(() => {
     handleNotesList();
-    handleAlertMessage();
+    //handle and set filter notes list after search
 
-    // function refreshPage() {
-    //   window.location.reload();
-    // }
-    // // Set up the interval to refresh the page
-    // const intervalId = setInterval(refreshPage, 300000); // 300 seconds
-    // return () => {
-    //   clearInterval(intervalId);
-    // };
+    handleAlertMessage();
+    // auto refresh is managed by AuthContext
   }, [handleNotesList, handleAlertMessage]);
+
+  useEffect(() => {
+    // Filter notes based on searchTerm
+    const filterNotes = () => {
+      const filtered = notes.filter(
+        (note) =>
+          note.noteName.toLowerCase().includes(searchTerm) ||
+          note.description.toLowerCase().includes(searchTerm)
+      );
+      setFilteredNotes(filtered);
+    };
+
+    filterNotes();
+  }, [searchTerm, notes]);
 
   // Parse the HTML content from the TiptapEditor into React components with syntax highlighting
   const renderContent = (htmlString) => {
@@ -187,10 +207,41 @@ export default function NoteList() {
 
   return (
     <>
+      {/* React fragment */}
       <div className="container">
-        <h3>All Notes</h3>
         {alertMessage && (
           <div className="alert alert-success">{alertMessage}</div>
+        )}
+        <div className="container">
+          <h3>All Notes</h3>
+          <div className="search-container">
+            <input
+              type="search"
+              className="form-control me-3 text-bg"
+              placeholder="Search by Title or Content.."
+              value={searchTerm}
+              onChange={handleSearchBarChange}
+              aria-label="Search"
+              style={{
+                width: '20rem',
+                background: '#F0F0F0',
+                border: 'none',
+                padding: '0.5rem',
+              }}
+            />
+          </div>
+        </div>
+
+        {loading && (
+          <div className="container col-md-12">
+            <h5>Notes loading...</h5>
+          </div>
+        )}
+
+        {error && (
+          <div className="container col-md-12">
+            <h5>Problem fetching the notes - ${error}</h5>
+          </div>
         )}
 
         <div className="container">
@@ -205,7 +256,7 @@ export default function NoteList() {
               </tr>
             </thead>
             <tbody>
-              {notes.map((note) => (
+              {filteredNotes.map((note) => (
                 <tr key={note.id}>
                   <td>{note.id}</td>
                   <td>{note.noteName}</td>

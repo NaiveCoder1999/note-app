@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../providers/AuthContext';
 import { Modal, Button } from 'react-bootstrap';
 import { useNavigate, NavLink } from 'react-router-dom';
@@ -48,11 +48,6 @@ const Navbar = () => {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              {/* <li className="nav-item">
-                <a className="nav-link" href="/">
-                  Home
-                </a>
-              </li> */}
               <li
                 className={`nav-item${activeItem === 'Home' ? 'active' : ''}`}
               >
@@ -79,11 +74,6 @@ const Navbar = () => {
                     Notes
                   </NavLink>
                 </li>
-                // <li className="nav-item">
-                //   <a className="nav-link active" href="/notes">
-                //     Notes
-                //   </a>
-                // </li>
               )}
 
               {!isAuthenticated && (
@@ -114,11 +104,6 @@ const Navbar = () => {
                     Profile
                   </NavLink>
                 </li>
-                // <li className="nav-item">
-                //   <a className="nav-link active" href="/notes">
-                //     Notes
-                //   </a>
-                // </li>
               )}
               {!isAuthenticated && (
                 <li
@@ -130,9 +115,6 @@ const Navbar = () => {
                     Profile
                   </NavLink>
                 </li>
-                // <li className="nav-item">
-                //   <a className="nav-link disabled">Notes</a>
-                // </li>
               )}
 
               {/* <li className="nav-item dropdown">
@@ -166,7 +148,7 @@ const Navbar = () => {
               </ul>
             </li> */}
             </ul>
-            {isAuthenticated && (
+            {/* {isAuthenticated && (
               <form className="d-flex" role="search">
                 <input
                   type="search"
@@ -175,7 +157,7 @@ const Navbar = () => {
                   aria-label="Search"
                 />
               </form>
-            )}
+            )} */}
             {!isAuthenticated && (
               <div className="text-end">
                 <button
