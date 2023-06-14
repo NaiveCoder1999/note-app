@@ -37,23 +37,22 @@ const AuthProvider = ({ children }) => {
         if (storedAccessToken) {
           const introspectData = await introspectAccessToken(storedAccessToken);
           const isTokenActive = introspectData.active;
-          console.log('isTokenActive', isTokenActive); // TODO to delete
+          // console.log('isTokenActive', isTokenActive);
 
           if (!isTokenActive) {
-            // when token is expired
+            // when token is expired, try refresh
             const { newAccessToken, newRefreshToken, newIdToken } =
               await refreshAccessToken(storedRefreshToken);
-            setIsAuthenticated(true);
             setLocalAccessToken(newAccessToken);
             setLocalRefreshToken(newRefreshToken);
             setLocalIdToken(newIdToken);
             setAccessToken(newAccessToken);
             setRefreshToken(newRefreshToken);
             setIDToken(newIdToken);
-
+            setIsAuthenticated(true);
             window.location.reload();
-          } else if (isTokenActive) {
-            // token is valid
+          } else {
+            // token is valid amd actove
             setIsAuthenticated(true);
             setAccessToken(storedAccessToken);
             setIDToken(storedIDToken);
@@ -62,11 +61,10 @@ const AuthProvider = ({ children }) => {
             if (storedIDToken) setIDToken(storedIDToken);
           }
         } else {
-          // no access token stored in local storage, auth status is false
+          // access token is null in local storage, auth status is false
           setIsAuthenticated(false);
           setLoginUserName(null);
           removeLocalAccessToken(); // To avoid trigger checkAuthenticationStatus() infinitely
-          // window.location.reload(); // would trap into infinite refresh loop
         }
       } catch (error) {
         console.error('Error introspect for access token:', error);

@@ -4,7 +4,7 @@ import { AlertMessageContext } from '../providers/AlertMessageContext';
 import { useAuth } from '../providers/AuthContext';
 import { getAllNotes, deleteNote } from '../services/noteService'; //non-default export
 import { useNavigate } from 'react-router-dom';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Pagination, PageItem, Form } from 'react-bootstrap';
 
 //for syntax highlight of code snippet
 import parse from 'html-react-parser';
@@ -14,34 +14,21 @@ import '../styles/Searchbox.css';
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [filteredNotes, setFilteredNotes] = useState([]); //filtered notes for searchbox
+  const [currentNotes, setCurrentNotes] = useState([]);
+  const [currentPageNumber, setCurrentPageNumber] = useState(1);
+  const [notesPerPage] = useState(5); // control pagination number
   const [searchTerm, setSearchTerm] = useState(''); //searchbox's input text
-  const [isDeleteModalOpen, toggleDeleteModal] = useState(false);
-  const [isPreviewModalOpen, togglePreviewModal] = useState(false);
-  const [selectedNote, setSelectedNote] = useState(null); //passed item object to control modal
+
   //create and update success message
   const { alertMessage, setAlertMessage } = useContext(AlertMessageContext);
+  const [selectedNote, setSelectedNote] = useState(null); //passed item object to control modal
+  const [isDeleteModalOpen, toggleDeleteModal] = useState(false);
+  const [isPreviewModalOpen, togglePreviewModal] = useState(false);
   const { loginUserName } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const handlePreviewModal = (item) => {
-    setSelectedNote(item);
-    togglePreviewModal(true);
-  };
-
-  const handleDeleteModal = (item) => {
-    setSelectedNote(item);
-    toggleDeleteModal(true);
-  };
-
-  const handleNotesList = useCallback(async () => {
-    getNotesList(loginUserName);
-  }, [loginUserName]);
-
-  const handleSearchBarChange = (e) => {
-    const lowerCaseSearchTerm = e.target.value.toLowerCase(); //set search term to lower case for searching
-    setSearchTerm(lowerCaseSearchTerm);
-  };
+  let navigate = useNavigate();
 
   const handleAlertMessage = useCallback(async () => {
     if (alertMessage) {
@@ -69,6 +56,20 @@ export default function NoteList() {
     }
   }
 
+  const handleNotesList = useCallback(async () => {
+    getNotesList(loginUserName);
+  }, [loginUserName]);
+
+  //this.props.navigation("/courses/-1")
+  function handleAdd() {
+    navigate(`/notes/-1`);
+  }
+
+  function handleUpdate(noteId) {
+    console.log('update ' + noteId);
+    navigate(`/notes/${noteId}`);
+  }
+
   function handleDelete(userName, noteId) {
     deleteNote(userName, noteId)
       .then((res) => {
@@ -84,42 +85,18 @@ export default function NoteList() {
       });
   }
 
-  let navigate = useNavigate();
-  function handleUpdate(noteId) {
-    console.log('update ' + noteId);
-    navigate(`/notes/${noteId}`);
-  }
+  const handlePreviewModal = (item) => {
+    setSelectedNote(item);
+    togglePreviewModal(true);
+  };
 
-  //this.props.navigation("/courses/-1")
-  function handleAdd() {
-    navigate(`/notes/-1`);
-  }
-
-  // update status of notes and alert messages
-  useEffect(() => {
-    handleNotesList();
-    //handle and set filter notes list after search
-
-    handleAlertMessage();
-    // auto refresh is managed by AuthContext
-  }, [handleNotesList, handleAlertMessage]);
-
-  useEffect(() => {
-    // Filter notes based on searchTerm
-    const filterNotes = () => {
-      const filtered = notes.filter(
-        (note) =>
-          note.noteName.toLowerCase().includes(searchTerm) ||
-          note.description.toLowerCase().includes(searchTerm)
-      );
-      setFilteredNotes(filtered);
-    };
-
-    filterNotes();
-  }, [searchTerm, notes]);
+  const handleDeleteModal = (item) => {
+    setSelectedNote(item);
+    toggleDeleteModal(true);
+  };
 
   // Parse the HTML content from the TiptapEditor into React components with syntax highlighting
-  const renderContent = (htmlString) => {
+  const handleRenderContent = (htmlString) => {
     const parser = new DOMParser();
     // parse the HTML string into a DOM tree
     const html = parser.parseFromString(htmlString, 'text/html');
@@ -205,6 +182,57 @@ export default function NoteList() {
     }
   };
 
+  // update status of notes and alert messages
+  useEffect(() => {
+    handleNotesList();
+    //handle and set filter notes list after search
+    handleAlertMessage();
+    // auto refresh is managed by AuthContext
+  }, [handleNotesList, handleAlertMessage]);
+
+  // update status of search box's filtered notes
+  useEffect(() => {
+    // Filter notes based on searchTerm
+    const filterNotes = () => {
+      const filtered = notes.filter(
+        (note) =>
+          note.noteName.toLowerCase().includes(searchTerm) ||
+          note.description.toLowerCase().includes(searchTerm)
+      );
+      setFilteredNotes(filtered);
+    };
+
+    filterNotes();
+  }, [searchTerm, notes]);
+
+  // pagination refresh
+  useEffect(() => {
+    const updateCurrentNotes = () => {
+      const indexOfLastNote = currentPageNumber * notesPerPage;
+      const indexOfFirstNote = indexOfLastNote - notesPerPage;
+      const currentNotesOnPage = filteredNotes.slice(
+        indexOfFirstNote,
+        indexOfLastNote
+      );
+      setCurrentNotes(currentNotesOnPage);
+    };
+    updateCurrentNotes();
+  }, [filteredNotes, currentPageNumber, notesPerPage]);
+
+  let paginationItems = [];
+  const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
+  for (let i = 1; i <= totalPages; i++) {
+    paginationItems.push(
+      <Pagination.Item
+        key={i}
+        active={i === currentPageNumber}
+        onClick={() => setCurrentPageNumber(i)}
+      >
+        {i}
+      </Pagination.Item>
+    );
+  }
+
   return (
     <>
       {/* React fragment */}
@@ -215,15 +243,19 @@ export default function NoteList() {
         <div className="container">
           <h3>All Notes</h3>
           <div className="search-container">
-            <input
+            <Form.Control
               type="search"
-              className="form-control me-3 text-bg"
+              // className="form-control me-3 text-bg"
               placeholder="Search by Title or Content.."
               value={searchTerm}
-              onChange={handleSearchBarChange}
+              onChange={(e) => {
+                const lowerCaseSearchTerm = e.target.value.toLowerCase(); //set search term to lower case for searching
+                setSearchTerm(lowerCaseSearchTerm); // ensures that the pagination resets to the first page when a new search is performed
+                setCurrentPageNumber(1);
+              }}
               aria-label="Search"
               style={{
-                width: '20rem',
+                width: '19rem',
                 background: '#F0F0F0',
                 border: 'none',
                 padding: '0.5rem',
@@ -256,7 +288,7 @@ export default function NoteList() {
               </tr>
             </thead>
             <tbody>
-              {filteredNotes.map((note) => (
+              {currentNotes.map((note) => (
                 <tr key={note.id}>
                   <td>{note.id}</td>
                   <td>{note.noteName}</td>
@@ -292,6 +324,7 @@ export default function NoteList() {
               ))}
             </tbody>
           </table>
+          <Pagination>{paginationItems}</Pagination>
           <button className="btn btn-success" onClick={() => handleAdd()}>
             Add
           </button>
@@ -312,7 +345,9 @@ export default function NoteList() {
               <Modal.Header closeButton>
                 <Modal.Title>{selectedNote.noteName}</Modal.Title>
               </Modal.Header>
-              <Modal.Body>{renderContent(selectedNote.description)}</Modal.Body>
+              <Modal.Body>
+                {handleRenderContent(selectedNote.description)}
+              </Modal.Body>
               <Modal.Footer>
                 <Button
                   variant="secondary"
