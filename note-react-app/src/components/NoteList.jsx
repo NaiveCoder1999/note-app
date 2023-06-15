@@ -361,10 +361,20 @@ export default function NoteList() {
               ))}
             </tbody>
           </table>
-          <Pagination>{paginationItems}</Pagination>
+          {/* {currentNotes.length > 0 && (
+            <Pagination>{paginationItems}</Pagination>
+          )}
           <button className="btn btn-success" onClick={() => handleAdd()}>
             Add
-          </button>
+          </button> */}
+          <div className="d-flex justify-content-between align-items-center">
+            <button className="btn btn-success" onClick={() => handleAdd()}>
+              Add
+            </button>
+            {currentNotes.length > 0 && (
+              <Pagination>{paginationItems}</Pagination>
+            )}
+          </div>
         </div>
 
         <div>
@@ -374,6 +384,7 @@ export default function NoteList() {
               size="xl"
               // fullscreen={'md-down'}
               show={isPreviewModalOpen && selectedNote !== null}
+              scrollable={true}
               onHide={() => {
                 togglePreviewModal(false);
                 setSelectedNote(null);

@@ -40,6 +40,8 @@ public class DefaultSecurityConfig {
     private static final String ENCODED_PASSWORD_NOCODER = "{bcrypt}$2a$10$Fq4H5l.G6pEzxy/UA/FLCOp6xIEvXGyefXZgY6X1oz/sljXEkmrTi";
     private static final String ENCODED_PASSWORD_CODER = "{bcrypt}$2a$10$nAyI3nrm7J4Die.lAZ0wBOgJ2znIOPVOLLvh8gNo6jYlqqNfByDeO"; //coderCdx
 
+    // encoded password guest
+    private static final String ENCODED_PASSWORD_GUEST = "{bcrypt}$2a$10$BKfZg5AwLTv5Is9rwL7r8eosucyGyItX52tjqpbpHS8qlnnJuJnA6";
     // @formatter:off
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -68,7 +70,12 @@ public class DefaultSecurityConfig {
                 .password(ENCODED_PASSWORD_CODER)
                 .roles("USER","ADMIN") //define the user authorities, e.g. ROLE_ADMIN
                 .build();
-        return new InMemoryUserDetailsManager(user, noteUser);
+
+        UserDetails guestUser = User.withUsername("guest")
+                .password(ENCODED_PASSWORD_GUEST)
+                .roles("USER") //define the user authorities, e.g. ROLE_ADMIN
+                .build();
+        return new InMemoryUserDetailsManager(user, noteUser, guestUser);
     }
 
     @Bean
