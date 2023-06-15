@@ -219,8 +219,27 @@ export default function NoteList() {
     updateCurrentNotes();
   }, [filteredNotes, currentPageNumber, notesPerPage]);
 
+  // define pagination items
   let paginationItems = [];
   const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
+  paginationItems.push(
+    <Pagination.First
+      key={-4}
+      onClick={() => setCurrentPageNumber(1)}
+      disabled={currentPageNumber === 1}
+    />
+  );
+  paginationItems.push(
+    <Pagination.Prev
+      key={-3}
+      onClick={() =>
+        setCurrentPageNumber((CurrentPageNumer) =>
+          Math.max(CurrentPageNumer - 1, 1)
+        )
+      }
+      disabled={currentPageNumber === 1}
+    />
+  );
   for (let i = 1; i <= totalPages; i++) {
     paginationItems.push(
       <Pagination.Item
@@ -232,6 +251,24 @@ export default function NoteList() {
       </Pagination.Item>
     );
   }
+  paginationItems.push(
+    <Pagination.Next
+      key={-2}
+      onClick={() =>
+        setCurrentPageNumber((currentPageNumber) =>
+          Math.min(currentPageNumber + 1, totalPages)
+        )
+      }
+      disabled={currentPageNumber === totalPages}
+    />
+  );
+  paginationItems.push(
+    <Pagination.Last
+      key={-1}
+      onClick={() => setCurrentPageNumber(totalPages)}
+      disabled={currentPageNumber === totalPages}
+    />
+  );
 
   return (
     <>

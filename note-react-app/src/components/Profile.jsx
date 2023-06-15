@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Card, Table } from 'react-bootstrap';
+import { useAuth } from '../providers/AuthContext';
 import {
   getLocalAccessToken,
   introspectAccessToken,
@@ -10,6 +12,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { loginUserName } = useAuth();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,10 +58,81 @@ const Profile = () => {
     return <div>Error: {error.message}</div>;
   }
 
+  const {
+    active,
+    sub,
+    aud,
+    nbf,
+    scope,
+    authority,
+    iss,
+    exp,
+    iat,
+    email,
+    client_id,
+    token_type,
+  } = data;
   return (
     <div className="container">
-      <h1>Profile of user</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <h3>Profile of {loginUserName}</h3>
+      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
+      <Card>
+        <Card.Header>Profile Information</Card.Header>
+        <Card.Body>
+          <Table responsive>
+            <tbody>
+              <tr>
+                <th>Active</th>
+                <td>{active ? 'Yes' : 'No'}</td>
+              </tr>
+              <tr>
+                <th>Subject</th>
+                <td>{sub}</td>
+              </tr>
+              <tr>
+                <th>Audience</th>
+                <td>{aud.join(', ')}</td>
+              </tr>
+              <tr>
+                <th>Not Before</th>
+                <td>{new Date(nbf * 1000).toLocaleString()}</td>
+              </tr>
+              <tr>
+                <th>Scope</th>
+                <td>{scope}</td>
+              </tr>
+              <tr>
+                <th>Authority</th>
+                <td>{authority.join(', ')}</td>
+              </tr>
+              <tr>
+                <th>Issuer</th>
+                <td>{iss}</td>
+              </tr>
+              <tr>
+                <th>Expiration</th>
+                <td>{new Date(exp * 1000).toLocaleString()}</td>
+              </tr>
+              <tr>
+                <th>Issued At</th>
+                <td>{new Date(iat * 1000).toLocaleString()}</td>
+              </tr>
+              <tr>
+                <th>Email</th>
+                <td>{email}</td>
+              </tr>
+              <tr>
+                <th>Client ID</th>
+                <td>{client_id}</td>
+              </tr>
+              <tr>
+                <th>Token Type</th>
+                <td>{token_type}</td>
+              </tr>
+            </tbody>
+          </Table>
+        </Card.Body>
+      </Card>
     </div>
   );
 };
