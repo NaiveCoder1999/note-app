@@ -35,7 +35,8 @@ const Logout = () => {
 
   if (isAuthenticated) {
     // Redirect to the HomePage if logged in
-    window.location.href = 'http://127.0.0.1:3000/';
+    // window.location.href = 'http://127.0.0.1:3000/';
+    window.location.href = process.env.REACT_APP_BASE_URI;
   } else {
     return (
       <div className="container">

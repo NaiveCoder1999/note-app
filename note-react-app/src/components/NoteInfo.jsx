@@ -32,7 +32,6 @@ export default function NoteInfo() {
     console.log(noteEntity);
     let noteData = noteEntity.data;
     setNoteData(noteData); //set a json data
-
   }
 
   //function to handle update and handle create
@@ -106,12 +105,14 @@ export default function NoteInfo() {
   }, [handleNoteInfo, keyDownHandler, noteId]);
 
   return (
-    <div className="container">
-      <h3>Note Details</h3>
-      <p></p>
+    <>
       <div className="container">
-        <NoteForm initialValues={noteData} onSubmit={handleSubmit} />
+        <h3>Note Details</h3>
+        <p></p>
+        <div className="container">
+          <NoteForm initialValues={noteData} onSubmit={handleSubmit} />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

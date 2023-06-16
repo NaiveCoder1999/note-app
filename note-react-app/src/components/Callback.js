@@ -23,7 +23,8 @@ const Callback = () => {
         .then(() => {
           // Redirect to the home page or another protected route
           // force refresh the page to make interceptor configure bearer header
-          window.location.replace('http://127.0.0.1:3000/notes');
+          // window.location.replace('http://127.0.0.1:3000/notes');
+          window.location.replace(process.env.REACT_APP_BASE_URI + '/notes');
           //navigate('/notes', { replace: true });
         })
         .catch((err) => {
