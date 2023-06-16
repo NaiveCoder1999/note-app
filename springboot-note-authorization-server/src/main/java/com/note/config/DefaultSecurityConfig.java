@@ -38,7 +38,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration(proxyBeanMethods = false)
 public class DefaultSecurityConfig {
     private static final String ENCODED_PASSWORD_NOCODER = "{bcrypt}$2a$10$Fq4H5l.G6pEzxy/UA/FLCOp6xIEvXGyefXZgY6X1oz/sljXEkmrTi";
-    private static final String ENCODED_PASSWORD_CODER = "{bcrypt}$2a$10$nAyI3nrm7J4Die.lAZ0wBOgJ2znIOPVOLLvh8gNo6jYlqqNfByDeO"; //coderCdx
+    private static final String ENCODED_PASSWORD_CODER = "{bcrypt}$2a$10$nAyI3nrm7J4Die.lAZ0wBOgJ2znIOPVOLLvh8gNo6jYlqqNfByDeO";
 
     // encoded password guest
     private static final String ENCODED_PASSWORD_GUEST = "{bcrypt}$2a$10$BKfZg5AwLTv5Is9rwL7r8eosucyGyItX52tjqpbpHS8qlnnJuJnA6";
@@ -51,7 +51,6 @@ public class DefaultSecurityConfig {
                 )
                 .cors(withDefaults())
                 // use default login page provided by spring-security
-                // https://github.com/spring-projects/spring-authorization-server/issues/533#issuecomment-1448611820
                 .formLogin(withDefaults());
         return http.build();
     }
@@ -59,8 +58,12 @@ public class DefaultSecurityConfig {
     // configure OAuth2 login user
     @Bean
     UserDetailsService users() {
-//        UserDetails user = User.withDefaultPasswordEncoder()
-//                .username("nocoder")
+        // add a guest account with same username and password
+        UserDetails guestUser = User.withUsername("guest")
+                .password(ENCODED_PASSWORD_GUEST)
+                .roles("USER","ADMIN")
+                .build();
+
                 UserDetails user = User.withUsername("nocoder")
                 .password(ENCODED_PASSWORD_NOCODER)
                 .roles("USER","ADMIN") //define the user authorities, e.g. ROLE_ADMIN
@@ -68,13 +71,9 @@ public class DefaultSecurityConfig {
 
         UserDetails noteUser = User.withUsername("coder")
                 .password(ENCODED_PASSWORD_CODER)
-                .roles("USER","ADMIN") //define the user authorities, e.g. ROLE_ADMIN
+                .roles("USER","ADMIN")
                 .build();
 
-        UserDetails guestUser = User.withUsername("guest")
-                .password(ENCODED_PASSWORD_GUEST)
-                .roles("USER") //define the user authorities, e.g. ROLE_ADMIN
-                .build();
         return new InMemoryUserDetailsManager(user, noteUser, guestUser);
     }
 

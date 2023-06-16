@@ -12,7 +12,11 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://127.0.0.1:3000");
-        config.addAllowedOrigin("http://127.0.0.1:8080"); // add h2 database url
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://127.0.0.1:4200");
+        config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedOrigin("http://127.0.0.1:8080");
+        config.addAllowedOrigin("http://localhost:8080"); // add h2 database url
         config.addAllowedHeader("*");
         //config.addAllowedMethod("GET");
         config.addAllowedMethod("*");
