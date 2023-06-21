@@ -61,7 +61,7 @@ public class DefaultSecurityConfig {
         // add a guest account with same username and password
         UserDetails guestUser = User.withUsername("guest")
                 .password(ENCODED_PASSWORD_GUEST)
-                .roles("USER","ADMIN")
+                .roles("USER")
                 .build();
 
                 UserDetails user = User.withUsername("nocoder")
@@ -72,6 +72,7 @@ public class DefaultSecurityConfig {
         UserDetails noteUser = User.withUsername("coder")
                 .password(ENCODED_PASSWORD_CODER)
                 .roles("USER","ADMIN")
+
                 .build();
 
         return new InMemoryUserDetailsManager(user, noteUser, guestUser);

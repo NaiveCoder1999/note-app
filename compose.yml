@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  auth:
+    build:
+      context: ./springboot-note-authorization-server
+      dockerfile: Dockerfile
+    image: note-auth-server:0.0.1
+    container_name: angular-ui
+    ports:
+      - 80:80
+    links:
+      - raft0
+      - raft1
+      - raft2
+
+  resource:
+    environment:
+      - RPC_ADDRESS=raft0:4041
+      - API_ADDRESS=raft0:8090
+    build:
+      context: ./raft
+      dockerfile: Dockerfile
+    image: raft-rest:latest
+    container_name: raft0
+    expose:
+      - 8090
+      - 4041

@@ -1,0 +1,16 @@
+logging:
+    level:
+        org:
+            springframework:
+                security: DEBUG
+                security.oauth2: DEBUG
+                web: DEBUG
+        root: INFO
+server:
+    port: 8090
+spring:
+    config:
+        activate:
+            on-profile: docker
+note:
+    issuerURI: "http://noteauth:8090"

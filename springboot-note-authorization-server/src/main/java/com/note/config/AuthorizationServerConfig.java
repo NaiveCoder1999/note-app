@@ -20,6 +20,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.note.jose.Jwks;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -31,7 +32,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -61,21 +61,15 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Configuration(proxyBeanMethods = false)
-//@Configuration
 public class AuthorizationServerConfig {
-
+    @Value("${note.issuerURI}")
+    String issuerURI;
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -94,11 +88,11 @@ public class AuthorizationServerConfig {
         };
 
         authorizationServerConfigurer
-//                .authorizationEndpoint(authorizationEndpoint ->
-//                        authorizationEndpoint.errorResponseHandler(
-//                                new SimpleUrlAuthenticationFailureHandler("/error")))
                 .oidc((oidc) -> oidc.userInfoEndpoint((userInfo) -> userInfo
                                 .userInfoMapper(userInfoMapper)));
+        //                .authorizationEndpoint(authorizationEndpoint ->
+//                        authorizationEndpoint.errorResponseHandler(
+//                                new SimpleUrlAuthenticationFailureHandler("/error")));
 
         http
                 .securityMatcher(endpointsMatcher)
@@ -154,6 +148,7 @@ public class AuthorizationServerConfig {
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
                         .idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)
+                        .authorizationCodeTimeToLive(Duration.ofSeconds(30))
                         .accessTokenTimeToLive(Duration.ofSeconds(30 * 60))
                         .refreshTokenTimeToLive(Duration.ofSeconds(60 * 60))
 //                        .reuseRefreshTokens(true)
@@ -218,9 +213,14 @@ public class AuthorizationServerConfig {
         };
     }
 
+    // for docker config
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
-        return AuthorizationServerSettings.builder().build();
+
+        return AuthorizationServerSettings.builder()
+                //.issuer("http://noteauth:8090")
+                .issuer(issuerURI)
+                .build();
     }
 
     @Bean
