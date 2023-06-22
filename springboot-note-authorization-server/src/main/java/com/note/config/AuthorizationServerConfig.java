@@ -70,6 +70,10 @@ import java.util.stream.Collectors;
 public class AuthorizationServerConfig {
     @Value("${note.issuerURI}")
     String issuerURI;
+    @Value("${note.redirectURI}")
+    String redirectURI;
+    @Value("${note.postLogoutURI}")
+    String postLogoutURI;
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -127,8 +131,6 @@ public class AuthorizationServerConfig {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("note-client") //secret with basic auth
                 .clientSecret("{bcrypt}$2a$10$2RjplWIrwNu5LHAi4v9YquSjjbvJP1EQtAJ8j9RaGWFNO/awbO3dS") //note_secret
-//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .clientAuthenticationMethods(s -> {
                     s.add(ClientAuthenticationMethod.CLIENT_SECRET_POST);
 //                    s.add(ClientAuthenticationMethod.CLIENT_SECRET_BASIC);
@@ -137,8 +139,10 @@ public class AuthorizationServerConfig {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .redirectUri("http://127.0.0.1:3000/callback") //matched with react frontend app
-                .postLogoutRedirectUri("http://127.0.0.1:3000/logout")
+//                .redirectUri("http://127.0.0.1:3000/callback")
+//                .postLogoutRedirectUri("http://127.0.0.1:3000/logout")
+                .redirectUri(redirectURI) //matched with react frontend app
+                .postLogoutRedirectUri(postLogoutURI)
                 .scope(OidcScopes.OPENID).scope(OidcScopes.PROFILE)
                 .scope("note:read").scope("note:write")
                 .clientSettings(ClientSettings.builder()
@@ -218,7 +222,6 @@ public class AuthorizationServerConfig {
     public AuthorizationServerSettings authorizationServerSettings() {
 
         return AuthorizationServerSettings.builder()
-                //.issuer("http://noteauth:8090")
                 .issuer(issuerURI)
                 .build();
     }

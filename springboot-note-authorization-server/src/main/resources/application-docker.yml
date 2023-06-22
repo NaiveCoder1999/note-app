@@ -1,16 +1,19 @@
 logging:
-    level:
-        org:
-            springframework:
-                security: DEBUG
-                security.oauth2: DEBUG
-                web: DEBUG
-        root: INFO
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        security.oauth2: DEBUG
+        web: DEBUG
+    root: INFO
 server:
-    port: 8090
+  port: 8090
 spring:
-    config:
-        activate:
-            on-profile: docker
+  config:
+    activate:
+      on-profile: docker
 note:
-    issuerURI: "http://noteauth:8090"
+  # TODO change for react docker container
+  issuerURI: 'http://authorization-server:8090'
+  redirectURI: 'http://127.0.0.1/callback'
+  postLogoutURI: 'http://127.0.0.1/logout'

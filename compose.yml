@@ -1,27 +1,42 @@
 version: '3.8'
 services:
-  auth:
+  authorization-server:
     build:
       context: ./springboot-note-authorization-server
       dockerfile: Dockerfile
     image: note-auth-server:0.0.1
-    container_name: angular-ui
+    container_name: noteauth
     ports:
-      - 80:80
-    links:
-      - raft0
-      - raft1
-      - raft2
-
-  resource:
-    environment:
-      - RPC_ADDRESS=raft0:4041
-      - API_ADDRESS=raft0:8090
-    build:
-      context: ./raft
-      dockerfile: Dockerfile
-    image: raft-rest:latest
-    container_name: raft0
+      - 8090:8090
     expose:
       - 8090
-      - 4041
+
+  api-service:
+    build:
+      context: ./springboot-note
+      dockerfile: Dockerfile
+    image: note-resource-server:0.0.1
+    container_name: noteresource
+    ports:
+      - 8080:8080
+    expose:
+      - 8080
+    depends_on:
+      - authorization-server
+
+  react-app:
+    build:
+      context: ./note-react-app
+      dockerfile: Dockerfile
+    image: note-react-app:0.0.1
+    container_name: noteapp
+    ports:
+      - 80:80
+    expose:
+      - 80
+    depends_on:
+      - api-service
+
+networks:
+  default:
+    name: note-app-network
