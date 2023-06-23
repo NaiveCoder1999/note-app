@@ -1,20 +1,25 @@
 // import logo from './logo.svg';
 import './styles/App.css';
-import React from 'react';
-import NoteList from './components/NoteList';
-import NoteInfo from './components/NoteInfo';
+import React, { Suspense, lazy } from 'react';
+// import NoteList from './components/NoteList';
+// import NoteInfo from './components/NoteInfo';
 import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
 import Logout from './components/Logout';
 import Callback from './components/Callback';
-import Test from './components/Test';
+// import Test from './components/Test';
+
+import Loading from './components/Loading';
 
 import { AlertMessageProvider } from './providers/AlertMessageContext';
 import { AuthProvider } from './providers/AuthContext';
 import { ProtectedRoute } from './providers/ProtectedRoute';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import Footer from './components/Footer';
+import { Routes, Route } from 'react-router-dom';
+// import Footer from './components/Footer';
 import Profile from './components/Profile';
+
+const NoteList = React.lazy(() => import('./components/NoteList'));
+const NoteInfo = React.lazy(() => import('./components/NoteInfo'));
 
 function App() {
   return (
@@ -26,15 +31,14 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/callback" element={<Callback />} />
-
-            <Route
+            {/* <Route
               path="/test"
               element={
                 <ProtectedRoute>
                   <Test />
                 </ProtectedRoute>
               }
-            />
+            /> */}
             <Route
               path="/profile"
               element={
@@ -47,7 +51,9 @@ function App() {
               path="/notes"
               element={
                 <ProtectedRoute>
-                  <NoteList />
+                  <Suspense fallback={<Loading />}>
+                    <NoteList />
+                  </Suspense>
                 </ProtectedRoute>
               }
             />
@@ -55,14 +61,12 @@ function App() {
               path="/notes/:noteId"
               element={
                 <ProtectedRoute>
-                  <NoteInfo />
+                  <Suspense fallback={<Loading />}>
+                    <NoteInfo />
+                  </Suspense>
                 </ProtectedRoute>
               }
             />
-            {/* <Route path="/test" element={<Test />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/notes" element={<NoteList />} />
-            <Route path="/notes/:noteId" element={<NoteInfo />} /> */}
           </Routes>
         </AlertMessageProvider>
       </AuthProvider>

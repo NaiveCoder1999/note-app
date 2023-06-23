@@ -34,11 +34,13 @@
     "react-scripts": "5.0.1",
     "react-syntax-highlighter": "^15.5.0",
     "sass": "^1.62.1",
+    "source-map-explorer": "^2.5.3",
     "web-vitals": "^3.3.1",
     "whatwg-fetch": "^3.6.2",
     "yup": "^1.1.1"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

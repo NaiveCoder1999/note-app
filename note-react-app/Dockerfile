@@ -1,15 +1,10 @@
 FROM node:16.16.0-slim AS builder
-
 WORKDIR /app
-
 COPY package.json package-lock.json ./
-## Install build toolchain, install node deps and compile native add-ons
-# RUN apk add --no-cache python3 make g++
-RUN npm install
-
+RUN --mount=type=cache,target=/root/.npm,rw npm install
 COPY ./ /app/
 RUN npm run build
-# FROM nginx:1.25.1 as runtime
+
 FROM nginx:1.25.1-alpine3.17-slim as runtime
 COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build /usr/share/nginx/html
