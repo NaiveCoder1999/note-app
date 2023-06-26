@@ -15,7 +15,7 @@
     <description>springboot-note</description>
     <properties>
         <java.version>17</java.version>
-        <maven.test.skip>true</maven.test.skip>
+<!--        <maven.test.skip>true</maven.test.skip>-->
     </properties>
     <dependencies>
         <dependency>

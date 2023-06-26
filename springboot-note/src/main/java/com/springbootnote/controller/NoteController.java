@@ -71,7 +71,7 @@ public class NoteController {
     @DeleteMapping("/{userName}/notes/{id}")
     @PreAuthorize("#userName == authentication.name")
     public ResponseEntity<Void> deleteNote(@PathVariable long id, @PathVariable String userName) {
-        noteService.deleteNote(id, userName); //TODO scan the delete status?
+        noteService.deleteNote(id, userName);
         return ResponseEntity.noContent().build();
     }
 

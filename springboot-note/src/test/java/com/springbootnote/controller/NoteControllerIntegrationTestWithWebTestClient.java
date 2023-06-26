@@ -24,7 +24,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @SpringBootTest(classes = SpringbootNoteApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
-class NoteControllerWebTestClientIntegrationTest {
+class NoteControllerIntegrationTestWithWebTestClient {
 
     @LocalServerPort
     private int port; // available with Spring Web MVC

@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 /**
  * Integration test class for note controller
  */
-@Disabled ("This test is disabled for oauth2 testing WIP")
+@Disabled("This test is disabled for oauth2 resource server config enabled")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = SpringbootNoteApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc // for mocking oauth2
@@ -109,7 +109,7 @@ class NoteControllerIntegrationTest {
         try {
             note = restTemplate.getForObject("/user/coder/notes/10001", Note.class);
         } catch (NoteNotFoundException e) {
-            Assertions.assertEquals("Note id not found : 1", e.getMessage());
+            Assertions.assertEquals("Note id not found : 10001", e.getMessage());
         }
     }
 
