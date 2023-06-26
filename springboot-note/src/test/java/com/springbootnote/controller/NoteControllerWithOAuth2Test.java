@@ -4,41 +4,60 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springbootnote.model.Note;
 import com.springbootnote.service.NoteService;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 /**
- * Unit test class for note controller
+ * Unit test class with mocking oauth for note controller
  */
-@Disabled("This test is disabled for oauth2 testing")
+@Disabled("This test is disabled for oauth2 testing WIP")
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = NoteController.class)
 @WebMvcTest(value = NoteController.class)
-@AutoConfigureMockMvc
-@WithMockUser(username="coder", roles={"USER","ADMIN"})
-class NoteControllerTest {
+//@Import(NoteController.class)
+@TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
+//@WithMockUser(username = "coder", password = "coderCdx", roles = {"USER", "ADMIN"})
+class NoteControllerWithOAuth2Test {
+
+    //object <-> json
+    private static final ObjectMapper om = new ObjectMapper();
+    Note mockNote = new Note(10001L, "NodeJS", "coder", "TestJava10001");
+    String mockNoteJson = om.writeValueAsString(mockNote);
+    @Autowired
+    private WebApplicationContext context;
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,15 +65,25 @@ class NoteControllerTest {
     @MockBean
     private NoteService noteService;
 
-    //object <-> json
-    private static final ObjectMapper om = new ObjectMapper();
+    private Jwt jwt;
 
+    NoteControllerWithOAuth2Test() throws JsonProcessingException {
+    }
 
-    Note mockNote = new Note(10001L, "NodeJS", "coder", "TestJava10001");
-    //String mockNoteJson = "{\"id\":10001,\"noteName\":\"NodeJS\",\"userName\":\"coder\",\"description\":\"TestJava10001\"}";
-    String mockNoteJson = om.writeValueAsString(mockNote);
+    @BeforeEach
+    public void setup() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
 
-    NoteControllerTest() throws JsonProcessingException {
+        jwt = Jwt.withTokenValue("token")
+                .header("kid", "foo")
+                .header("alg", "RS256")
+                .claim(StandardClaimNames.SUB, "coder")
+                .claim("aud", "note-client")
+                .claim(StandardClaimNames.EMAIL, "dxchen1999@gmail.com")
+                .build();
     }
 
     @Test
@@ -62,10 +91,16 @@ class NoteControllerTest {
         //Note note = new Note(10001L, "NodeJS", "coder", "TestJava10001");
         Mockito.when(noteService.createNote
                 (Mockito.any(Note.class))).thenReturn(mockNote);
-
+//        Collection<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN");
+//        JwtAuthenticationToken token = new JwtAuthenticationToken(jwt, authorities);
         //invoke controller to create
         RequestBuilder request = MockMvcRequestBuilders.
                 post("/user/coder/notes")
+                .with(jwt()
+                        .authorities(List.of(new SimpleGrantedAuthority("ROLE_USER"),
+                                new SimpleGrantedAuthority("ROLE_ADMIN"))).jwt(jwt))
+
+//                .with(authentication(token))
                 .content(mockNoteJson).contentType(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(request).andReturn();
@@ -91,7 +126,11 @@ class NoteControllerTest {
         //assertEquals(notes, noteService.getAllNotes("coder"));
         //invoke controller
         RequestBuilder request = MockMvcRequestBuilders.
-                get("/user/coder/notes").accept(MediaType.APPLICATION_JSON);
+                get("/user/coder/notes")
+                .with(jwt()
+                        .authorities(List.of(new SimpleGrantedAuthority("ROLE_USER"),
+                                new SimpleGrantedAuthority("ROLE_ADMIN"))).jwt(jwt))
+                .accept(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(request).andReturn();
 
@@ -105,8 +144,12 @@ class NoteControllerTest {
                 (10001L, "coder")).thenReturn(mockNote);
 
         //invoke controller
-        RequestBuilder request = MockMvcRequestBuilders.
-                get("/user/coder/notes/10001").accept(MediaType.APPLICATION_JSON);
+        RequestBuilder request = MockMvcRequestBuilders
+        .get("/user/coder/notes/10001")
+                 .with(jwt()
+                .authorities(List.of(new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("ROLE_ADMIN"))).jwt(jwt))
+                .accept(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(request).andReturn();
 
@@ -117,11 +160,14 @@ class NoteControllerTest {
     @Test
     void updateNote() throws Exception {
         when(noteService.updateNote(Mockito.anyLong(),
-                        Mockito.anyString(), Mockito.any(Note.class)))
+                Mockito.anyString(), Mockito.any(Note.class)))
                 .thenReturn(mockNote);
 
         RequestBuilder request = MockMvcRequestBuilders
                 .put("/user/coder/notes/10001")
+                .with(jwt()
+                        .authorities(List.of(new SimpleGrantedAuthority("ROLE_USER"),
+                                new SimpleGrantedAuthority("ROLE_ADMIN"))).jwt(jwt))
                 .contentType(MediaType.APPLICATION_JSON).content(mockNoteJson);
 
         MvcResult result = mockMvc.perform(request).andReturn();
@@ -139,8 +185,10 @@ class NoteControllerTest {
         Mockito.doNothing().when(noteService).deleteNote(10001L, "coder");
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/user/coder/notes/10001");
-
+                .delete("/user/coder/notes/10001")
+.with(jwt()
+                .authorities(List.of(new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("ROLE_ADMIN"))).jwt(jwt));
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         MockHttpServletResponse response = result.getResponse();

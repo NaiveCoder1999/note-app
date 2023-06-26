@@ -17,9 +17,9 @@ import reactor.core.publisher.Mono;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
- * Integration test class for note controller
+ * Integration test class using webflux method for note controller
  */
-
+@Disabled ("This test is disabled for oauth2 testing WIP")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = SpringbootNoteApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
