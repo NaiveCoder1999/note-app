@@ -1,0 +1,774 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "ApiserviceService": {
+      "DependsOn": ["ApiserviceTCP8080Listener"],
+      "Properties": {
+        "Cluster": {
+          "Fn::GetAtt": ["Cluster", "Arn"]
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100
+        },
+        "DeploymentController": {
+          "Type": "ECS"
+        },
+        "DesiredCount": 1,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "api-service",
+            "ContainerPort": 8080,
+            "TargetGroupArn": {
+              "Ref": "ApiserviceTCP8080TargetGroup"
+            }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [
+              {
+                "Ref": "DefaultNetwork"
+              }
+            ],
+            "Subnets": ["subnet-974e79cd", "subnet-e034de99", "subnet-eec603a5"]
+          }
+        },
+        "PlatformVersion": "1.4.0",
+        "PropagateTags": "SERVICE",
+        "SchedulingStrategy": "REPLICA",
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": ["ApiserviceServiceDiscoveryEntry", "Arn"]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          },
+          {
+            "Key": "com.docker.compose.service",
+            "Value": "api-service"
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "ApiserviceTaskDefinition"
+        }
+      },
+      "Type": "AWS::ECS::Service"
+    },
+    "ApiserviceServiceDiscoveryEntry": {
+      "Properties": {
+        "Description": "\"api-service\" service discovery entry in Cloud Map",
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "api-service",
+        "NamespaceId": {
+          "Ref": "CloudMap"
+        }
+      },
+      "Type": "AWS::ServiceDiscovery::Service"
+    },
+    "ApiserviceTCP8080Listener": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "ForwardConfig": {
+              "TargetGroups": [
+                {
+                  "TargetGroupArn": {
+                    "Ref": "ApiserviceTCP8080TargetGroup"
+                  }
+                }
+              ]
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "LoadBalancer"
+        },
+        "Port": 8080,
+        "Protocol": "TCP"
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener"
+    },
+    "ApiserviceTCP8080TargetGroup": {
+      "Properties": {
+        "Port": 8080,
+        "Protocol": "TCP",
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          }
+        ],
+        "TargetType": "ip",
+        "VpcId": "vpc-420bb23b"
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+    },
+    "ApiserviceTaskDefinition": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Command": ["eu-west-1.compute.internal", "note-app.local"],
+            "Essential": false,
+            "Image": "docker/ecs-searchdomain-sidecar:1.0",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "LogGroup"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "note-app"
+              }
+            },
+            "Name": "Apiservice_ResolvConf_InitContainer"
+          },
+          {
+            "DependsOn": [
+              {
+                "Condition": "SUCCESS",
+                "ContainerName": "Apiservice_ResolvConf_InitContainer"
+              }
+            ],
+            "Essential": true,
+            "Image": "092764866376.dkr.ecr.eu-west-1.amazonaws.com/note-resource:0.0.1@sha256:acd32fba44193d440467480efe455297b310ce532a34c5f08bde0875ddc7a96e",
+            "LinuxParameters": {},
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "LogGroup"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "note-app"
+              }
+            },
+            "Name": "api-service",
+            "PortMappings": [
+              {
+                "ContainerPort": 8080,
+                "HostPort": 8080,
+                "Protocol": "tcp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Ref": "ApiserviceTaskExecutionRole"
+        },
+        "Family": "note-app-api-service",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": ["FARGATE"]
+      },
+      "Type": "AWS::ECS::TaskDefinition"
+    },
+    "ApiserviceTaskExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["sts:AssumeRole"],
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+          "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        ],
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          },
+          {
+            "Key": "com.docker.compose.service",
+            "Value": "api-service"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "AuthorizationserverService": {
+      "DependsOn": ["AuthorizationserverTCP8090Listener"],
+      "Properties": {
+        "Cluster": {
+          "Fn::GetAtt": ["Cluster", "Arn"]
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100
+        },
+        "DeploymentController": {
+          "Type": "ECS"
+        },
+        "DesiredCount": 1,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "authorization-server",
+            "ContainerPort": 8090,
+            "TargetGroupArn": {
+              "Ref": "AuthorizationserverTCP8090TargetGroup"
+            }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [
+              {
+                "Ref": "DefaultNetwork"
+              }
+            ],
+            "Subnets": ["subnet-974e79cd", "subnet-e034de99", "subnet-eec603a5"]
+          }
+        },
+        "PlatformVersion": "1.4.0",
+        "PropagateTags": "SERVICE",
+        "SchedulingStrategy": "REPLICA",
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": ["AuthorizationserverServiceDiscoveryEntry", "Arn"]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          },
+          {
+            "Key": "com.docker.compose.service",
+            "Value": "authorization-server"
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "AuthorizationserverTaskDefinition"
+        }
+      },
+      "Type": "AWS::ECS::Service"
+    },
+    "AuthorizationserverServiceDiscoveryEntry": {
+      "Properties": {
+        "Description": "\"authorization-server\" service discovery entry in Cloud Map",
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "authorization-server",
+        "NamespaceId": {
+          "Ref": "CloudMap"
+        }
+      },
+      "Type": "AWS::ServiceDiscovery::Service"
+    },
+    "AuthorizationserverTCP8090Listener": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "ForwardConfig": {
+              "TargetGroups": [
+                {
+                  "TargetGroupArn": {
+                    "Ref": "AuthorizationserverTCP8090TargetGroup"
+                  }
+                }
+              ]
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "LoadBalancer"
+        },
+        "Port": 8090,
+        "Protocol": "TCP"
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener"
+    },
+    "AuthorizationserverTCP8090TargetGroup": {
+      "Properties": {
+        "Port": 8090,
+        "Protocol": "TCP",
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          }
+        ],
+        "TargetType": "ip",
+        "VpcId": "vpc-420bb23b"
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+    },
+    "AuthorizationserverTaskDefinition": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Command": ["eu-west-1.compute.internal", "note-app.local"],
+            "Essential": false,
+            "Image": "docker/ecs-searchdomain-sidecar:1.0",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "LogGroup"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "note-app"
+              }
+            },
+            "Name": "Authorizationserver_ResolvConf_InitContainer"
+          },
+          {
+            "DependsOn": [
+              {
+                "Condition": "SUCCESS",
+                "ContainerName": "Authorizationserver_ResolvConf_InitContainer"
+              }
+            ],
+            "Essential": true,
+            "Image": "092764866376.dkr.ecr.eu-west-1.amazonaws.com/note-auth:0.0.1@sha256:8258ad80bdcab8d399f746dc60946be5d61a50c8008d68c4794a9066c61b3d16",
+            "LinuxParameters": {},
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "LogGroup"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "note-app"
+              }
+            },
+            "Name": "authorization-server",
+            "PortMappings": [
+              {
+                "ContainerPort": 8090,
+                "HostPort": 8090,
+                "Protocol": "tcp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Ref": "AuthorizationserverTaskExecutionRole"
+        },
+        "Family": "note-app-authorization-server",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": ["FARGATE"]
+      },
+      "Type": "AWS::ECS::TaskDefinition"
+    },
+    "AuthorizationserverTaskExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["sts:AssumeRole"],
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+          "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        ],
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          },
+          {
+            "Key": "com.docker.compose.service",
+            "Value": "authorization-server"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "CloudMap": {
+      "Properties": {
+        "Description": "Service Map for Docker Compose project note-app",
+        "Name": "note-app.local",
+        "Vpc": "vpc-420bb23b"
+      },
+      "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace"
+    },
+    "Cluster": {
+      "Properties": {
+        "ClusterName": "note-app",
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          }
+        ]
+      },
+      "Type": "AWS::ECS::Cluster"
+    },
+    "Default8080Ingress": {
+      "Properties": {
+        "CidrIp": "0.0.0.0/0",
+        "Description": "api-service:8080/tcp on default network",
+        "FromPort": 8080,
+        "GroupId": {
+          "Ref": "DefaultNetwork"
+        },
+        "IpProtocol": "TCP",
+        "ToPort": 8080
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress"
+    },
+    "Default8090Ingress": {
+      "Properties": {
+        "CidrIp": "0.0.0.0/0",
+        "Description": "authorization-server:8090/tcp on default network",
+        "FromPort": 8090,
+        "GroupId": {
+          "Ref": "DefaultNetwork"
+        },
+        "IpProtocol": "TCP",
+        "ToPort": 8090
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress"
+    },
+    "Default80Ingress": {
+      "Properties": {
+        "CidrIp": "0.0.0.0/0",
+        "Description": "react-app:80/tcp on default network",
+        "FromPort": 80,
+        "GroupId": {
+          "Ref": "DefaultNetwork"
+        },
+        "IpProtocol": "TCP",
+        "ToPort": 80
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress"
+    },
+    "DefaultNetwork": {
+      "Properties": {
+        "GroupDescription": "note-app Security Group for default network",
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          },
+          {
+            "Key": "com.docker.compose.network",
+            "Value": "note-app-network"
+          }
+        ],
+        "VpcId": "vpc-420bb23b"
+      },
+      "Type": "AWS::EC2::SecurityGroup"
+    },
+    "DefaultNetworkIngress": {
+      "Properties": {
+        "Description": "Allow communication within network default",
+        "GroupId": {
+          "Ref": "DefaultNetwork"
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": {
+          "Ref": "DefaultNetwork"
+        }
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress"
+    },
+    "LoadBalancer": {
+      "Properties": {
+        "LoadBalancerAttributes": [
+          {
+            "Key": "load_balancing.cross_zone.enabled",
+            "Value": "true"
+          }
+        ],
+        "Scheme": "internet-facing",
+        "Subnets": ["subnet-974e79cd", "subnet-e034de99", "subnet-eec603a5"],
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          }
+        ],
+        "Type": "network"
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    },
+    "LogGroup": {
+      "Properties": {
+        "LogGroupName": "/docker-compose/note-app"
+      },
+      "Type": "AWS::Logs::LogGroup"
+    },
+    "ReactappService": {
+      "DependsOn": ["ReactappTCP80Listener"],
+      "Properties": {
+        "Cluster": {
+          "Fn::GetAtt": ["Cluster", "Arn"]
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100
+        },
+        "DeploymentController": {
+          "Type": "ECS"
+        },
+        "DesiredCount": 1,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "react-app",
+            "ContainerPort": 80,
+            "TargetGroupArn": {
+              "Ref": "ReactappTCP80TargetGroup"
+            }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [
+              {
+                "Ref": "DefaultNetwork"
+              }
+            ],
+            "Subnets": ["subnet-974e79cd", "subnet-e034de99", "subnet-eec603a5"]
+          }
+        },
+        "PlatformVersion": "1.4.0",
+        "PropagateTags": "SERVICE",
+        "SchedulingStrategy": "REPLICA",
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": ["ReactappServiceDiscoveryEntry", "Arn"]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          },
+          {
+            "Key": "com.docker.compose.service",
+            "Value": "react-app"
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "ReactappTaskDefinition"
+        }
+      },
+      "Type": "AWS::ECS::Service"
+    },
+    "ReactappServiceDiscoveryEntry": {
+      "Properties": {
+        "Description": "\"react-app\" service discovery entry in Cloud Map",
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "react-app",
+        "NamespaceId": {
+          "Ref": "CloudMap"
+        }
+      },
+      "Type": "AWS::ServiceDiscovery::Service"
+    },
+    "ReactappTCP80Listener": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "ForwardConfig": {
+              "TargetGroups": [
+                {
+                  "TargetGroupArn": {
+                    "Ref": "ReactappTCP80TargetGroup"
+                  }
+                }
+              ]
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "LoadBalancer"
+        },
+        "Port": 80,
+        "Protocol": "TCP"
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener"
+    },
+    "ReactappTCP80TargetGroup": {
+      "Properties": {
+        "Port": 80,
+        "Protocol": "TCP",
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          }
+        ],
+        "TargetType": "ip",
+        "VpcId": "vpc-420bb23b"
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+    },
+    "ReactappTaskDefinition": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Command": ["eu-west-1.compute.internal", "note-app.local"],
+            "Essential": false,
+            "Image": "docker/ecs-searchdomain-sidecar:1.0",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "LogGroup"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "note-app"
+              }
+            },
+            "Name": "Reactapp_ResolvConf_InitContainer"
+          },
+          {
+            "DependsOn": [
+              {
+                "Condition": "SUCCESS",
+                "ContainerName": "Reactapp_ResolvConf_InitContainer"
+              }
+            ],
+            "Essential": true,
+            "Image": "092764866376.dkr.ecr.eu-west-1.amazonaws.com/note-react:0.0.1@sha256:6d9bdedbb875f332dce0c213a3b8851e2d2494c46b6c4fd94c1b0e4bcebd7ba0",
+            "LinuxParameters": {},
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "LogGroup"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "note-app"
+              }
+            },
+            "Name": "react-app",
+            "PortMappings": [
+              {
+                "ContainerPort": 80,
+                "HostPort": 80,
+                "Protocol": "tcp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Ref": "ReactappTaskExecutionRole"
+        },
+        "Family": "note-app-react-app",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": ["FARGATE"]
+      },
+      "Type": "AWS::ECS::TaskDefinition"
+    },
+    "ReactappTaskExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["sts:AssumeRole"],
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+          "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        ],
+        "Tags": [
+          {
+            "Key": "com.docker.compose.project",
+            "Value": "note-app"
+          },
+          {
+            "Key": "com.docker.compose.service",
+            "Value": "react-app"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    }
+  }
+}

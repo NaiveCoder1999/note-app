@@ -1,10 +1,11 @@
 version: '3.8'
 services:
   authorization-server:
+    # platform: 'linux/amd64'
     build:
       context: ./springboot-note-authorization-server
       dockerfile: Dockerfile
-    image: note-auth-server:0.0.1
+    image: note-auth:0.0.1
     container_name: noteauth
     ports:
       - 8090:8090
@@ -12,10 +13,11 @@ services:
       - 8090
 
   api-service:
+    # platform: 'linux/amd64'
     build:
       context: ./springboot-note
       dockerfile: Dockerfile
-    image: note-resource-server:0.0.1
+    image: note-resource:0.0.1
     container_name: noteresource
     ports:
       - 8080:8080
@@ -25,10 +27,11 @@ services:
       - authorization-server
 
   react-app:
+    # platform: 'linux/amd64'
     build:
       context: ./note-react-app
       dockerfile: Dockerfile
-    image: note-react-app:0.0.1
+    image: note-react:0.0.1
     container_name: noteapp
     ports:
       - 80:80

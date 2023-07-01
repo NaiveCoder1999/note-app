@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM maven:3.9.2-eclipse-temurin-17 AS builder
+FROM --platform=linux/amd64 maven:3.9.2-eclipse-temurin-17 AS builder
 #create folder and subfolders
 ENV HOME=/usr/app
 RUN mkdir -p $HOME
@@ -14,7 +14,7 @@ ADD . $HOME
 ## Build using the cache
 RUN --mount=type=cache,target=/root/.m2,rw mvn package
 
-FROM --platform=$BUILDPLATFORM eclipse-temurin:17.0.7_7-jre-jammy
+FROM --platform=linux/amd64 eclipse-temurin:17.0.7_7-jre-jammy
 COPY --from=builder /usr/app/target/*.jar /app.jar
 
 EXPOSE 8090
