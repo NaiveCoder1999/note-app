@@ -1,0 +1,24 @@
+logging:
+  level:
+    org:
+      springframework:
+        security: INFO
+        security.oauth2: INFO
+        web: INFO
+    root: INFO
+server:
+  address: 0.0.0.0
+  port: 8090
+spring:
+  config:
+    activate:
+      # do not conflict with other profiles
+      on-profile: deployment
+note:
+  # TODO change for aws deployment
+  # http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com
+#  issuerURI: 'http://54.154.203.158:8090'
+  issuerURI: "http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com:8090"
+  redirectURI: "http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com/callback"
+  postLogoutURI: "http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com/logout"
+  originURI: "http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com"

@@ -18,14 +18,4 @@ COPY --from=builder /usr/app/target/*.jar /app.jar
 
 EXPOSE 8080
 # ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar", "/app.jar"]
-CMD ["java", "-Dspring.profiles.active=docker", "-jar", "/app.jar"]
-#FROM eclipse-temurin:17.0.7_7-jre-jammy
-#WORKDIR /app
-#
-#COPY .mvn/ .mvn
-#COPY mvnw pom.xml ./
-#RUN ./mvnw dependency:go-offline
-#
-#COPY src ./src
-#EXPOSE 8080
-#CMD ["./mvnw", "spring-boot:run"]
+CMD ["java", "-Dspring.profiles.active=deployment", "-jar", "/app.jar"]

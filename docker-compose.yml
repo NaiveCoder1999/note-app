@@ -5,7 +5,7 @@ services:
     build:
       context: ./springboot-note-authorization-server
       dockerfile: Dockerfile
-    image: note-auth:0.0.1
+    image: note-auth:0.0.4
     container_name: noteauth
     ports:
       - 8090:8090
@@ -17,7 +17,7 @@ services:
     build:
       context: ./springboot-note
       dockerfile: Dockerfile
-    image: note-resource:0.0.1
+    image: note-resource:0.0.4
     container_name: noteresource
     ports:
       - 8080:8080
@@ -31,7 +31,7 @@ services:
     build:
       context: ./note-react-app
       dockerfile: Dockerfile
-    image: note-react:0.0.1
+    image: note-react:0.0.4
     container_name: noteapp
     ports:
       - 80:80

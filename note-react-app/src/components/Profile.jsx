@@ -45,17 +45,21 @@ const Profile = () => {
   if (loading) {
     return (
       <div className="container">
-        <div className="row mt-5 ">
-          <div className="col-md-12">
-            <h2>Loading...</h2>
-          </div>
+        <div className="container col-md-12">
+          <h2>Notes loading...</h2>
         </div>
       </div>
     );
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <div className="container">
+        <div className="container col-md-12">
+          <h5>Error - {error}</h5>
+        </div>
+      </div>
+    );
   }
 
   const {

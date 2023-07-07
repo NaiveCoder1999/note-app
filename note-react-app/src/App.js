@@ -1,14 +1,13 @@
 // import logo from './logo.svg';
 import './styles/App.css';
 import React, { Suspense, lazy } from 'react';
-// import NoteList from './components/NoteList';
-// import NoteInfo from './components/NoteInfo';
+import NoteList from './components/NoteList';
+import NoteInfo from './components/NoteInfo';
 import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
 import Logout from './components/Logout';
 import Callback from './components/Callback';
 // import Test from './components/Test';
-
 import Loading from './components/Loading';
 
 import { AlertMessageProvider } from './providers/AlertMessageContext';
@@ -18,8 +17,9 @@ import { Routes, Route } from 'react-router-dom';
 // import Footer from './components/Footer';
 import Profile from './components/Profile';
 
-const NoteList = React.lazy(() => import('./components/NoteList'));
-const NoteInfo = React.lazy(() => import('./components/NoteInfo'));
+// lazy loading feature
+// const NoteList = React.lazy(() => import('./components/NoteList'));
+// const NoteInfo = React.lazy(() => import('./components/NoteInfo'));
 
 function App() {
   return (
@@ -51,9 +51,10 @@ function App() {
               path="/notes"
               element={
                 <ProtectedRoute>
-                  <Suspense fallback={<Loading />}>
+                  {/* <Suspense fallback={<Loading />}>
                     <NoteList />
-                  </Suspense>
+                  </Suspense> */}
+                  <NoteList />
                 </ProtectedRoute>
               }
             />
@@ -61,9 +62,10 @@ function App() {
               path="/notes/:noteId"
               element={
                 <ProtectedRoute>
-                  <Suspense fallback={<Loading />}>
+                  {/* <Suspense fallback={<Loading />}>
                     <NoteInfo />
-                  </Suspense>
+                  </Suspense> */}
+                  <NoteInfo />
                 </ProtectedRoute>
               }
             />

@@ -270,6 +270,26 @@ export default function NoteList() {
     />
   );
 
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="container col-md-12">
+          <h2>Notes loading...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container">
+        <div className="container col-md-12">
+          <h5>Problem fetching the notes - {error}</h5>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* React fragment */}
@@ -301,7 +321,7 @@ export default function NoteList() {
           </div>
         </div>
 
-        {loading && (
+        {/* {loading && (
           <div className="container col-md-12">
             <h5>Notes loading...</h5>
           </div>
@@ -311,7 +331,7 @@ export default function NoteList() {
           <div className="container col-md-12">
             <h5>Problem fetching the notes - ${error}</h5>
           </div>
-        )}
+        )} */}
 
         <div className="container">
           <table className="table table-striped">
@@ -361,12 +381,6 @@ export default function NoteList() {
               ))}
             </tbody>
           </table>
-          {/* {currentNotes.length > 0 && (
-            <Pagination>{paginationItems}</Pagination>
-          )}
-          <button className="btn btn-success" onClick={() => handleAdd()}>
-            Add
-          </button> */}
           <div className="d-flex justify-content-between align-items-center">
             <button className="btn btn-success" onClick={() => handleAdd()}>
               Add

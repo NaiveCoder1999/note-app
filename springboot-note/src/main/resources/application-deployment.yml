@@ -7,8 +7,13 @@ logging:
         web: INFO
     root: INFO
 server:
+  address: 0.0.0.0
   port: 8080
 spring:
+  config:
+    activate:
+      # do not conflict with other profiles
+      on-profile: deployment
   datasource:
     driver-class-name: org.h2.Driver
     password: ''
@@ -35,7 +40,7 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          issuer-uri: http://127.0.0.1:8090
+          issuer-uri: http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com:8090
           # no need to set jwk url by default
           # jwk-set-uri: http://127.0.0.1:8090/oauth2/jwks
   sql:
@@ -48,4 +53,4 @@ springdoc:
   swagger-ui:
     path: /swagger-ui
 note:
-  originURI: "http://127.0.0.1/"
+  originURI: "http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com"

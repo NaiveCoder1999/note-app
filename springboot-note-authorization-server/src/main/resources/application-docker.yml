@@ -7,13 +7,14 @@ logging:
         web: INFO
     root: INFO
 server:
+
   port: 8090
 spring:
   config:
     activate:
       on-profile: docker
 note:
-  # TODO change for react docker container
-  issuerURI: 'http://authorization-server:8090'
-  redirectURI: 'http://127.0.0.1/callback'
-  postLogoutURI: 'http://127.0.0.1/logout'
+  issuerURI: "http://authorization-server:8090"
+  redirectURI: "http://127.0.0.1/callback"
+  postLogoutURI: "http://127.0.0.1/logout"
+  originURI: "http://127.0.0.1/"

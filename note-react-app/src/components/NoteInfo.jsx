@@ -18,6 +18,8 @@ export default function NoteInfo() {
   const { alertMessage, setAlertMessage } = useContext(AlertMessageContext);
   const { loginUserName } = useAuth();
   const { noteId } = useParams(); //noteId: "id"
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const handleNoteInfo = useCallback(
     async (noteId) => {
@@ -27,11 +29,26 @@ export default function NoteInfo() {
   );
 
   async function fetchNoteData(userName, id) {
-    //get note json object
-    let noteEntity = await getSingleNote(userName, id); //axios response type
-    console.log(noteEntity);
-    let noteData = noteEntity.data;
-    setNoteData(noteData); //set a json data
+    try {
+      if (
+        userName !== null &&
+        userName !== undefined &&
+        id !== null &&
+        id !== undefined
+      ) {
+        //get note json object
+        let noteEntity = await getSingleNote(userName, id);
+        //console.log(noteEntity);
+        setNoteData(noteEntity.data); //set a json data
+        setError(null);
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetch note data:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }
 
   //function to handle update and handle create
@@ -103,6 +120,26 @@ export default function NoteInfo() {
       document.removeEventListener('keydown', keyDownHandler);
     };
   }, [handleNoteInfo, keyDownHandler, noteId]);
+
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="container col-md-12">
+          <h2>Note is loading...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container">
+        <div className="container col-md-12">
+          <h5>Problem fetching the note - {error}</h5>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

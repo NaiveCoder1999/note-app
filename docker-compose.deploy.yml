@@ -2,26 +2,26 @@ version: '3.8'
 # build image with multiple platforms
 services:
   authorization-server:
-    image: 092764866376.dkr.ecr.eu-west-1.amazonaws.com/note-auth:0.0.1
+    image: 092764866376.dkr.ecr.eu-west-1.amazonaws.com/note-auth:0.0.4
     container_name: noteauth
     ports:
       - 8090:8090
 
   api-service:
-    image: 092764866376.dkr.ecr.eu-west-1.amazonaws.com/note-resource:0.0.1
+    image: 092764866376.dkr.ecr.eu-west-1.amazonaws.com/note-resource:0.0.4
     container_name: noteresource
     ports:
       - 8080:8080
-    # depends_on:
-    #   - authorization-server
+    depends_on:
+      - authorization-server
 
   react-app:
-    image: 092764866376.dkr.ecr.eu-west-1.amazonaws.com/note-react:0.0.1
+    image: 092764866376.dkr.ecr.eu-west-1.amazonaws.com/note-react:0.0.4
     container_name: noteapp
     ports:
       - 80:80
-    # depends_on:
-    #   - api-service
+    depends_on:
+      - api-service
 
 networks:
   default:

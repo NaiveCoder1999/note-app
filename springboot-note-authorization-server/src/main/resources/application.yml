@@ -12,3 +12,4 @@ note:
   issuerURI: "http://127.0.0.1:8090"
   redirectURI: "http://127.0.0.1:3000/callback"
   postLogoutURI: "http://127.0.0.1:3000/logout"
+  originURI: "http://127.0.0.1/"

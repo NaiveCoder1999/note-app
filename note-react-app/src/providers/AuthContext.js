@@ -37,9 +37,11 @@ const AuthProvider = ({ children }) => {
         if (storedAccessToken) {
           const introspectData = await introspectAccessToken(storedAccessToken);
           const isTokenActive = introspectData.active;
-          // console.log('isTokenActive', isTokenActive);
+          console.log('isTokenActive', isTokenActive);
 
-          if (!isTokenActive) {
+          // if (!isTokenActive) {
+
+          if (!introspectData.active) {
             // when token is expired, try refresh
             const { newAccessToken, newRefreshToken, newIdToken } =
               await refreshAccessToken(storedRefreshToken);
@@ -52,7 +54,7 @@ const AuthProvider = ({ children }) => {
             setIsAuthenticated(true);
             window.location.reload();
           } else {
-            // token is valid amd actove
+            // token is valid and active
             setIsAuthenticated(true);
             setAccessToken(storedAccessToken);
             setIDToken(storedIDToken);

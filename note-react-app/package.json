@@ -22,6 +22,7 @@
     "bootstrap": "^5.2.3",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.3",
+    "env-cmd": "^10.1.0",
     "formik": "^2.2.9",
     "html-react-parser": "^3.0.16",
     "lowlight": "^2.8.1",
@@ -42,7 +43,9 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-scripts start",
+    "start:deployment": "env-cmd -f .env.deployment react-scripts start",
     "build": "react-scripts build",
+    "build:deployment": "env-cmd -f .env.deployment react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
