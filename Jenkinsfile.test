@@ -20,53 +20,55 @@ pipeline {
             }
         }
 
-        stage("Building Image of Authorization Server") {
+        stage("Building Image of Jenkins Agent for Testing Pipeline") {
             steps{
                 script {
-                    dockerImage = docker.build("${registry}/note-auth:${env.BUILD_ID}",
-                                   "-f ./springboot-note-authorization-server/jenkins.Dockerfile ./springboot-note-authorization-server")
+                    dockerImage = docker.build("${registry}/myjenkins-agent:${env.BUILD_ID}",
+                                   "-f ./jenkins-image/agent.Dockerfile ./jenkins-image")
 
 
                 }
             }
         }
 
-        stage("Pushing Authorization Server Image to ECR") {
+        stage("Pushing Image to ECR") {
             steps{
-                script {
-                    docker.withRegistry(registry, registryCredential) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
-
-        stage("Update Authorization Server Service in ECS") {
-            environment {
-                TASK_FAMILY = "note-app-authorization-server"
-                ECR_IMAGE = "${registry}/note-auth:${env.BUILD_NUMBER}"
-                SERVICE_NAME = "note-app-AuthorizationserverService-YriQUnjCGrr6"
-                }            
-            steps {
                 withAWS(credentials: "awskey", region: "eu-west-1") {
                     script {
-                    sh '''
-                        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --region "$defaultRegion")
-
-                        NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_IMAGE" '.taskDefinition | .containerDefinitions[1].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy)')
-
-                        NEW_TASK_INFO=$(aws ecs register-task-definition --region "$defaultRegion" --cli-input-json "$NEW_TASK_DEFINTIION")
-
-                        NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
-
-                        aws ecs update-service --cluster ${clusterName} \
-                                               --service ${SERVICE_NAME} \
-                                               --task-definition ${TASK_FAMILY}:${NEW_REVISION}
-                    '''
+                        docker.withRegistry( registry, registryCredential ) {
+                            dockerImage.push()
+                        }
                     }
-                    
                 }
             }
         }
+
+        // stage("Update Authorization Server Service in ECS") {
+        //     environment {
+        //         TASK_FAMILY = "note-app-authorization-server"
+        //         ECR_IMAGE = "${registry}/note-auth:${env.BUILD_NUMBER}"
+        //         SERVICE_NAME = "note-app-AuthorizationserverService-YriQUnjCGrr6"
+        //         }            
+        //     steps {
+        //         withAWS(credentials: "awskey", region: "eu-west-1") {
+        //             script {
+        //             sh '''
+        //                 TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --region "$defaultRegion")
+
+        //                 NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_IMAGE" '.taskDefinition | .containerDefinitions[1].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy)')
+
+        //                 NEW_TASK_INFO=$(aws ecs register-task-definition --region "$defaultRegion" --cli-input-json "$NEW_TASK_DEFINTIION")
+
+        //                 NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
+
+        //                 aws ecs update-service --cluster ${clusterName} \
+        //                                        --service ${SERVICE_NAME} \
+        //                                        --task-definition ${TASK_FAMILY}:${NEW_REVISION}
+        //             '''
+        //             }
+                    
+        //         }
+        //     }
+        // }
     }
 }
