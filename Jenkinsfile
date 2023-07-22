@@ -24,7 +24,7 @@ pipeline {
             steps{
                 script {
                     dockerImage = docker.build("${registry}/note-auth:${env.BUILD_ID}",
-                                   "-f ./springboot-note-authorization-server/aws.Dockerfile ./springboot-note-authorization-server")
+                                   "-f ./springboot-note-authorization-server/jenkins.Dockerfile ./springboot-note-authorization-server")
                 }
             }
         }
@@ -45,7 +45,7 @@ pipeline {
                     script {
                         // dockerImage = docker.build registry + "/note-resource:${env.BUILD_NUMBER}", "-f springboot-note/aws.Dockerfile ./springboot-note"
                         dockerImage = docker.build("${registry}/note-resource:${env.BUILD_ID}",
-                                   "-f ./springboot-note/aws.Dockerfile ./springboot-note")
+                                   "-f ./springboot-note/jenkins.Dockerfile ./springboot-note")
                     }
                 }
             }
