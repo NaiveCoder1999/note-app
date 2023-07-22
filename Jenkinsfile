@@ -30,9 +30,11 @@ pipeline {
         }
 
         stage("Pushing Authorization Server Image to ECR") {
-            steps{
+            steps {
                 script {
-                    docker.withRegistry( registry, registryCredential ) {
+                    // cleanup current user docker credentials
+                    sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
+                    docker.withRegistry( "https://${registry}", registryCredential ) {
                         dockerImage.push()
                     }
                 }
@@ -43,7 +45,6 @@ pipeline {
             steps{
                 withAWS(credentials: "awskey", region: "eu-west-1") {
                     script {
-                        // dockerImage = docker.build registry + "/note-resource:${env.BUILD_NUMBER}", "-f springboot-note/aws.Dockerfile ./springboot-note"
                         dockerImage = docker.build("${registry}/note-resource:${env.BUILD_ID}",
                                    "-f ./springboot-note/jenkins.Dockerfile ./springboot-note")
                     }
@@ -52,9 +53,10 @@ pipeline {
         }
 
         stage("Pushing Note API Service Image to ECR") {
-            steps{
+            steps {
                 script {
-                    docker.withRegistry( registry, registryCredential ) {
+                    sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
+                    docker.withRegistry( "https://${registry}", registryCredential ) {
                         dockerImage.push()
                     }
                 }
@@ -65,15 +67,16 @@ pipeline {
             steps{
                 script {
                     dockerImage = docker.build("${registry}/note-react:${env.BUILD_ID}",
-                                   "-f ./note-react-app/aws.Dockerfile ./note-react-app")
+                                   "-f ./note-react-app/jenkins.Dockerfile ./note-react-app")
                 }
             }
         }
 
         stage("Pushing React Frontend Image to ECR") {
-            steps{
+            steps {
                 script {
-                    docker.withRegistry( registry, registryCredential ) {
+                    sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
+                    docker.withRegistry( "https://${registry}", registryCredential ) {
                         dockerImage.push()
                     }
                 }
@@ -83,7 +86,7 @@ pipeline {
         stage("Update Authorization Server Service in ECS") {
             environment {
                 TASK_FAMILY = "note-app-authorization-server"
-                ECR_IMAGE = "${registry}/note-auth:${env.BUILD_NUMBER}"
+                ECR_IMAGE = "${registry}/note-auth:${env.BUILD_ID}"
                 SERVICE_NAME = "note-app-AuthorizationserverService-YriQUnjCGrr6"
                 }            
             steps {
@@ -111,7 +114,7 @@ pipeline {
         stage("Update Note API Service in ECS") {
             environment {
                 TASK_FAMILY = "note-app-api-service"
-                ECR_IMAGE = "${registry}/note-resource:${env.BUILD_NUMBER}"
+                ECR_IMAGE = "${registry}/note-resource:${env.BUILD_ID}"
                 SERVICE_NAME = "note-app-ApiserviceService-HUWgUYL8xoWS"
                 }            
             steps {
@@ -139,7 +142,7 @@ pipeline {
         stage("Update Frontend Service in ECS") {
             environment {
                 TASK_FAMILY = "note-app-react-app"
-                ECR_IMAGE = "${registry}/note-react:${env.BUILD_NUMBER}"
+                ECR_IMAGE = "${registry}/note-react:${env.BUILD_ID}"
                 SERVICE_NAME = "note-app-ReactappService-WYa497feT0sw"
                 }            
             steps {
