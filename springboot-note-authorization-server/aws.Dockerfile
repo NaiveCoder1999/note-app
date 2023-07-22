@@ -7,7 +7,7 @@ WORKDIR $HOME
 ## verify pom.xml dependencies
 ADD pom.xml $HOME
 ## RUN apk add --no-cache python3 g++ make
-RUN mvn verify --fail-never
+RUN mvn verify --fail-never -X
 ## add all source code and start compiling
 ## compile and package to JAR
 ADD . $HOME
