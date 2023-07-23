@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage("Building Image of Authorization Server") {
+        stage("Building Image of Spring Authorization Server") {
             steps{
                 script {
                     dockerImage = docker.build("${registry}/note-auth:${env.BUILD_ID}",
@@ -41,24 +41,86 @@ pipeline {
             }
         }
 
-        stage("Building Image of Note API Service") {
-            steps{
+        stage("Update Authorization Server Service in ECS") {
+            environment {
+                TASK_FAMILY = "note-app-authorization-server"
+                ECR_IMAGE = "${registry}/note-auth:${env.BUILD_ID}"
+                SERVICE_NAME = "note-app-AuthorizationserverService-YriQUnjCGrr6"
+                }            
+            steps {
                 withAWS(credentials: "awskey", region: "eu-west-1") {
                     script {
-                        dockerImage = docker.build("${registry}/note-resource:${env.BUILD_ID}",
-                                   "-f ./springboot-note/jenkins.Dockerfile ./springboot-note")
+                    sh '''
+                        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --region "$defaultRegion")
+
+                        OLD_REVISION=$(echo $TASK_DEFINITION | jq '.taskDefinition.revision')
+
+                        NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_IMAGE" '.taskDefinition | .containerDefinitions[1].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy)')
+
+                        NEW_TASK_INFO=$(aws ecs register-task-definition --region "$defaultRegion" --cli-input-json "$NEW_TASK_DEFINTIION")
+
+                        NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
+
+                        aws ecs update-service --cluster ${clusterName} \
+                                               --service ${SERVICE_NAME} \
+                                               --task-definition ${TASK_FAMILY}:${NEW_REVISION}
+
+                        aws ecs deregister-task-definition --task-definition ${TASK_FAMILY}:${OLD_REVISION}
+                    '''
                     }
+                    
                 }
             }
         }
 
-        stage("Pushing Note API Service Image to ECR") {
+        stage("Building Image of Note API Service") {
+            steps{
+                script {
+                    dockerImage = docker.build("${registry}/note-resource:${env.BUILD_ID}",
+                                    "-f ./springboot-note/jenkins.Dockerfile ./springboot-note")
+                }
+            }
+        }
+
+        stage("Pushing API Service Image to ECR") {
             steps {
                 script {
                     sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
                     docker.withRegistry( "https://${registry}", registryCredential ) {
                         dockerImage.push()
                     }
+                }
+            }
+        }
+
+        stage("Update API Service in ECS") {
+            environment {
+                TASK_FAMILY = "note-app-api-service"
+                ECR_IMAGE = "${registry}/note-resource:${env.BUILD_ID}"
+                SERVICE_NAME = "note-app-ApiserviceService-HUWgUYL8xoWS"
+                }            
+            steps {
+                withAWS(credentials: "awskey", region: "eu-west-1") {
+                    script {
+                    sh '''
+                        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --region "$defaultRegion")
+
+                        OLD_REVISION=$(echo $TASK_DEFINITION | jq '.taskDefinition.revision')
+
+                        NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_IMAGE" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy)')
+
+                        NEW_TASK_INFO=$(aws ecs register-task-definition --region "$defaultRegion" --cli-input-json "$NEW_TASK_DEFINTIION")
+
+                        NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
+
+                        aws ecs update-service --cluster ${clusterName} \
+                                               --service ${SERVICE_NAME} \
+                                               --task-definition ${TASK_FAMILY}:${NEW_REVISION}
+
+                        aws ecs deregister-task-definition --task-definition ${TASK_FAMILY}:${OLD_REVISION}
+                    '''
+                    }
+                    
                 }
             }
         }
@@ -72,69 +134,13 @@ pipeline {
             }
         }
 
-        stage("Pushing React Frontend Image to ECR") {
+        stage("Pushing Frontend Image to ECR") {
             steps {
                 script {
                     sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
                     docker.withRegistry( "https://${registry}", registryCredential ) {
                         dockerImage.push()
                     }
-                }
-            }
-        }
-
-        stage("Update Authorization Server Service in ECS") {
-            environment {
-                TASK_FAMILY = "note-app-authorization-server"
-                ECR_IMAGE = "${registry}/note-auth:${env.BUILD_ID}"
-                SERVICE_NAME = "note-app-AuthorizationserverService-YriQUnjCGrr6"
-                }            
-            steps {
-                withAWS(credentials: "awskey", region: "eu-west-1") {
-                    script {
-                    sh '''
-                        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --region "$defaultRegion")
-
-                        NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_IMAGE" '.taskDefinition | .containerDefinitions[1].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy)')
-
-                        NEW_TASK_INFO=$(aws ecs register-task-definition --region "$defaultRegion" --cli-input-json "$NEW_TASK_DEFINTIION")
-
-                        NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
-
-                        aws ecs update-service --cluster ${clusterName} \
-                                               --service ${SERVICE_NAME} \
-                                               --task-definition ${TASK_FAMILY}:${NEW_REVISION}
-                    '''
-                    }
-                    
-                }
-            }
-        }
-
-        stage("Update Note API Service in ECS") {
-            environment {
-                TASK_FAMILY = "note-app-api-service"
-                ECR_IMAGE = "${registry}/note-resource:${env.BUILD_ID}"
-                SERVICE_NAME = "note-app-ApiserviceService-HUWgUYL8xoWS"
-                }            
-            steps {
-                withAWS(credentials: "awskey", region: "eu-west-1") {
-                    script {
-                    sh '''
-                        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --region "$defaultRegion")
-
-                        NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_IMAGE" '.taskDefinition | .containerDefinitions[1].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy)')
-
-                        NEW_TASK_INFO=$(aws ecs register-task-definition --region "$defaultRegion" --cli-input-json "$NEW_TASK_DEFINTIION")
-
-                        NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
-
-                        aws ecs update-service --cluster ${clusterName} \
-                                               --service ${SERVICE_NAME} \
-                                               --task-definition ${TASK_FAMILY}:${NEW_REVISION}
-                    '''
-                    }
-                    
                 }
             }
         }
@@ -151,6 +157,8 @@ pipeline {
                     sh '''
                         TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --region "$defaultRegion")
 
+                        OLD_REVISION=$(echo $TASK_DEFINITION | jq '.taskDefinition.revision')
+
                         NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_IMAGE" '.taskDefinition | .containerDefinitions[1].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy)')
 
                         NEW_TASK_INFO=$(aws ecs register-task-definition --region "$defaultRegion" --cli-input-json "$NEW_TASK_DEFINTIION")
@@ -160,6 +168,8 @@ pipeline {
                         aws ecs update-service --cluster ${clusterName} \
                                                --service ${SERVICE_NAME} \
                                                --task-definition ${TASK_FAMILY}:${NEW_REVISION}
+
+                        aws ecs deregister-task-definition --task-definition ${TASK_FAMILY}:${OLD_REVISION}
                     '''
                     }
                     
