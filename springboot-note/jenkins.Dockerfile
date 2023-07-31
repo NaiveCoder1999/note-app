@@ -10,7 +10,7 @@ RUN mvn verify --fail-never
 #compile and package to JAR
 ADD . $HOME
 #RUN mvn package
-# Build using the cache
+# Build without cache for jenkins pipeline compa
 RUN mvn package
 
 FROM --platform=linux/amd64 eclipse-temurin:17.0.7_7-jre-jammy

@@ -1,6 +1,7 @@
 FROM --platform=linux/amd64 node:16.16.0-slim AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
+# Build without cache for jenkins pipeline compatibility
 RUN npm install
 COPY ./ /app/
 # RUN npm run build

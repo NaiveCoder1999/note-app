@@ -1,81 +1,61 @@
-# Note Taking App
+<h2 align="center">
+<span>Note Taking App</span>
+</h2>
+<p align="center">
+  <em>A Full-Stack Application to validate OAuth authorization-code flow with PKCE and to manage notes.</em>
+</p>
+<p align="center">
+  <a href="http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com/"><b>🌐LIVE DEMO</b></a> 
+</p>
+
+
+
+The goal of this project is to implement an application called `note-app` to manage notes taking. For it, we will implement a back-end [`Spring Boot`](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/) application called `springboot-note` to provice REST APIs for resource access and a font-end [ReactJS](https://react.dev/) application called `note-react-app` to provide browser access. Besides, we will use  [`OAuth 2.0`](https://www.oauth.com/) and [`JWT Authentication`](https://jwt.io/introduction) supported by [`Spring Authorization Server`]( https://docs.spring.io/spring-authorization-server/docs/current/reference/html/overview.html)  secure both applications.
 
 
 
 ## Features
+
+- Login/Logout with OAuth 2 Authorization Code Flow with PKCE
+- CRUD for note-taking
+- WYSIWYG text editor and syntax highlighter for code snippets
 
 
 
 ## Roadmap
 
 - [x] Local Run with JAR and NPM
-- [ ] Docker Compose
-- [ ] Kubernetes
-- [ ] Deployment + CI/CD
+- [x] Docker Compose
+- [x] AWS Deployment + Jenkins CI/CD pipeline
+- [ ] Kubernetes Deployment
 
 
 
 ## Get Started
 
-The **username** and **password** for demo: `guest`
+- Online Service
 
-### Dependencies:
+  - **Check the** 🌐 **[LIVE DEMO on AWS ECS ](http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com/)** (Please make sure Port 8080 and 8090 is not blocked on your network). The **username** and **password** are `guest`
+  - The other users/passwords are:`coder` and `nocoder`.
 
-JDK
+- Local Service
 
-```shell
-openjdk version "17.0.7" 2023-04-18
-OpenJDK Runtime Environment Temurin-17.0.7+7 (build 17.0.7+7)
-OpenJDK 64-Bit Server VM Temurin-17.0.7+7 (build 17.0.7+7, mixed mode)
-```
+  - In a terminal, make sure you are inside `note-app` root folder. Run the following command to start docker compose containers:
 
-Maven
-
-```shell
-Apache Maven 3.9.2 (c9616018c7a021c1c39be70fb2843d6f5f9b8a1c)
-Maven home: /opt/homebrew/Cellar/maven/3.9.2/libexec
-Java version: 17.0.7, vendor: Eclipse Adoptium
-```
-
-NPM
-
-```shell
-npm version
-{
-  npm: '9.2.0',
-  node: '16.16.0'
-  #...
-}
-```
+    ```shell
+    docker compose up -d
+    ```
+    
+    Then access http://127.0.0.1/ in browser to 
+  - To stop and remove docker-compose containers and network, in the terminal and inside `note-app` folder, run the command below
+  
+    ```shell
+    docker compose down -v
+    ```
 
 
 
-### Local Build
-
-#### Create and Running JAR
-
-```shell
-# Open another terminal window
-# to build and execute the authorizaton server
-mvn -f springboot-note-authorization-server/ package
-mvn -f springboot-note-authorization-server/ spring-boot:run
-
-# Under root folder: note-app
-# to build and execute the resource server
-mvn -f springboot-note/ package
-mvn -f springboot-note/ spring-boot:run
-```
-
-#### Running React Frontend
-
-1. Install dependency packages(should be run under `note-react-app` directory):
-   Run `npm install`
-2. Run localhost server. 
-   Run `npm start`
-
-
-
-### Screenshots
+## Screenshots
 
 - Homepage
 
@@ -110,3 +90,9 @@ mvn -f springboot-note/ spring-boot:run
 - Logout Confirmation
 
 <img src=".//docs/images/logoutBox.jpg" alt="index" style="zoom: 33%;" />
+
+
+
+## License
+
+[GNU General Public License v3.0](./LICENSE)
