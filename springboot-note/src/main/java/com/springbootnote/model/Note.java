@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
+@Table(name="`note`")
 public class Note {
 
     @Id
