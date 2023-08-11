@@ -5392,3 +5392,69 @@ org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (
 	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
 	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:108)
 	at java.base/java.lang.Thread.run(Thread.java:833)
+2023-08-11 00:26:54 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "NOTE" not found (candidates are: "note"); SQL statement:
+INSERT INTO note (ID, NOTE_NAME, USER_NAME, DESCRIPTION) VALUES (1, '230. Kth Smallest Element in a BST', 'guest', '<p><u>https://leetcode.com/problems/kth-smallest-element-in-a-bst/description/</u></p><p><u>https://labuladong.github.io/algo/2/21/42/</u></p><pre><code class="language-java">class Solution {
+    int res = 0;
+    int rank = 0;
+    public int kthSmallest(TreeNode root, int k) {
+        traverse(root, k);
+        return res;
+    }
+
+    void traverse(TreeNode root, int k) {
+        if (root == null) return;
+        traverse(root.left, k);
+        //inorder traverse
+        rank++;
+        if (rank == k) {
+            res = root.val;
+            return;
+        }
+        traverse(root.right, k);
+    }
+}</code></pre>') [42103-214]
+2023-08-11 00:27:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "NOTE" not found (candidates are: "note"); SQL statement:
+INSERT INTO `note` (ID, NOTE_NAME, USER_NAME, DESCRIPTION) VALUES (1, '230. Kth Smallest Element in a BST', 'guest', '<p><u>https://leetcode.com/problems/kth-smallest-element-in-a-bst/description/</u></p><p><u>https://labuladong.github.io/algo/2/21/42/</u></p><pre><code class="language-java">class Solution {
+    int res = 0;
+    int rank = 0;
+    public int kthSmallest(TreeNode root, int k) {
+        traverse(root, k);
+        return res;
+    }
+
+    void traverse(TreeNode root, int k) {
+        if (root == null) return;
+        traverse(root.left, k);
+        //inorder traverse
+        rank++;
+        if (rank == k) {
+            res = root.val;
+            return;
+        }
+        traverse(root.right, k);
+    }
+}</code></pre>') [42103-214]
+2023-08-11 00:28:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "NOTE" not found (candidates are: "note"); SQL statement:
+INSERT INTO `note` (ID, NOTE_NAME, USER_NAME, DESCRIPTION) VALUES (1, '230. Kth Smallest Element in a BST', 'guest', '<p><u>https://leetcode.com/problems/kth-smallest-element-in-a-bst/description/</u></p><p><u>https://labuladong.github.io/algo/2/21/42/</u></p><pre><code class="language-java">class Solution {
+    int res = 0;
+    int rank = 0;
+    public int kthSmallest(TreeNode root, int k) {
+        traverse(root, k);
+        return res;
+    }
+
+    void traverse(TreeNode root, int k) {
+        if (root == null) return;
+        traverse(root.left, k);
+        //inorder traverse
+        rank++;
+        if (rank == k) {
+            res = root.val;
+            return;
+        }
+        traverse(root.right, k);
+    }
+}</code></pre>') [42103-214]

@@ -21,6 +21,7 @@ export default function NoteInfo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
   const handleNoteInfo = useCallback(
     async (noteId) => {
       fetchNoteData(loginUserName, noteId);
@@ -30,7 +31,16 @@ export default function NoteInfo() {
 
   async function fetchNoteData(userName, id) {
     try {
-      if (
+      if (id === `-1`) {
+        let noteData = {
+          id: '-1',
+          noteName: '',
+          userName: '',
+          description: '',
+        };
+        setNoteData(noteData); //set a json data
+        setError(null);
+      } else if (
         userName !== null &&
         userName !== undefined &&
         id !== null &&
@@ -38,7 +48,7 @@ export default function NoteInfo() {
       ) {
         //get note json object
         let noteEntity = await getSingleNote(userName, id);
-        //console.log(noteEntity);
+        console.log(noteEntity);
         setNoteData(noteEntity.data); //set a json data
         setError(null);
       }
@@ -109,10 +119,6 @@ export default function NoteInfo() {
   }, []);
 
   useEffect(() => {
-    if (noteId === `-1`) {
-      return;
-    }
-
     handleNoteInfo(noteId);
 
     document.addEventListener('keydown', keyDownHandler);

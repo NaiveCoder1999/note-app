@@ -40,6 +40,23 @@ services:
     depends_on:
       - api-service
 
+  mysql-db:
+    image: mysql:8.1.0
+    container_name: notedb
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: notedb
+      MYSQL_USER: sa
+      MYSQL_PASSWORD: sapassword
+      MYSQL_ROOT_HOST: '%' # allow root and user login from any host
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
+
 networks:
   default:
     name: note-app-network
