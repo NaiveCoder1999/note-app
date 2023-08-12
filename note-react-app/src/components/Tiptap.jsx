@@ -168,6 +168,7 @@ export default function Tiptap({ initialContent, onChange }) {
   const [editable, setEditable] = useState(false);
   //const contentRef = useRef(initialContent);
   const editor = useEditor({
+    content: initialContent,
     extensions: [
       StarterKit.configure({
         bulletList: {
@@ -213,20 +214,14 @@ export default function Tiptap({ initialContent, onChange }) {
     }
     editor.setEditable(editable);
 
-    //Update editor content when initialContent of note changes
-    let prevDesc = editor.getHTML();
+    //Force update editor content when initialContent of note changes
+    //   let prevDesc = editor.getHTML();
 
-    if (prevDesc === initialContent || prevDesc === '<p></p>') {
-      editor.commands.setContent(initialContent);
-    }
-    // let prevDesc = editor.getHTML();
-    // if (prevDesc !== initialContent && prevDesc !== '<p></p>') {
-    //   editor.commands.setContent(prevDesc);
-    // } else {
-    //   editor.commands.setContent(initialContent);
-    // }
-  }, [editor, editable, initialContent]);
-
+    //   if (prevDesc === initialContent || prevDesc === '<p></p>') {
+    //     editor.commands.setContent(initialContent);
+    //   }
+    // }, [editor, editable, initialContent]);
+  }, [editor, editable]);
   return (
     <div>
       <div className="textEditor">
