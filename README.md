@@ -11,8 +11,7 @@ The goal of this project is to implement an application called `note-app` to man
 
 - Online Service
 
-  - **Check the** 🌐 **[LIVE DEMO on AWS ECS ](http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com/)** (Please make sure Port 8080 and 8090 is not blocked on your network). The **username** and **password** are `guest`
-  - The other users/passwords are:`coder` and `nocoder`.
+  - The users/passwords are:`coder` and `nocoder`.
 
 - Local Service
 
