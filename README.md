@@ -4,9 +4,6 @@
 <p align="center">
   <em>A Full-Stack Application to validate OAuth authorization-code flow with PKCE and to manage notes.</em>
 </p>
-<p align="center">
-  <a href="http://note-loadb-1153hxl66luz-dfb9d722b8f996bd.elb.eu-west-1.amazonaws.com/"><b>🌐LIVE DEMO</b></a> 
-</p>
 
 The goal of this project is to implement an application called `note-app` to manage notes taking. For it, we will implement a back-end [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/) application called `springboot-note` to provice REST APIs for resource access and a font-end [ReactJS](https://react.dev/) application called `note-react-app` to provide browser access. Besides, we will use  [OAuth 2.0](https://www.oauth.com/) and [JWT Authentication](https://jwt.io/introduction) supported by [Spring Authorization Server]( https://docs.spring.io/spring-authorization-server/docs/current/reference/html/overview.html) secure both applications.
 
